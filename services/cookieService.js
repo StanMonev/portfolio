@@ -88,7 +88,7 @@ const getAnalyticsData = async (excludedIpsString="") => {
       .whereNotIn('ip', excludedIps);
 
     const countryVisitors = await knex('analytics')
-      .select('country', 'ip', knex.raw('count(*) as count'))
+      .select('country', 'ip', knex.raw('count(*) as count'), knex.raw('MAX(timestamp) as timestamp'))
       .groupBy('country', 'ip')
       .orderBy('count', 'desc')
       .whereNotIn('ip', excludedIps);
