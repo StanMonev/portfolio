@@ -238,7 +238,12 @@ async function fetchAndRenderTable(filterIPs = '') {
     const tableBody = document.getElementById('visitorsTable').querySelector('tbody');
     tableBody.innerHTML = '';
 
-    data.countryVisitors.forEach(visitor => {
+    // Sort visitors by timestamp (latest first)
+    const sortedVisitors = data.countryVisitors.sort((a, b) => {
+        return new Date(b.timestamp) - new Date(a.timestamp);
+    });
+
+    sortedVisitors.forEach(visitor => {
         const row = document.createElement('tr');
 
         const ipCell = document.createElement('td');
@@ -257,6 +262,10 @@ async function fetchAndRenderTable(filterIPs = '') {
         const countCell = document.createElement('td');
         countCell.textContent = visitor.count;
         row.appendChild(countCell);
+
+        const timestampCell = document.createElement('td');
+        timestampCell.textContent = formatDate(visitor.timestamp);
+        row.appendChild(timestampCell);
 
         tableBody.appendChild(row);
     });
