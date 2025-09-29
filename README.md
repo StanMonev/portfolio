@@ -24,3 +24,11 @@ Dependencies (install with `npm install`):
 - pg: 8.12.0
 
 Start development server with `npm run devStart`.
+
+# Database actions
+
+### Rollback all migrations
+```npx knex migrate:rollback --all```
+
+### Run all migrations
+```npx knex migrate:latest```
