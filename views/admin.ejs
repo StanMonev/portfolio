@@ -4,34 +4,37 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
+    <title data-translate="admin.title">Admin Page</title>
     <link rel="stylesheet" href="/assets/css/admin.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/assets/javascript/translations.js"></script>
     <script src="/assets/javascript/admin.js"></script>
 </head>
 <body>
     <div class="admin-container">
-        <h1>Welcome to the Admin Page</h1>
-        <p>Click the button below to access the resume editor:</p>
-        <button onclick="document.location = '/'">Return to Website</button>
-        <button onclick="redirectToResumeEditor()">Resume Editor</button>
-        <button onclick="logout()">Logout</button>
+        <%- include('partials/languageSwitcher') %>
         
-        <h2>Visitor Statistics</h2>
+        <h1 data-translate="admin.welcome">Welcome to the Admin Page</h1>
+        <p data-translate="admin.resume_editor_access">Click the button below to access the resume editor:</p>
+        <button onclick="document.location = '/'" data-translate="admin.return_website">Return to Website</button>
+        <button onclick="redirectToResumeEditor()" data-translate="admin.resume_editor">Resume Editor</button>
+        <button onclick="logout()" data-translate="common.logout">Logout</button>
+        
+        <h2 data-translate="admin.visitor_statistics">Visitor Statistics</h2>
 
         <div>
-            <label for="filterIP">Filter by IP:</label>
-            <input type="text" id="filterIP" placeholder="Enter IP to hide">
-            <button id="applyFilter">Apply Filter</button>
+            <label for="filterIP" data-translate="admin.filter_ip">Filter by IP:</label>
+            <input type="text" id="filterIP" data-translate-placeholder="admin.filter_placeholder" placeholder="Enter IP to hide">
+            <button id="applyFilter" data-translate="admin.apply_filter">Apply Filter</button>
         </div>
         
         <table id="visitorsTable">
             <thead>
                 <tr>
-                    <th>IP Address</th>
-                    <th>Country</th>
-                    <th>Visit Times</th>
-                    <th>Last Visit</th>
+                    <th data-translate="admin.ip_address">IP Address</th>
+                    <th data-translate="admin.country">Country</th>
+                    <th data-translate="admin.visit_times">Visit Times</th>
+                    <th data-translate="admin.last_visit">Last Visit</th>
                 </tr>
             </thead>
             <tbody>

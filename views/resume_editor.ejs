@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Editor</title>
+    <title data-translate="resume.editor_title">Resume Editor</title>
     <link rel="stylesheet" href="/assets/css/resume.css">
+    <script src="/assets/javascript/translations.js"></script>
     <script src="/assets/javascript/api.js"></script>
     <script src="/assets/javascript/utils.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
@@ -21,30 +22,30 @@
             </div>
     
             <div class="section">
-                <h3>Work Experience</h3>
+                <h3 data-translate="resume.work_experience">Work Experience</h3>
                 <input type="hidden" id="workExperienceId">
                 <%- include('partials/cv/cv_work_experience') %>
             </div>
 
             <div class="section">
-                <h3>Education</h3>
+                <h3 data-translate="resume.education">Education</h3>
                 <input type="hidden" id="educationId">
                 <%- include('partials/cv/cv_education') %>
             </div>
 
             <div class="section">
-                <h3>Projects</h3>
+                <h3 data-translate="resume.projects">Projects</h3>
                 <input type="hidden" id="projectId">
                 <%- include('partials/cv/cv_projects') %>
             </div>
             
-            <button type="button" id="saveResume">Save Resume</button>
-            <button id="downloadPDF">Download as PDF</button>
+            <button type="button" id="saveResume" data-translate="resume.save_resume">Save Resume</button>
+            <button id="downloadPDF" data-translate="resume.download_pdf">Download as PDF</button>
 
         </div>
         <div class="divider"></div>
         <div id="previewSection" class="preview-section panel right">
-            <h2>Preview</h2>
+            <h2 data-translate="resume.preview">Preview</h2>
             <div id="preview">
                 <%- include('partials/cv/cv_preview') %>
             </div>

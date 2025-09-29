@@ -3,8 +3,11 @@
 		<img class="logo" src="/assets/images/smworks_logo_cropped.png" alt="logo">
 	</a>
 	<div class="links">
-		<a id="homeButton" href="/#home">Home</a>
-		<a id="aboutButton" href="/#about">About</a>
-		<a id="contactButton" href="/#contact">Contact</a>
+		<a id="homeButton" href="/#home" data-translate="navigation_menu.home">Home</a>
+		<a id="aboutButton" href="/#about" data-translate="navigation_menu.about">About</a>
+		<a id="contactButton" href="/#contact" data-translate="navigation_menu.contact">Contact</a>
+		<%- include('languageSwitcher') %>
 	</div>
 </div>
+
+<script src="/assets/javascript/translations.js"></script>

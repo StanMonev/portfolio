@@ -1,4 +1,3 @@
-
 /*
  * Root
  */
@@ -39,8 +38,8 @@ body a {
 }
 
 body a:hover {
-  transform: scale(1.05); 
-  opacity: 0.8; 
+  transform: scale(1.05);
+  opacity: 0.8;
   color: lightgreen;
 }
 
@@ -67,7 +66,6 @@ body a:hover {
 }
 
 .section .section-container div {
-  width: fit-content;
   color: var(--site-green);
 }
 
@@ -120,10 +118,7 @@ footer {
 }
 
 #home.section .section-container div.text-container {
-  width: 730px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  width: 960px;
   align-items: center;
   font-size: 200%;
   font-family: var(--font_family);
@@ -137,7 +132,7 @@ footer {
 
 #home.section .section-container div.text-container .title-text span {
   color: var(--stand-out-header);
-}  
+}
 
 .typewriter>.wrap {
   border-right: 0.08em solid var(--stand-out);
@@ -147,7 +142,7 @@ footer {
 }
 
 #home.section .section-container .content-container {
-  margin-right:0;
+  margin-right: 0;
 }
 
 @keyframes blink {
@@ -205,7 +200,7 @@ footer {
     text-align: center;
     margin-top: 50px;
   }
-  
+
   main #home.section .section-container div.typewriter-container {
     width: auto;
     display: flex;
@@ -249,16 +244,16 @@ footer {
 }
 
 #about.section .content div span {
-  color:#00dd00;
+  color: #00dd00;
   font-weight: bold;
 }
 
 #about.section .content div a:not(#downloadButton) {
-  color:var(--site-green);
+  color: var(--site-green);
 }
 
 #about.section .content div.download-button-container span {
-  color:inherit;
+  color: inherit;
 }
 
 #about.section .content div.download-button-container {
@@ -297,14 +292,14 @@ footer {
   }
 }
 
-@media screen and (max-height: 966px) {  
+@media screen and (max-height: 966px) {
   div.section {
     padding-top: 250px;
     padding-bottom: 250px;
   }
 }
 
-@media screen and (max-width: 966px) {  
+@media screen and (max-width: 966px) {
 
   div.section {
     padding-top: 250px;
@@ -323,7 +318,7 @@ footer {
   main #about.section .section-container {
     flex-direction: column;
   }
-  
+
   main #about.section .content {
     display: flex;
     flex-direction: column;
@@ -347,10 +342,10 @@ footer {
  * This is the CONTACT section CSS
  */
 
- #contact.section .section-container {
+#contact.section .section-container {
   display: flex;
   justify-content: center;
- }
+}
 
 .contact-container .form-control:not(#sendEmailBtn) {
   background-color: var(--background);
@@ -379,63 +374,64 @@ footer {
   font-weight: bolder;
 }
 
- .contact-container div input::placeholder, 
- .contact-container div textarea::placeholder,
- .contact-container form div input,
- .contact-container form div textarea,
- .contact-container form div input:focus,
- .contact-container form div textarea:focus  {
-   color: var(--site-green);
- }
- 
- input:-webkit-autofill,
- input:-webkit-autofill:hover, 
- input:-webkit-autofill:focus, 
- input:-webkit-autofill:active{
-   background-color: var(--background);
-   -webkit-background-clip: text;
-   -webkit-text-fill-color: var(--site-green);
-   transition: background-color 5000s ease-in-out 0s;
-   box-shadow: inset 0 0 20px 20px #23232329;
- }
- 
- .contact-container form div input:focus,
- .contact-container form div textarea:focus  {
-   box-shadow: 0 0 0 0.1rem rgb(35, 70, 35)
- }
- 
- #nameContainer, #emailContainer {
-   flex: 1 1 0;
- }
- 
- #messageContainer {
-   flex: 100%
- }
- 
- #sendEmailBtn {
-   width: 200px;
-   margin-top: 15px;
-   border-color: var(--site-green);
-   background-color: var(--background);
-   transition: background-color .3s ease-in-out,color .3s ease-in-out;
- }
- 
- #sendEmailBtn:hover {
-   width: 200px;
-   margin-top: 15px;
-   border-color: var(--site-green);
-   background-color: var(--site-green);
-   color: var(--background);
-   transition: background-color .3s ease-in-out,color .3s ease-in-out;
- }
+.contact-container div input::placeholder,
+.contact-container div textarea::placeholder,
+.contact-container form div input,
+.contact-container form div textarea,
+.contact-container form div input:focus,
+.contact-container form div textarea:focus {
+  color: var(--site-green);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  background-color: var(--background);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: var(--site-green);
+  transition: background-color 5000s ease-in-out 0s;
+  box-shadow: inset 0 0 20px 20px #23232329;
+}
+
+.contact-container form div input:focus,
+.contact-container form div textarea:focus {
+  box-shadow: 0 0 0 0.1rem rgb(35, 70, 35)
+}
+
+#nameContainer,
+#emailContainer {
+  flex: 1 1 0;
+}
+
+#messageContainer {
+  flex: 100%
+}
+
+#sendEmailBtn {
+  width: 200px;
+  margin-top: 15px;
+  border-color: var(--site-green);
+  background-color: var(--background);
+  transition: background-color .3s ease-in-out, color .3s ease-in-out;
+}
+
+#sendEmailBtn:hover {
+  width: 200px;
+  margin-top: 15px;
+  border-color: var(--site-green);
+  background-color: var(--site-green);
+  color: var(--background);
+  transition: background-color .3s ease-in-out, color .3s ease-in-out;
+}
 
 .section .section-container div#subjectContainer {
-  width:auto;
+  width: auto;
   flex: 1 0 100%;
 }
 
 .section .section-container div.error-message {
-  width:auto;
+  width: auto;
   padding-left: 5px;
   color: var(--bs-form-invalid-border-color);
 }
@@ -456,10 +452,10 @@ footer {
   transition: all .1s ease-in;
 }
 
-.contact-container .form-container input:focus ~ label,
-.contact-container .form-container input.filled ~ label,
-.contact-container .form-container textarea:focus ~ label,
-.contact-container .form-container textarea.filled ~ label {
+.contact-container .form-container input:focus~label,
+.contact-container .form-container input.filled~label,
+.contact-container .form-container textarea:focus~label,
+.contact-container .form-container textarea.filled~label {
   top: calc(5px - 1.1em);
 }
 
@@ -484,7 +480,7 @@ footer {
 
 /*
  * Navigation Bar
- */ 
+ */
 
 .main-container .navbar {
   display: flex;
@@ -558,10 +554,10 @@ footer {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: darkgreen; 
+  background: darkgreen;
 }
 
- /*
+/*
  * Buttons and other widgets
  */
 
@@ -573,17 +569,18 @@ footer {
   background-color: var(--background);
   border-color: var(--site-green);
   font-family: 'Verdana', Courier, monospace;
-  color:var(--site-green);
+  color: var(--site-green);
   letter-spacing: 5px;
   cursor: pointer;
-  transition: background-color .3s ease-in-out,color .3s ease-in-out;
+  transition: background-color .3s ease-in-out, color .3s ease-in-out;
   transition: opacity 1s ease-in-out;
 }
 
-.download-button:hover, .download-button-menu:hover {
+.download-button:hover,
+.download-button-menu:hover {
   background-color: var(--site-green);
   color: var(--background);
-  transition: background-color .3s ease-in-out,color .3s ease-in-out;
+  transition: background-color .3s ease-in-out, color .3s ease-in-out;
 }
 
 .download-button .icon {
@@ -608,7 +605,7 @@ footer {
 
 .download-button:hover .icon {
   stroke: var(--background);
-  transition: stroke .3s ease-in-out,color .3s ease-in-out;
+  transition: stroke .3s ease-in-out, color .3s ease-in-out;
 }
 
 .to-load {
@@ -633,30 +630,36 @@ footer {
   opacity: 1;
 }
 
-.about-me-photo, .greetings-avatar {
+.about-me-photo,
+.greetings-avatar {
   max-width: 400px;
   width: auto;
   height: auto;
   border-radius: 50%;
   cursor: pointer;
-  -webkit-mask: 
-    linear-gradient(135deg,#000c 40%,#000,#000c 60%)
-    100% 100%/250% 250%;
+  -webkit-mask:
+    linear-gradient(135deg, #000c 40%, #000, #000c 60%) 100% 100%/250% 250%;
+  mask:
+    linear-gradient(135deg, #000c 40%, #000, #000c 60%) 100% 100%/250% 250%;
   transition: .5s;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
 
-.about-me-photo:hover, .greetings-avatar:hover {
+.about-me-photo:hover,
+.greetings-avatar:hover {
   -webkit-mask-position: 0 0;
+  mask-position: 0 0;
 }
 
 .about-me-photo {
-  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  -webkit-filter: grayscale(100%);
+  /* Safari 6.0 - 9.0 */
   filter: grayscale(100%);
 }
 
 .about-me-photo:hover {
-  -webkit-filter: grayscale(0%); /* Safari 6.0 - 9.0 */
+  -webkit-filter: grayscale(0%);
+  /* Safari 6.0 - 9.0 */
   filter: grayscale(0%);
 }
 
@@ -683,7 +686,7 @@ footer {
   border-radius: var(--bs-border-radius);
   text-decoration: none;
   color: var(--site-green);
-  transition: background-color .3s ease-in-out,color .3s ease-in-out;
+  transition: background-color .3s ease-in-out, color .3s ease-in-out;
 }
 
 .about-button .bi.bi-arrow-down-circle {
@@ -698,10 +701,10 @@ footer {
 .social-media-icons a {
   text-decoration: none;
   fill: var(--site-green);
-  transition: fill .3s ease-in-out,color .3s ease-in-out;
+  transition: fill .3s ease-in-out, color .3s ease-in-out;
 }
 
-.social-media-icons a:hover { 
+.social-media-icons a:hover {
   fill: rgb(17, 127, 131);
 }
 
@@ -766,29 +769,32 @@ footer {
 }
 
 #cookieNotice {
-  position: fixed; 
-  bottom: 0; 
-  width: 100%; 
-  background-color: var(--nav-background); 
-  color: var(--site-green); 
-  text-align: center; 
-  padding: 20px; 
-  z-index: 1000; 
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--nav-background);
+  color: var(--site-green);
+  text-align: center;
+  padding: 20px;
+  z-index: 1000;
   display: none;
   font-family: 'Courier New', Courier, monospace;
   border-top: 1px solid var(--site-green);
 }
 
 #learnMore {
-  color: var(--site-green); 
+  color: var(--site-green);
   text-decoration: underline;
 }
 
-#acceptCookies, #rejectCookies, #customizeCookies, #savePreferences {
-  background-color: var(--nav-background); 
-  color: var(--site-green); 
-  border: 1px solid var(--site-green); 
-  padding: 10px 20px; 
+#acceptCookies,
+#rejectCookies,
+#customizeCookies,
+#savePreferences {
+  background-color: var(--nav-background);
+  color: var(--site-green);
+  border: 1px solid var(--site-green);
+  padding: 10px 20px;
   cursor: pointer;
   margin: 5px;
   font-family: 'Courier New', Courier, monospace;
@@ -826,7 +832,7 @@ footer {
 
 @media screen and (max-width: 2500px) {
   #modal .modal-content {
-      margin-top: 140px;
+    margin-top: 140px;
   }
 }
 
@@ -895,7 +901,7 @@ footer {
 }
 
 #modalBody {
-  padding: 10px 0; 
+  padding: 10px 0;
 }
 
 #modalCloseBottom {
@@ -915,69 +921,83 @@ footer {
 
 /* Modal CSS end */
 
-#skills.section {
+/* Container */
+.skills-wrap {
   position: relative;
   z-index: 1;
-  background: var(--background);
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-
+  width: 100vw;
 }
 
-.section .section-container div.skills-grid {
-  width: 50%;
+/* Carousel frame */
+.skills-section {
+  position: relative;
+  overflow: hidden;
+  /* hide scrolling content */
+  margin: 20px auto 0;
+  max-width: 1200px;
 }
 
-.section .section-container div.skill-item {
-  width: 100%;
-  padding: 25px 10px;
-}
-
-.section .section-container div.skills-section {
-  padding-top: 250px;
-  background-color: var(--background);
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.skills-section h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 2rem;
-  color: var(--site-green);
-}
-
+/* Single-row, non-wrapping track */
 .skills-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  display: flex;
+  align-items: center;
   gap: 15px;
+  flex-wrap: nowrap;
+  will-change: transform;
+  transform: translateX(0);
 }
 
 .skill-item {
-  display: flex;
+  flex: 0 0 auto;
+  display: inline-flex;
   align-items: center;
-  padding: 10px;
-  background-color: transparent;
+  gap: 10px;
+  min-width: 150px;
+  padding: 10px 14px;
   border: 1px solid var(--site-green);
   border-radius: 5px;
-  transition: transform 0.2s;
-}
-
-.skill-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  transition: none;
+  pointer-events: none;
+  /* no hover lift/clicks while scrolling */
+  white-space: nowrap;
 }
 
 .skill-icon {
   width: 24px;
   height: 24px;
-  margin-right: 10px;
+  object-fit: contain;
 }
 
 .skill-name {
   font-size: 1rem;
   color: var(--site-green);
+}
+
+/* Edge fades (optional) */
+.skills-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  pointer-events: none;
+  background: linear-gradient(to right, var(--background), transparent);
+}
+
+.skills-fade-left {
+  left: 0;
+}
+
+.skills-fade-right {
+  right: 0;
+  transform: scaleX(-1);
+}
+
+/* Pause animation for users preferring reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .skills-grid {
+    transform: none !important;
+  }
 }
 
 .section .section-container .icon-credits {
@@ -1005,22 +1025,24 @@ footer {
 }
 
 div.loader-container .loader {
-  --d:22px;
+  --d: 22px;
   width: 4px;
   height: 4px;
   border-radius: 50%;
   color: inherit;
-  box-shadow: 
-    calc(1*var(--d))      calc(0*var(--d))     0 0,
-    calc(0.707*var(--d))  calc(0.707*var(--d)) 0 1px,
-    calc(0*var(--d))      calc(1*var(--d))     0 2px,
+  box-shadow:
+    calc(1*var(--d)) calc(0*var(--d)) 0 0,
+    calc(0.707*var(--d)) calc(0.707*var(--d)) 0 1px,
+    calc(0*var(--d)) calc(1*var(--d)) 0 2px,
     calc(-0.707*var(--d)) calc(0.707*var(--d)) 0 3px,
-    calc(-1*var(--d))     calc(0*var(--d))     0 4px,
+    calc(-1*var(--d)) calc(0*var(--d)) 0 4px,
     calc(-0.707*var(--d)) calc(-0.707*var(--d))0 5px,
-    calc(0*var(--d))      calc(-1*var(--d))    0 6px;
+    calc(0*var(--d)) calc(-1*var(--d)) 0 6px;
   animation: l27 1s infinite steps(8);
 }
 
 @keyframes l27 {
-  100% {transform: rotate(1turn)}
+  100% {
+    transform: rotate(1turn)
+  }
 }

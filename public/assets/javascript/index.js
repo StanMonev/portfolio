@@ -26,6 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setupPolicies();
   setupCookies();
   initializeLinks();
+  // Start skills carousel
+  setupSkillsCarousel();
 });
 
 /**
@@ -507,5 +509,84 @@ const preloadImages = async () => {
   paths.forEach(path => {
     const img = new Image();
     img.src = path;
+  });
+}
+
+/**
+ * Skills carousel: infinitely scroll skills horizontally by duplicating the content.
+ * This creates a seamless, jitter-free loop.
+ */
+function setupSkillsCarousel() {
+  const track = document.getElementById('skillsTrack');
+  if (!track) return;
+
+  const SPEED_PX = 0.6; // lower = slower
+  let offset = 0;
+  let rafId = null;
+  let loopWidth = 0; // width of the original set
+
+  // Don’t double-clone if this runs twice (hot reload, etc.)
+  const alreadyCloned = track.hasAttribute('data-cloned');
+  if (!alreadyCloned) {
+    const children = Array.from(track.children);
+    children.forEach(node => {
+      const clone = node.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      track.appendChild(clone);
+    });
+    track.setAttribute('data-cloned', 'true');
+  }
+
+  // Measure after layout paints
+  function measure() {
+    // With one clone pass, half of scrollWidth is the original “lap”
+    loopWidth = track.scrollWidth / 2;
+  }
+
+  function step() {
+    offset -= SPEED_PX;
+    if (-offset >= loopWidth) {
+      // Snap back by exactly one lap
+      offset += loopWidth;
+    }
+    track.style.transform = `translateX(${offset}px)`;
+    rafId = requestAnimationFrame(step);
+  }
+
+  function start() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (rafId == null) rafId = requestAnimationFrame(step);
+  }
+
+  function stop() {
+    if (rafId != null) cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+
+  // Recompute on resize (debounced)
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const current = offset % loopWidth; // preserve relative position
+      measure();
+      offset = current; // keep visual continuity
+    }, 100);
+  });
+
+  // Pause on hover
+  const frame = document.querySelector('.skills-section');
+  frame.addEventListener('mouseenter', stop);
+  frame.addEventListener('mouseleave', start);
+
+  // Pause when tab is hidden
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop(); else start();
+  });
+
+  // Kickoff
+  requestAnimationFrame(() => {
+    measure();
+    start();
   });
 }

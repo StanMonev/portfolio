@@ -1,24 +1,24 @@
-<div class="header">About Me</div>
+<div class="header" data-translate="about.header">About Me</div>
 <div class="image-container">
   <img class="about-me-photo" src="/assets/images/CV_Pic_To_Use.jpeg" alt="about_me_photo">
 </div>
 <div class="content">
-  <h1>I'm Stan</h1>
-  <h4>Software Developer</h4>
+  <h1 data-translate="about.name_intro">I'm Stan</h1>
+  <h4 data-translate="about.job_title">Software Developer</h4>
 
   <p>
-     I'm a versatile Software Developer currently based in Bochum, Germany.
-     I love learning, experiencing and discovering new things. And I also have a passion for coding! &#128640;
-     I have had a lot of experience from small to big projects in the university, different companies or just doing them for fun from the comfort of my home.
-     Projects that span from web, app, game to even AI development. &#128200; All of them brought me joy by letting my mind work, trying to figure out what was causing that pesky error or how I can make the code run faster and look prettier.
-     I really enjoy coding riddles that get me thinking &#129504;, and when I solve them, it's the best feeling ever!
-     If you have a challenge for me, bring it on and don't hesitate to contact me! &#128233;
+     <span data-translate="about.description_part_1">I'm a versatile Software Developer currently based in Bochum, Germany.</span>
+     <span data-translate="about.description_part_2">I love learning, experiencing and discovering new things. And I also have a passion for coding! 🚀</span>
+     <span data-translate="about.description_part_3">I have had a lot of experience from small to big projects in the university, different companies or just doing them for fun from the comfort of my home.</span>
+     <span data-translate="about.description_part_4">Projects that span from web, app, game to even AI development. 📈 All of them brought me joy by letting my mind work, trying to figure out what was causing that pesky error or how I can make the code run faster and look prettier.</span>
+     <span data-translate="about.description_part_5">I really enjoy coding riddles that get me thinking 🤔, and when I solve them, it's the best feeling ever!</span>
+     <span data-translate="about.description_part_6">If you have a challenge for me, bring it on and don't hesitate to contact me! 📩</span>
   </p>
 
-  <div><span>Email :</span> <a href="mailto:contact@stanimirmonevworks.com">contact@stanimirmonevworks.com</a></div>
-  <div><span>Place :</span> 44892 - Bochum, Germany</div>
+  <div><span data-translate="about.email_label">Email :</span> <a href="mailto:contact@stanimirmonevworks.com">contact@stanimirmonevworks.com</a></div>
+  <div><span data-translate="about.place_label">Place :</span> <span data-translate="about.location">44892 - Bochum, Germany</span></div>
 
   <div id="downloadButtonContainer" class="download-button-container">
-    <%- include('downloadButton', {id:'downloadButton', css:'download-button', text:'DOWNLOAD RESUME'}); %>
+    <%- include('downloadButton', {id:'downloadButton', css:'download-button', text:'DOWNLOAD RESUME', textKey:'about.download_resume'}); %>
   </div>
 </div>

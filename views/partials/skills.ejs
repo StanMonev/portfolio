@@ -1,15 +1,30 @@
-<div class="skills-section">
-  <h2>Stuff that I know and I've worked with:</h2>
-  <div class="skills-grid">
-    <% skills.forEach(skill => { %>
-      <div class="skill-item">
-        <img loading="lazy" src="<%= skill.icon %>" alt="<%= skill.name %> icon" class="skill-icon">
-        <span class="skill-name"><%= skill.name %></span>
-      </div>
-    <% }) %>
+<!-- skills.ejs (single file: HTML + CSS + JS) -->
+<section class="skills-wrap" id="skills">
+  <div style="width: 100%; text-align: center; margin-top: 20px;">
+    <h2 data-translate="skills.header">Stuff that I know and I've worked with:</h2>
   </div>
-</div>
 
-<div class="icon-credits">
-  <h5>Icons thanks to:</h5> <a href="https://www.freepik.com/" target="_blank" rel="noopener noreferrer">Freepik</a>, <a href="https://www.flaticon.com/" target="_blank" rel="noopener noreferrer">Flaticon</a>, <a href="https://www.pngwing.com/" target="_blank" rel="noopener noreferrer">PNGWing</a> and <a href="https://watermarkly.com/"  target="_blank" rel="noopener noreferrer">Watermarkly</a>
-</div>
+  <div class="skills-section">
+    <!-- Track -->
+    <div class="skills-grid" id="skillsTrack">
+      <% skills.forEach(skill => { %>
+        <div class="skill-item">
+          <img loading="lazy" src="<%= skill.icon %>" alt="<%= skill.name %> icon" class="skill-icon">
+          <span class="skill-name"><%= skill.name %></span>
+        </div>
+      <% }) %>
+    </div>
+    <!-- Optional gradient masks -->
+    <div class="skills-fade skills-fade-left" aria-hidden="true"></div>
+    <div class="skills-fade skills-fade-right" aria-hidden="true"></div>
+  </div>
+
+  <div class="icon-credits">
+    <h5 data-translate="skills.credits_title">Icons thanks to:</h5>
+    <a href="https://www.freepik.com/" target="_blank" rel="noopener noreferrer" data-translate="skills.freepik">Freepik</a>,
+    <a href="https://www.flaticon.com/" target="_blank" rel="noopener noreferrer" data-translate="skills.flaticon">Flaticon</a>,
+    <a href="https://www.pngwing.com/" target="_blank" rel="noopener noreferrer" data-translate="skills.pngwing">PNGWing</a>
+    <span data-translate="contact.and">and</span>
+    <a href="https://watermarkly.com/" target="_blank" rel="noopener noreferrer" data-translate="skills.watermarkly">Watermarkly</a>
+  </div>
+</section>
