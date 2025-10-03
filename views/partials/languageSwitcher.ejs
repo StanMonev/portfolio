@@ -26,8 +26,8 @@
   .flag-dropdown {
     position: relative;
     font: 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    color:#00dd00;
-    margin: auto 0;
+    color: #00dd00;
+    margin: 12px 0;
     transition: all 1s ease;
   }
 
@@ -37,7 +37,7 @@
     padding: 0 .7rem;
     background: transparent;
     cursor: pointer;
-    color:#00dd00;
+    color: #00dd00;
     transform: scale(0.95);
   }
 
@@ -69,7 +69,7 @@
   .fd-list {
     position: absolute;
     z-index: 50;
-    top: calc(100% + -25px);
+    top: calc(100% + -32px);
     left: 0;
     right: 0;
     border-radius: 10px;
@@ -79,8 +79,7 @@
     margin: 0;
     list-style: none;
     display: none;
-    background: var(--nav-background);
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    transition: all .7s ease-in-out;
   }
 
   .flag-dropdown[aria-expanded="true"] .fd-list {
@@ -88,7 +87,8 @@
   }
 
   .fd-option {
-    gap: .6rem;
+    display: flex;
+    gap: .35rem;
     padding: .5rem .55rem;
     border-radius: 8px;
     cursor: pointer;
@@ -167,9 +167,15 @@
       }
 
       // Click handling
-      trigger.addEventListener('click', () => setOpen(root.getAttribute('aria-expanded') !== 'true'));
+      trigger.addEventListener('click', () => {
+        setOpen(root.getAttribute('aria-expanded') !== 'true');
+        trigger.style.visibility = 'hidden';
+      });
       document.addEventListener('click', (e) => {
-        if (!root.contains(e.target)) setOpen(false);
+        if (!root.contains(e.target)) {
+          trigger.removeAttribute('style');
+          setOpen(false);
+        }
       });
 
       options.forEach((opt, i) => {
@@ -182,6 +188,7 @@
           opt.prepend(img);
         }
         opt.addEventListener('click', () => {
+          trigger.removeAttribute('style');
           applySelection(opt);
           setOpen(false);
           trigger.focus();

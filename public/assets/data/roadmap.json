@@ -1,0 +1,82 @@
+[  
+  {
+    "title": "First steps in programming",
+    "org": "Home",
+    "date": "2012 - 2014",
+    "description": "Created mods for a game that I played with passion - Mount and Blade: Warband.",
+    "tags": ["Python", "GIMP", "Blender"],
+    "x": 52,
+    "y": 6,
+    "popup_dir": "right"
+  },
+  {
+    "title": "Java Developer",
+    "org": "QTime GmbH",
+    "date": "2016 - 2020",
+    "description": "Developed various Java applications and gained experience in backend development.",
+    "tags": ["Java", "Javascript", "HTML", "C++"],
+    "x": 45,
+    "y": 18.7,
+    "popup_dir": "left"
+  },
+  {
+    "title": "Shopify Software Developer",
+    "org": "Eshop Guide",
+    "date": "2021 - 2023",
+    "description": "Developed various Shopify applications and gained experience in e-commerce development.",
+    "tags": ["Ruby on Rails", "Shopify", "JavaScript", "Liquid", "PostgreSQL"],
+    "x": 61,
+    "y": 30,
+    "popup_dir": "right"
+  },
+  {
+    "title": "Freelancing Software Developer",
+    "org": "Freelance",
+    "date": "2024 – Present",
+    "description": "Working on various freelance projects, including web development, AImodel training/evaluation and software solutions.",
+    "tags": ["C#", "Python", "MySQL", "PostgreSQL", "JavaScript", "HTML/CSS", "Shopify"],
+    "x": 55,
+    "y": 42.5,
+    "popup_dir": "right"
+  },
+  {
+    "title": "Reinforcement Learning Research",
+    "org": "University Project",
+    "date": "2024",
+    "description": "A research project focused on applying reinforcement learning techniques to a selfmade 2D game.",
+    "tags": ["Python", "TensorFlow", "Reinforcement Learning"],
+    "x": 40.2,
+    "y": 54,
+    "popup_dir": "left"
+  },
+  {
+    "title": "Portfolio Website",
+    "org": "Personal Project",
+    "date": "2024 - Present",
+    "description": "A personal portfolio website to showcase my projects and skills.",
+    "tags": ["HTML", "CSS", "JavaScript", "EJS"],
+    "x": 56,
+    "y": 65.5,
+    "popup_dir": "right"
+  },
+  {
+    "title": "Portfolio Website",
+    "org": "Personal Project",
+    "date": "2024 - Present",
+    "description": "A personal portfolio website to showcase my projects and skills.",
+    "tags": ["HTML", "CSS", "JavaScript", "EJS"],
+    "x": 56,
+    "y": 80,
+    "popup_dir": "right"
+  },
+  {
+    "title": "React Blog Builder (WIP)",
+    "org": "Personal Project",
+    "date": "2024 - Present",
+    "description": "A web application to create and manage blogs using React for the frontend and Express for the backend.",
+    "tags": ["React", "Express", "EJS"],
+    "x": 44,
+    "y": 93,
+    "popup_dir": "left"
+  }
+]

@@ -18,6 +18,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   preloadImages();
+  setNavbar();
   setupNavigationLinks();
   sendEmailHandler();
   checkInputFilled();
@@ -26,8 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setupPolicies();
   setupCookies();
   initializeLinks();
-  // Start skills carousel
   setupSkillsCarousel();
+  setupRoadmap();
 });
 
 /**
@@ -52,9 +53,43 @@ const setupNavigationLinks = () => {
     link.addEventListener('click', e => {
       e.preventDefault();
       const target = document.querySelector(e.target.getAttribute('href'));
-      scrollIntoViewWithOffset(target, 100);
+      if (target.id === 'about') {
+        scrollIntoViewWithOffset(target, 100);
+      } else {
+        scrollIntoViewWithOffset(target);
+      }
     });
   });
+};
+
+/**
+ * The navbar should have a transparent background at the top of the page.
+ * 
+ * @returns {void}
+ */
+const setNavbar = () => {
+  const navbar = document.getElementById('mainNavbar');
+  const dropdownList = document.querySelector('#countrySelect .fd-list');
+  if (!navbar) return;
+
+  const handleScroll = () => {
+    if (window.scrollY === 0) {
+      navbar.style.backgroundColor = 'transparent';
+      navbar.style.boxShadow = 'none';
+      navbar.style.backdropFilter = 'none';
+      dropdownList.style.backgroundColor = 'transparent';
+      dropdownList.style.boxShadow = 'none';
+    } else {
+      navbar.removeAttribute('style');
+      dropdownList.removeAttribute('style');
+    }
+  };
+
+  // Initial check
+  handleScroll();
+
+  // Listen for scroll events
+  window.addEventListener('scroll', handleScroll, { passive: true });
 };
 
 /**
@@ -238,91 +273,119 @@ const checkFilled = (e, inputFields, textareaField) => {
 };
 
 /**
- * Sets up the matrix background animation and attaches resize observers to handle screen changes.
- * 
- * @returns {void}
+ * Matrix background — robust, crisp, and leak-free.
+ * Usage: call setupMatrixBackground() once after DOM is ready.
  */
-const setupMatrixBackground = async () => {
-  let initID = runMatrixBackground();
-  localStorage.setItem("matrixBackgroundID", initID);
 
-  const resizeObserver = new ResizeObserver(resetMatrix);
-  resizeObserver.observe(document.querySelector('main'));
-  screen.orientation.addEventListener("change", resetMatrix);
+const MATRIX = {
+  rafId: null,
+  fontSize: 14,                        // tweak as you like
+  letters: ('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789').repeat(6).split(''),
 };
 
 /**
- * Resets the matrix background animation by clearing and restarting the interval.
- * 
- * @returns {void}
+ * Initialize and start the matrix background.
  */
-const resetMatrix = () => {
-  let id = localStorage.getItem("matrixBackgroundID");
-  if (id !== undefined) clearInterval(id);
-  id = runMatrixBackground();
-  localStorage.setItem("matrixBackgroundID", id);
-};
-
-/**
- * Runs the matrix background animation by drawing letters on the canvas.
- * 
- * @returns {number} - The interval ID for the animation loop.
- */
-const runMatrixBackground = () => {
+const setupMatrixBackground = () => {
   const canvas = document.querySelector('.matrix');
-  const ctx = canvas.getContext('2d');
-  setCanvasHeight(canvas);
-
-  canvas.width = $('html').width();
-
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVXYZ'.repeat(6).split('');
-  const fontSize = 10;
-  const columns = canvas.width / fontSize;
-  let drops = [];
-  for (let i = 0; i < columns; i++) {
-    drops[i] = 1;
+  if (!canvas) {
+    console.warn('[matrix] No canvas with class ".matrix" found.');
+    return;
   }
-
-  return loopMatrixBackground(ctx, canvas, drops, letters, fontSize);
+  // one-time listeners
+  window.addEventListener('resize', () => resetMatrix(canvas), { passive: true });
+  window.addEventListener('orientationchange', () => resetMatrix(canvas), { passive: true });
+  // Start
+  resetMatrix(canvas);
 };
 
 /**
- * Loops the matrix background animation, continuously drawing new letters on the canvas.
- * 
- * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
- * @param {HTMLCanvasElement} canvas - The canvas element on which to draw the animation.
- * @param {Array<number>} drops - An array representing the positions of the drops.
- * @param {Array<string>} letters - An array of letters to be drawn in the animation.
- * @param {number} fontSize - The font size for the letters in the animation.
- * @returns {number} - The interval ID for the animation loop.
+ * Stop (if running), resize, re-init state, and restart.
  */
-const loopMatrixBackground = (ctx, canvas, drops, letters, fontSize) => {
-  return setInterval(() => {
-    ctx.fillStyle = 'rgba(30, 30, 30, .1)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+const resetMatrix = (canvas) => {
+  stopMatrix();
+  const state = initMatrixCanvas(canvas, MATRIX.fontSize);
+  startMatrixLoop(state);
+};
 
-    drops.forEach((drop, i) => {
-      const text = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillStyle = '#044804';
-      ctx.fillText(text, i * fontSize, drop * fontSize);
-      drops[i]++;
+/**
+ * Cancel the RAF loop if active.
+ */
+const stopMatrix = () => {
+  if (MATRIX.rafId != null) {
+    cancelAnimationFrame(MATRIX.rafId);
+    MATRIX.rafId = null;
+  }
+};
 
-      if (drops[i] * fontSize > canvas.height && Math.random() > .99) {
+/**
+ * Prepare canvas size (with DPR), compute columns/drops, and return drawing state.
+ */
+const initMatrixCanvas = (canvas, fontSize) => {
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+  // Full document height (so the background spans long pages)
+  const widthCSS = Math.ceil(document.documentElement.clientWidth || window.innerWidth);
+  const heightCSS = Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.documentElement.clientHeight,
+    window.innerHeight
+  );
+
+  // Match CSS size
+  canvas.style.width = `${widthCSS}px`;
+  canvas.style.height = `${heightCSS}px`;
+
+  // Backing store scaled for HiDPI
+  canvas.width = Math.floor(widthCSS * dpr);
+  canvas.height = Math.floor(heightCSS * dpr);
+
+  const ctx = canvas.getContext('2d');
+  // Normalize drawing to CSS pixels
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.font = `${fontSize}px monospace`;
+  ctx.textBaseline = 'top';
+
+  // Compute columns & drops
+  const columns = Math.ceil(widthCSS / fontSize);
+  const drops = new Array(columns).fill(1);
+
+  // Paint initial background
+  ctx.fillStyle = 'rgb(10, 10, 10)';
+  ctx.fillRect(0, 0, widthCSS, heightCSS);
+
+  return { ctx, widthCSS, heightCSS, drops, fontSize };
+};
+
+/**
+ * Start the animation loop (RAF).
+ */
+const startMatrixLoop = ({ ctx, widthCSS, heightCSS, drops, fontSize }) => {
+  const { letters } = MATRIX;
+
+  const tick = () => {
+    // trail fade
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
+    ctx.fillRect(0, 0, widthCSS, heightCSS);
+
+    for (let i = 0; i < drops.length; i++) {
+      const ch = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+      ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+
+      drops[i] += 1;
+
+      // Randomly reset
+      if (drops[i] * fontSize > heightCSS && Math.random() > 0.975) {
         drops[i] = 0;
       }
-    });
-  }, 25);
-};
+    }
 
-/**
- * Sets the height of the canvas element to match the maximum scroll height of the document.
- * 
- * @param {HTMLCanvasElement} canvas - The canvas element whose height is to be set.
- * @returns {void}
- */
-const setCanvasHeight = canvas => {
-  const height = Math.max(document.body.scrollHeight, document.documentElement.clientHeight);
-  canvas.height = height;
+    MATRIX.rafId = requestAnimationFrame(tick);
+  };
+
+  MATRIX.rafId = requestAnimationFrame(tick);
 };
 
 /**
@@ -494,9 +557,9 @@ const initializeLinks = () => {
  * @param {number} offset - The offset to apply to the scroll position.
  * @returns {void}
  */
-const scrollIntoViewWithOffset = (targetElement, offset) => {
+const scrollIntoViewWithOffset = (targetElement, offset = 0) => {
   const elementPosition = targetElement.getBoundingClientRect().top;
-  const offsetPosition = elementPosition + window.scrollY  - offset;
+  const offsetPosition = elementPosition + window.scrollY - offset;
 
   window.scrollTo({
     top: offsetPosition,
@@ -516,7 +579,7 @@ const preloadImages = async () => {
  * Skills carousel: infinitely scroll skills horizontally by duplicating the content.
  * This creates a seamless, jitter-free loop.
  */
-function setupSkillsCarousel() {
+const setupSkillsCarousel = () => {
   const track = document.getElementById('skillsTrack');
   if (!track) return;
 
@@ -590,3 +653,62 @@ function setupSkillsCarousel() {
     start();
   });
 }
+
+const setupRoadmap = () => {
+  const canvas = document.getElementById('roadmapCanvas');
+  if (!canvas || canvas.dataset.initialized === 'true') return;
+  canvas.dataset.initialized = 'true';
+
+  const dataUrl = canvas.getAttribute('data-src');
+  const pointsContainer = canvas.querySelector('.roadmap-points-container');
+
+  // Load data and render points
+  async function loadData() {
+    try {
+      const res = await fetch(dataUrl, { cache: 'no-store' });
+      if (!res.ok) throw new Error(res.statusText);
+      return await res.json();
+    } catch (e) {
+      console.error('Roadmap data error:', e);
+      return [];
+    }
+  }
+
+  function renderPoints(data) {
+    pointsContainer.innerHTML = '';
+
+    data.forEach((item, i) => {
+      // Create point element
+      const point = document.createElement('div');
+      point.className = 'roadmap-point';
+      point.style.left = `${item.x || 50}%`;
+      point.style.top = `${item.y || (20 + i * 30)}%`;
+      point.style.setProperty('--delay', `${0.2 + i * 0.4}s`);
+      point.style.setProperty('--duration', `${1.8 + i * 0.4}s`);
+      point.dataset.index = i;
+      point.setAttribute('data-direction', item.popup_dir);
+
+      // Create tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'roadmap-tooltip';
+      tooltip.innerHTML = `
+        <h4>${item.title || 'Untitled'}</h4>
+        <div class="meta">${[item.org, item.date].filter(Boolean).join(' · ')}</div>
+        <p>${item.description || ''}</p>
+        ${item.tags ? `<div class="tags">${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>` : ''}
+        ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener">Open</a>` : ''}
+      `;
+
+      point.appendChild(tooltip);
+      pointsContainer.appendChild(point);
+    });
+  }
+
+  // Initialize
+  (async function init() {
+    const items = await loadData();
+    renderPoints(items);
+  })();
+}
+
+

@@ -177,11 +177,11 @@
     "header": "About Me",
     "name_intro": "I'm Stan",
     "job_title": "Software Developer",
-    "description_part_1": "I'm a versatile Software Developer currently based in Bochum, Germany.",
-    "description_part_2": "I love learning, experiencing and discovering new things. And I also have a passion for coding! 🚀",
-    "description_part_3": "I have had a lot of experience from small to big projects in the university, different companies or just doing them for fun from the comfort of my home.",
-    "description_part_4": "Projects that span from web, app, game to even AI development. 📈 All of them brought me joy by letting my mind work, trying to figure out what was causing that pesky error or how I can make the code run faster and look prettier.",
-    "description_part_5": "I really enjoy coding riddles that get me thinking 🤔, and when I solve them, it's the best feeling ever!",
+    "description_part_1": "I'm a person who loves programming, plain and simple! Every day, I strive to learn something new and develop my skills in computer science.",
+    "description_part_2": "I grew up in Varna, Bulgaria, and after graduating from high school, I moved to Dortmund to live and study. Now I am a programmer based in Bochum, Germany. 🚀",
+    "description_part_3": "So far, I have had the opportunity to work on many projects, professionally, at university, and also on some personal projects.",
+    "description_part_4": "The coding areas I have immersed myself in include web, applications, games, and even AI development. 📈 All of them brought me joy by making my mind work, trying to figure out what was causing that annoying bug or how I could make the code run faster.",
+    "description_part_5": "I love programming puzzles and hate bugs that waste my time, but I don't give up until I solve them, and when I do, it's the best feeling!",
     "description_part_6": "If you have a challenge for me, bring it on and don't hesitate to contact me! 📩",
     "email_label": "Email :",
     "place_label": "Place :",
@@ -251,5 +251,12 @@
     "policy_title": "Cookie Policy",
     "privacy_title": "Privacy Policy",
     "terms_title": "Terms and Conditions"
+  },
+  "typewriter": {
+    "text_1": "Backend Development",
+    "text_2": "Frontend Development",
+    "text_3": "App Development",
+    "text_4": "Game Development",
+    "text_5": "Artificial Intelligence"
   }
 }

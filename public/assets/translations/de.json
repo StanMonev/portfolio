@@ -177,11 +177,11 @@
     "header": "Über mich",
     "name_intro": "Ich bin Stan",
     "job_title": "Software-Entwickler",
-    "description_part_1": "Ich bin ein vielseitiger Software-Entwickler, der derzeit in Bochum, Deutschland, lebt.",
-    "description_part_2": "Ich liebe es zu lernen, zu erleben und neue Dinge zu entdecken. Und ich habe auch eine Leidenschaft für das Programmieren! 🚀",
-    "description_part_3": "Ich habe viel Erfahrung von kleinen bis großen Projekten an der Universität, in verschiedenen Unternehmen oder einfach nur zum Spaß von zu Hause aus gesammelt.",
-    "description_part_4": "Projekte, die von Web-, App-, Spiel- bis hin zur KI-Entwicklung reichen. 📈 Sie alle bereiteten mir Freude, indem sie meinen Geist arbeiten ließen und versuchten herauszufinden, was diesen lästigen Fehler verursachte oder wie ich den Code schneller laufen und schöner aussehen lassen kann.",
-    "description_part_5": "Ich genieße wirklich Programmierrätsel, die mich zum Nachdenken bringen 🤔, und wenn ich sie löse, ist es das beste Gefühl überhaupt!",
+    "description_part_1": "Ich bin jemand, der das Programmieren liebt, ganz einfach! Jeden Tag bemühe ich mich, etwas Neues zu lernen und meine Fähigkeiten in der Informatik weiterzuentwickeln.",
+    "description_part_2": "Ich bin in Varna, Bulgarien, aufgewachsen und nach dem Abitur bin ich nach Dortmund gezogen, um dort zu leben und zu studieren. Jetzt bin ich Programmierer mit Sitz in Bochum, Deutschland. 🚀",
+    "description_part_3": "Bisher hatte ich die Gelegenheit, an vielen Projekten zu arbeiten, sowohl beruflich als auch an der Universität und auch an einigen persönlichen Projekten.",
+    "description_part_4": "Zu den Bereichen der Programmierung, in die ich mich vertieft habe, gehören Web, Anwendungen, Spiele und sogar die Entwicklung künstlicher Intelligenz. 📈 Alle haben mir Freude bereitet, weil ich meinen Kopf anstrengen musste, um herauszufinden, was diesen lästigen Fehler verursacht hat oder wie ich den Code schneller laufen lassen kann.",
+    "description_part_5": "Ich liebe Programmierrätsel und hasse Fehler, die meine Zeit verschwenden, aber ich gebe nicht auf, bis ich sie gelöst habe, und wenn ich das schaffe, ist das ein großartiges Gefühl!",
     "description_part_6": "Wenn Sie eine Herausforderung für mich haben, bringen Sie sie mit und zögern Sie nicht, mich zu kontaktieren! 📩",
     "email_label": "E-Mail :",
     "place_label": "Ort :",
@@ -251,5 +251,12 @@
     "policy_title": "Cookie-Richtlinie",
     "privacy_title": "Datenschutzrichtlinie",
     "terms_title": "Geschäftsbedingungen"
+  },
+  "typewriter": {
+    "text_1": "Backend-Entwicklung",
+    "text_2": "Frontend-Entwicklung",
+    "text_3": "App-Entwicklung",
+    "text_4": "Spiel-Entwicklung",
+    "text_5": "Künstliche Intelligenz"
   }
 }

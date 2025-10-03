@@ -3,14 +3,69 @@
  */
 
 :root {
-  --background: rgb(30, 30, 30);
-  --nav-background: rgb(45, 45, 45);
+  /* Base defaults (dark-ish) will be overridden by theme blocks */
+  --background: #0d1117;
+  --nav-background: #11141800;
   --font_family: "roboto_monoregular", monospace;
-  --site-green: #0aa00a;
-  --stand-out-header: darkorange;
-  --stand-out: antiquewhite;
+  --site-green: #00ff41;
+  --stand-out-header: #ff8c00;
+  --stand-out: #f8f0e3;
 }
 
+/* Dark Theme */
+html[data-theme="dark"] {
+  --background: #0d1117;
+  /* deep dark */
+  --nav-background: #0f141a;
+  /* nav darker */
+  --site-green: #39ff14;
+  /* neon green */
+  --stand-out-header: #ff8c00;
+  /* accent orange */
+  --stand-out: #e6f3e6;
+  /* soft light */
+  --text-color: #c9d1d9;
+  /* general text */
+  --muted: #8b949e;
+  /* muted text */
+  --border: #1f6f1f;
+  /* green border */
+  --card: #0f1a13;
+  /* panels */
+}
+
+/* Light Theme */
+html[data-theme="light"] {
+  --background: #f7f9fb;
+  /* clean white */
+  --nav-background: #ffffff;
+  /* white nav */
+  --site-green: #0a7f0a;
+  /* calm green */
+  --stand-out-header: #ff7a00;
+  /* softer orange */
+  --stand-out: #222;
+  /* dark text */
+  --text-color: #1b1f24;
+  /* primary text */
+  --muted: #6b7280;
+  /* muted */
+  --border: #e2e8f0;
+  /* subtle borders */
+  --card: #ffffff;
+  /* white panels */
+}
+
+/* Apply theme colors */
+html,
+body {
+  background: var(--background);
+  color: var(--text-color, var(--site-green));
+}
+
+.navbar a {
+  color: var(--site-green);
+}
 
 /*
  * Main Components
@@ -49,9 +104,10 @@ body a:hover {
 }
 
 .section {
-  width: auto;
-  padding-top: 500px;
-  padding-bottom: 500px;
+  min-height: 100vh;
+  padding-top: 120px;
+  /* preserve spacing below navbar */
+  padding-bottom: 120px;
 }
 
 .section.index .title span {
@@ -80,6 +136,12 @@ body a:hover {
   flex-wrap: wrap;
   justify-content: space-evenly;
   align-items: center;
+}
+
+#home .section-container {
+  justify-content: end;
+  flex-direction: row-reverse;
+  gap: 150px;
 }
 
 footer {
@@ -112,13 +174,13 @@ footer {
 }
 
 #home.section .section-container div.typewriter-container {
-  width: 725px;
+  width: 1000px;
   display: flex;
   font-size: 30px;
 }
 
 #home.section .section-container div.text-container {
-  width: 960px;
+  width: 1000px;
   align-items: center;
   font-size: 200%;
   font-family: var(--font_family);
@@ -486,12 +548,24 @@ input:-webkit-autofill:active {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  background: var(--nav-background);
   z-index: 100000;
   position: fixed;
   top: 0;
   padding: 10px 2em;
+  backdrop-filter: blur(4px);
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+  transition: all .7s ease-in-out;
+}
+
+.main-container .navbar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  filter: blur(20px);
 }
 
 .navbar a {
@@ -671,6 +745,8 @@ input:-webkit-autofill:active {
 
 .matrix {
   position: absolute;
+  inset: 0;
+  display: block;
 }
 
 .about-button-container {
@@ -710,7 +786,7 @@ input:-webkit-autofill:active {
 
 .social-media-icons-footer a {
   text-decoration: none;
-  fill: #0a700a;
+  fill: var(--site-green);
 }
 
 .alert-box-container {
@@ -1044,5 +1120,261 @@ div.loader-container .loader {
 @keyframes l27 {
   100% {
     transform: rotate(1turn)
+  }
+}
+
+/* Roadmap Container */
+.roadmap-section {
+  position: relative;
+  padding: 40px 0;
+}
+
+/* Roadmap canvas with background image */
+.roadmap-canvas {
+  position: relative;
+  width: clamp(360px, 60vw, 500px);
+  height: clamp(700px, 85vh, 1400px);
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: visible;
+}
+
+/* Background image */
+.roadmap-background {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Points container overlay */
+.roadmap-points-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Individual roadmap points */
+.roadmap-point {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--site-green);
+  border: 3px solid var(--background);
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 0 0 rgba(57, 255, 20, 0.4);
+  z-index: 10;
+  -webkit-animation: home_hero_item_hints_glow 2s
+    cubic-bezier(0.25, 0.1, 0.2, 1) infinite;
+  animation: home_hero_item_hints_glow 2s cubic-bezier(0.25, 0.1, 0.2, 1)
+    infinite;
+  animation-delay: var(--delay, 0s); 
+  animation-duration: var(--duration, 2s);
+}
+
+.roadmap-point:hover {
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 8px rgba(57, 255, 20, 0.2);
+}
+
+/* Tooltip styling */
+.roadmap-tooltip {
+  position: absolute;
+  right: 100px;
+  bottom: 0;
+  width: 320px;
+  padding: 12px 16px;
+  background: var(--card);
+  color: var(--text-color);
+  border: 2px solid var(--site-green);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translate(-10px, 46.5%) scaleY(0);
+  transition: all 0.3s ease-in 0.4s;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* Tooltip arrow */
+.roadmap-point::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--site-green);
+  transition: width 0.4s ease-in 0s;
+}
+
+.roadmap-point[data-direction="right"]::after {
+  left: 10px;
+}
+
+.roadmap-point[data-direction="left"]::after {
+  right: 10px;
+}
+
+.roadmap-point[data-direction="right"] .roadmap-tooltip {
+  left: 120px;
+}
+
+.roadmap-point[data-direction="left"] .roadmap-tooltip {
+  right: 100px;
+}
+
+.roadmap-point:hover .roadmap-tooltip {
+  transform: translate(-10px, 46.5%) scaleY(1);
+  pointer-events: auto;
+  transition-delay: 0.4s;
+}
+
+.roadmap-point:hover::after {
+  width: 420px;
+  transition-delay: 0s;
+}
+
+.roadmap-point:not(:hover) .roadmap-tooltip {
+  transition-delay: 0s;
+}
+
+.roadmap-point:not(:hover)::after {
+  transition-delay: 0.3s;
+}
+
+/* Tooltip content */
+.roadmap-tooltip h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: var(--site-green);
+  font-weight: bold;
+}
+
+.roadmap-tooltip .meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.roadmap-tooltip p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-color);
+}
+
+.roadmap-tooltip .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.roadmap-tooltip .tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 12px;
+  background-color: var(--site-green);
+  color: var(--background);
+}
+
+.roadmap-tooltip a {
+  color: var(--site-green);
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.roadmap-tooltip a:hover {
+  color: var(--stand-out-header);
+}
+
+#roadmap .timeline-text {
+  position: absolute;
+  font-size: 6rem;
+  color: #4443433d;
+  left: -35%;
+}
+
+#roadmap .timeline-text.a {
+  top: 10%;
+}
+
+#roadmap .timeline-text.b {
+  top: 25%;
+}
+
+#roadmap .timeline-text.c {
+  top: 40%;
+}
+
+#roadmap::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -15%;
+  width: 4px;
+  height: 10%;
+  background: repeating-linear-gradient(
+    to bottom,
+    #4443433d 0px,
+    #4443433d 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  mask: linear-gradient(to bottom, transparent 0%, black 20%, black 100%);
+  -webkit-mask: linear-gradient(to bottom, transparent 0%, black 20%, black 100%);
+}
+
+#roadmap::after {
+  content: "";
+  position: absolute;
+  top: 60%;
+  left: -15%;
+  width: 4px;
+  height: 30%;
+  background: repeating-linear-gradient(
+    to bottom,
+    #4443433d 0px,
+    #4443433d 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  mask: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+  -webkit-mask: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+}
+
+@-webkit-keyframes home_hero_item_hints_glow {
+  0% {
+    -webkit-box-shadow: 0 0 15px 3px #48aa48;
+    box-shadow: 0 0 15px 3px #48aa48;
+  }
+  70% {
+    -webkit-box-shadow: 0 0 25px 15px rgba(72, 170, 72, 0);
+    box-shadow: 0 0 25px 15px rgba(72, 170, 72, 0);
+  }
+  100% {
+    -webkit-box-shadow: 0 0 0 15px rgba(72, 170, 72, 0);
+    box-shadow: 0 0 0 15px rgba(72, 170, 72, 0);
+  }
+}
+
+@keyframes home_hero_item_hints_glow {
+  0% {
+    -webkit-box-shadow: 0 0 15px 3px #48aa48;
+    box-shadow: 0 0 15px 3px #48aa48;
+  }
+  70% {
+    -webkit-box-shadow: 0 0 25px 15px rgba(72, 170, 72, 0);
+    box-shadow: 0 0 25px 15px rgba(72, 170, 72, 0);
+  }
+  100% {
+    -webkit-box-shadow: 0 0 0 15px rgba(72, 170, 72, 0);
+    box-shadow: 0 0 0 15px rgba(72, 170, 72, 0);
   }
 }

@@ -8,10 +8,10 @@
  * Key functionalities:
  * - Typewriter effect with typing and deleting animation.
  * - Ability to handle custom text provided via the `data-type` attribute or fallback to default text.
- * - Automatic detection and parsing of JSON strings for custom text input.
+ * - Translation support that updates when language changes.
  */
 
-const text = ["Backend Development", "Frontend Development", "App Development", "Game Development", "Computational Intelligence", "Reinforcement Learning"];
+let typewriterInstances = [];
 
 /**
  * @param {HTMLElement} el - The HTML element where the typewriter effect will be applied.
@@ -24,8 +24,9 @@ var TxtType = function (el, toRotate, period) {
   this.loopNum = 0;
   this.period = parseInt(period, 10) || 2000;
   this.txt = "";
-  this.tick();
   this.isDeleting = false;
+  this.timeoutId = null;
+  this.tick();
 };
 
 /**
@@ -60,9 +61,33 @@ TxtType.prototype.tick = function () {
     delta = 500;  // Small pause before starting the next word
   }
 
-  setTimeout(function () {
+  this.timeoutId = setTimeout(function () {
     that.tick();
   }, delta);
+};
+
+/**
+ * Updates the typewriter with new text array
+ */
+TxtType.prototype.updateText = function(newTextArray) {
+  this.toRotate = newTextArray;
+  // Reset to start fresh with new text
+  this.loopNum = 0;
+  this.txt = "";
+  this.isDeleting = false;
+  if (this.timeoutId) {
+    clearTimeout(this.timeoutId);
+  }
+  this.tick();
+};
+
+/**
+ * Stops the typewriter animation
+ */
+TxtType.prototype.stop = function() {
+  if (this.timeoutId) {
+    clearTimeout(this.timeoutId);
+  }
 };
 
 /**
@@ -83,14 +108,55 @@ window.onload = function () {
 function startTypewriter() {
   var elements = document.getElementsByClassName("typewriter");
   for (var i = 0; i < elements.length; i++) {
-    let toRotate = elements[i].getAttribute('data-type') || text;
-    toRotate = isJsonString(toRotate) ? JSON.parse(toRotate) : toRotate;
+    let translationKeys = elements[i].getAttribute('data-type');
+    let toRotate = getTranslatedTexts(translationKeys);
     var period = 2000;
-    if (toRotate) {
-      new TxtType(elements[i], toRotate, period);
+    if (toRotate && toRotate.length > 0) {
+      const instance = new TxtType(elements[i], toRotate, period);
+      typewriterInstances.push({
+        element: elements[i],
+        instance: instance,
+        translationKeys: translationKeys
+      });
     }
   }
 }
+
+/**
+ * Gets translated texts from translation keys
+ */
+function getTranslatedTexts(translationKeys) {
+  if (!translationKeys) return ["Backend Development", "Frontend Development", "App Development", "Game Development", "Artificial Intelligence"];
+  
+  try {
+    const keys = JSON.parse(translationKeys);
+    if (window.translationService) {
+      return keys.map(key => window.translationService.t(key));
+    } else {
+      // Fallback texts if translation service is not available
+      return ["Backend Development", "Frontend Development", "App Development", "Game Development", "Artificial Intelligence"];
+    }
+  } catch (e) {
+    return ["Backend Development", "Frontend Development", "App Development", "Game Development", "Artificial Intelligence"];
+  }
+}
+
+/**
+ * Updates all typewriter instances when language changes
+ */
+function updateTypewriterLanguage() {
+  typewriterInstances.forEach(item => {
+    const newTexts = getTranslatedTexts(item.translationKeys);
+    item.instance.updateText(newTexts);
+  });
+}
+
+/**
+ * Listen for language change events
+ */
+window.addEventListener('languageChanged', function(e) {
+  updateTypewriterLanguage();
+});
 
 /**
  * Checks if a given string is a valid JSON string.
