@@ -95,6 +95,10 @@ class TranslationService {
         window.dispatchEvent(new CustomEvent('languageChanged', {
             detail: { language, translations: this.translations }
         }));
+        
+        if (window.innerWidth < 1024) { 
+            window.updateMatrix();
+        }
     }
 
     /**

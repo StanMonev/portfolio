@@ -1,214 +1,307 @@
-// Call the function as soon as the file is loaded.
-addClickToDownloadButton();
+// === Config / Selectors ======================================================
+const IDS = {
+  downloadBtnDesktop: 'downloadButtonDesktop',
+  downloadBtnMobile: 'downloadButtonMobile',
+  cvPreview: 'cvPreview',
+  previewName: 'previewName',
+  previewContact: 'previewContact',
+  previewSkills: 'previewSkills',
+  previewLanguages: 'previewLanguages',
+  previewInterests: 'previewInterests',
+  previewEducation: 'previewEducation',
+  previewProjects: 'previewProjects',
+  previewExperience: 'previewExperience'
+};
+
+const PDF_OPTIONS = {
+  margin: 5,
+  filename: 'StanimirMonevResume.pdf',
+  image: { type: 'jpeg', quality: 1 },
+  html2canvas: { scale: 2 },
+  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+};
+
+// === Boot ====================================================================
+document.addEventListener('DOMContentLoaded', addClickToDownloadButtons);
 
 /**
- * Add event listener for the download button. When clicked, it generates a PDF of the resume with a watermark.
- * 
- * @returns {void}
+ * Wire up the download button click -> update preview -> watermark -> pdf -> cleanup
  */
+function addClickToDownloadButtons() {
+  const btns = [
+    document.getElementById(IDS.downloadBtnDesktop), 
+    document.getElementById(IDS.downloadBtnMobile)
+  ];
+  
+  // Check if both buttons exist
+  if (!btns[0] || !btns[1]) {
+    console.warn(`[resume] Missing #${IDS.downloadBtnDesktop} or #${IDS.downloadBtnMobile}`);
+    return;
+  }
 
-function addClickToDownloadButton(){
-    document.getElementById('downloadButton').addEventListener('click', async function () {
+  // Add event listener to both buttons
+  btns.forEach(btn => {
+    if (!btn) return; // Extra safety check
     
-        // Add Loader
-        const downloadButtonContainer = document.getElementById('downloadButtonContainer');
-        downloadButtonContainer.innerHTML = '<div class="loader"></div>'
-        downloadButtonContainer.classList.remove("download-button-container");
-        downloadButtonContainer.classList.add("loader-container");
-        
-        await updatePreview();
-    
-        //Remove Loader
-        const data = await fetchData('/api/download-button', 'HTML')
-        downloadButtonContainer.innerHTML = data
-        downloadButtonContainer.classList.remove("loader-container");
-        downloadButtonContainer.classList.add("download-button-container");
-        addClickToDownloadButton();
-    
-        const element = document.getElementById('cvPreview');
-        const style = document.createElement('style');
-    
-        style.textContent = `
-            #about #resumeContainer {
-                display: block !important;
-            }
-    
-            .watermark {
-                position: relative;
-            }
-    
-            .watermark::before {
-                content: 'Copyright of Stanimir Monev';
-                font-size: 50px;
-                color: rgba(0, 0, 0, 0.1);
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                transform: rotate(-45deg);
-                display: grid;
-                place-items: center;
-                pointer-events: none;
-            }
-        `;
-    
-        document.head.appendChild(style); // Add watermark style to the document
-    
-        const opt = {
-            margin: 5,
-            filename: 'StanimirMonevResume.pdf',
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-    
-        // Generate the PDF and then remove the watermark style after the download
-        html2pdf().set(opt).from(element).save().then(() => {
-            document.head.removeChild(style);
-        });
+    btn.addEventListener('click', async () => {
+      // enter loading immediately
+      setLoading(btn, true);
+
+      // build the PDF with a temporary watermark style attached
+      const cleanup = attachWatermarkStyle();
+      try {
+        await updatePreview(); // refresh data before export
+
+        const container = document.getElementById(IDS.cvPreview);
+        if (!container) {
+          console.error(`[resume] Missing #${IDS.cvPreview}`);
+          return;
+        }
+
+        await html2pdf().set(PDF_OPTIONS).from(container).save();
+      } catch (err) {
+        console.error('[resume] PDF generation failed:', err);
+      } finally {
+        cleanup();               // always remove temporary style
+        setLoading(btn, false);  // always reset loading
+      }
     });
+  });
+}
+
+// === UI State ================================================================
+
+/**
+ * Toggle loading state for the neon button
+ * @param {HTMLElement} btn
+ * @param {boolean} isLoading
+ */
+function setLoading(btn, isLoading) {
+  if (!btn) return;
+  const label = btn.querySelector('.label');
+  const live  = btn.querySelector('.sr-only');
+
+  btn.classList.toggle('is-loading', isLoading);
+  btn.setAttribute('aria-busy', String(isLoading));
+  btn.setAttribute('aria-disabled', String(isLoading));
+
+  if (label) label.textContent = isLoading ? (label.dataset.loadingTranslate || 'Loading…')
+                                           : (label.dataset.translate || 'Download');
+  if (live)  live.textContent  = isLoading ? 'Downloading started' : '';
+  window.translationService?.translatePage();
 }
 
 /**
- * Fetches the resume data from the server and updates the preview section with the latest information.
- * 
+ * Injects a transient stylesheet that adds the watermark. Returns a cleanup fn.
+ * @returns {() => void}
+ */
+function attachWatermarkStyle() {
+  const style = document.createElement('style');
+  style.setAttribute('data-watermark-style', 'true');
+  style.textContent = `
+    #about #resumeContainer {
+      display: block !important;
+    }
+    .watermark {
+      position: relative;
+    }
+    .watermark::before {
+      content: 'Copyright of Stanimir Monev';
+      font-size: 50px;
+      color: rgba(0, 0, 0, 0.1);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      transform: rotate(-45deg);
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+  `;
+  document.head.appendChild(style);
+
+  return () => {
+    if (style.parentNode) style.parentNode.removeChild(style);
+  };
+}
+
+// === Data Loading / Rendering ================================================
+
+/**
+ * Fetches the resume data and updates the preview sections.
+ * Relies on fetchData, orderElements, formatList, splitTitle existing globally.
  * @returns {Promise<void>}
  */
 async function updatePreview() {
-    try {
-        const data = await fetchData('/api/resume/admin');
-        const firstName = data.first_name;
-        const lastName = data.last_name;
-        const town = data.town;
-        const country = data.country;
-        const email = data.email;
-        const linkedin = data.linkedin;
-        const github = data.github;
-        const website = data.website;
-        const skills = data.skills;
-        const languages = data.languages;
-        const interests = data.interests;
+  try {
+    const data = await fetchData('/api/resume/admin');
+    if (!data) return;
 
-        if(data.settings && data.settings["sectionOrder"]){
-            const sectionOrder = data.settings["sectionOrder"].split(',');
-            orderElements('cvPreview', sectionOrder);
-        }
-
-        document.getElementById('previewName').textContent = `${firstName} ${lastName}`;    
-
-        const contactInfo = [];
-        if (town && country) contactInfo.push(`${town}, ${country}`);
-        if (email) contactInfo.push(`<a href="mailto:${email}"><img src="/assets/images/gmail.png" class="icon" alt="Email Icon" /> E-Mail</a>`);
-        if (linkedin) contactInfo.push(`<a href="${linkedin}" target="_blank"> <img src="/assets/images/linkedin.png" class="icon" alt="LinkedIn Icon" /> LinkedIn</a>`);
-        if (github) contactInfo.push(`<a href="${github}" target="_blank"><img src="/assets/images/github.png" class="icon" alt="GitHub Icon" /> GitHub</a>`);
-        if (website) contactInfo.push(`<a href="${website}" target="_blank"><img src="/assets/images/smworks_logo_cropped.png" class="icon" alt="Website Icon" /> www.stanimirmonevworks.com</a>`);
-
-        document.getElementById('previewContact').innerHTML = contactInfo.join(' | ');
-        document.getElementById('previewSkills').innerHTML = formatList(skills);
-        document.getElementById('previewLanguages').innerHTML = formatList(languages);
-        document.getElementById('previewInterests').innerHTML = formatList(interests);
-    } catch (error) {
-        console.error('Error:', error);
+    // order
+    if (data.settings && data.settings['sectionOrder']) {
+      const sectionOrder = data.settings['sectionOrder'].split(',');
+      orderElements('cvPreview', sectionOrder);
     }
 
-    // Update other sections of the resume
-    await updateEducationPreview();
-    await updateProjectsPreview();
-    await updateWorkExperiencePreview();
+    // top info
+    const nameEl = document.getElementById(IDS.previewName);
+    if (nameEl) nameEl.textContent = `${data.first_name || ''} ${data.last_name || ''}`.trim();
+
+    const contactEl = document.getElementById(IDS.previewContact);
+    if (contactEl) contactEl.innerHTML = buildContactHTML({
+      town: data.town,
+      country: data.country,
+      email: data.email,
+      linkedin: data.linkedin,
+      github: data.github,
+      website: data.website
+    });
+
+    const skillsEl = document.getElementById(IDS.previewSkills);
+    if (skillsEl) skillsEl.innerHTML = formatList(data.skills);
+
+    const langEl = document.getElementById(IDS.previewLanguages);
+    if (langEl) langEl.innerHTML = formatList(data.languages);
+
+    const interestsEl = document.getElementById(IDS.previewInterests);
+    if (interestsEl) interestsEl.innerHTML = formatList(data.interests);
+  } catch (error) {
+    console.error('[resume] updatePreview failed:', error);
+  }
+
+  // Update other sections even if the top block errored
+  await updateEducationPreview();
+  await updateProjectsPreview();
+  await updateWorkExperiencePreview();
 }
 
 /**
- * Fetches and displays the education entries associated with the resume in the preview section.
- * 
- * @returns {Promise<void>}
+ * Education section
  */
 async function updateEducationPreview() {
-    try {
-        const data = await fetchData('/api/resume/educations-admin');
-        data.sort((a, b) => new Date(a.from_date) - new Date(b.from_date));
+  try {
+    const data = await fetchData('/api/resume/educations-admin');
+    if (!Array.isArray(data)) return;
 
-        const previewEducation = document.getElementById('previewEducation');
-        previewEducation.innerHTML = '';
-        data.forEach(edu => {
-            const item = document.createElement('div');
-            item.classList.add('education-item');
+    // oldest -> newest (kept same as original)
+    data.sort((a, b) => new Date(a.from_date) - new Date(b.from_date));
 
-            const [mainTitle, subTitle] = splitTitle(edu.name);
-            const fromDate = new Date(edu.from_date);
-            const endDate = new Date(edu.until_date);
-            const untilDate = edu.still_studying ? 'Present' : `${endDate.toLocaleString('en-GB', { month: 'long' })}, ${endDate.getFullYear()}`;
+    const root = document.getElementById(IDS.previewEducation);
+    if (!root) return;
 
-            item.innerHTML = `
-                <div>
-                    <strong class="title-main">${mainTitle}</strong><span class="title-sub">${subTitle}</span>
-                    <span class="dates">${fromDate.toLocaleString('en-GB', { month: 'long' })}, ${fromDate.getFullYear()} - ${untilDate}</span>
-                </div>
-                <ul>${formatList(edu.description)}</ul>
-            `;
-            previewEducation.appendChild(item);
-        });
-    } catch (error) {
-        console.error('Error:', error);
-    }
+    root.innerHTML = '';
+    data.forEach(edu => {
+      const item = document.createElement('div');
+      item.classList.add('education-item');
+
+      const [mainTitle, subTitle] = splitTitle(edu.name);
+      const fromDate = new Date(edu.from_date);
+      const endDate = new Date(edu.until_date);
+      const untilDate = edu.still_studying
+        ? 'Present'
+        : `${fromDateLocale(endDate)}, ${endDate.getFullYear()}`;
+
+      item.innerHTML = `
+        <div>
+          <strong class="title-main">${mainTitle}</strong><span class="title-sub">${subTitle}</span>
+          <span class="dates">${fromDateLocale(fromDate)}, ${fromDate.getFullYear()} - ${untilDate}</span>
+        </div>
+        <ul>${formatList(edu.description)}</ul>
+      `;
+      root.appendChild(item);
+    });
+  } catch (error) {
+    console.error('[resume] updateEducationPreview failed:', error);
+  }
 }
 
 /**
- * Fetches and displays the project entries associated with the resume in the preview section.
- * 
- * @returns {Promise<void>}
+ * Projects section
  */
 async function updateProjectsPreview() {
-    try {
-        const data = await fetchData('/api/resume/projects-admin');
-        const previewProjects = document.getElementById('previewProjects');
-        previewProjects.innerHTML = '';
-        data.forEach(proj => {
-            const item = document.createElement('div');
-            item.classList.add('project-item');
-            const [mainTitle, subTitle] = splitTitle(proj.name);
-            item.innerHTML = `
-                <div>
-                    <strong class="title-main">${mainTitle}</strong><span class="title-sub">${subTitle}</span>
-                </div>
-                <ul class="bullet-points">${formatList(proj.description)}</ul>
-            `;
-            previewProjects.appendChild(item);
-        });
-    } catch (error) {
-        console.error('Error:', error);
-    }
+  try {
+    const data = await fetchData('/api/resume/projects-admin');
+    if (!Array.isArray(data)) return;
+
+    const root = document.getElementById(IDS.previewProjects);
+    if (!root) return;
+
+    root.innerHTML = '';
+    data.forEach(proj => {
+      const item = document.createElement('div');
+      item.classList.add('project-item');
+
+      const [mainTitle, subTitle] = splitTitle(proj.name);
+      item.innerHTML = `
+        <div>
+          <strong class="title-main">${mainTitle}</strong><span class="title-sub">${subTitle}</span>
+        </div>
+        <ul class="bullet-points">${formatList(proj.description)}</ul>
+      `;
+      root.appendChild(item);
+    });
+  } catch (error) {
+    console.error('[resume] updateProjectsPreview failed:', error);
+  }
 }
 
 /**
- * Fetches and displays the work experience entries associated with the resume in the preview section.
- * 
- * @returns {Promise<void>}
+ * Work experience section
  */
 async function updateWorkExperiencePreview() {
-    try {
-        const data = await fetchData('/api/resume/work-experiences-admin');
-        data.sort((a, b) => new Date(a.job_begin_date) - new Date(b.job_begin_date));
+  try {
+    const data = await fetchData('/api/resume/work-experiences-admin');
+    if (!Array.isArray(data)) return;
 
-        const previewExperience = document.getElementById('previewExperience');
-        previewExperience.innerHTML = '';
-        data.forEach(exp => {
-            const item = document.createElement('div');
-            item.classList.add('experience-item');
-            const beginDate = new Date(exp.job_begin_date);
-            const endDate = new Date(exp.job_end_date);
-            const endDateString = exp.still_working ? 'Present' : `${endDate.toLocaleString('en-GB', { month: 'long' })}, ${endDate.getFullYear()}`;
-            const [mainTitle, subTitle] = splitTitle(exp.job_title);
-            item.innerHTML = `
-                <div>
-                    <strong class="title-main">${mainTitle}</strong><span class="title-sub">${subTitle}</span>
-                    <span class="dates">${beginDate.toLocaleString('en-GB', { month: 'long' })}, ${beginDate.getFullYear()} - ${endDateString}</span>
-                </div>
-                <ul>${formatList(exp.job_description)}</ul>
-            `;
-            previewExperience.appendChild(item);
-        });
-    } catch (error) {
-        console.error('Error:', error);
-    }
+    // oldest -> newest (kept same as original)
+    data.sort((a, b) => new Date(a.job_begin_date) - new Date(b.job_begin_date));
+
+    const root = document.getElementById(IDS.previewExperience);
+    if (!root) return;
+
+    root.innerHTML = '';
+    data.forEach(exp => {
+      const item = document.createElement('div');
+      item.classList.add('experience-item');
+
+      const beginDate = new Date(exp.job_begin_date);
+      const endDate = new Date(exp.job_end_date);
+      const endDateString = exp.still_working
+        ? 'Present'
+        : `${fromDateLocale(endDate)}, ${endDate.getFullYear()}`;
+
+      const [mainTitle, subTitle] = splitTitle(exp.job_title);
+      item.innerHTML = `
+        <div>
+          <strong class="title-main">${mainTitle}</strong><span class="title-sub">${subTitle}</span>
+          <span class="dates">${fromDateLocale(beginDate)}, ${beginDate.getFullYear()} - ${endDateString}</span>
+        </div>
+        <ul>${formatList(exp.job_description)}</ul>
+      `;
+      root.appendChild(item);
+    });
+  } catch (error) {
+    console.error('[resume] updateWorkExperiencePreview failed:', error);
+  }
+}
+
+// === Small helpers ============================================================
+
+/**
+ * Build contact HTML segments with icons. Matches your original output exactly.
+ * @param {{town?:string,country?:string,email?:string,linkedin?:string,github?:string,website?:string}} info
+ */
+function buildContactHTML(info) {
+  const parts = [];
+  if (info.town && info.country) parts.push(`${info.town}, ${info.country}`);
+  if (info.email)    parts.push(`<a href="mailto:${info.email}"><img src="/assets/images/gmail.png" class="icon" alt="Email Icon" /> E-Mail</a>`);
+  if (info.linkedin) parts.push(`<a href="${info.linkedin}" target="_blank"><img src="/assets/images/linkedin.png" class="icon" alt="LinkedIn Icon" /> LinkedIn</a>`);
+  if (info.github)   parts.push(`<a href="${info.github}" target="_blank"><img src="/assets/images/github.png" class="icon" alt="GitHub Icon" /> GitHub</a>`);
+  if (info.website)  parts.push(`<a href="${info.website}" target="_blank"><img src="/assets/images/smworks_logo_cropped.png" class="icon" alt="Website Icon" /> www.stanimirmonevworks.com</a>`);
+  return parts.join(' | ');
+}
+
+/** Month name in en-GB like your original usage */
+function fromDateLocale(d) {
+  return d.toLocaleString('en-GB', { month: 'long' });
 }

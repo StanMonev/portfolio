@@ -17,6 +17,7 @@
   <script src="/assets/javascript/cookies.js"></script>
   <script src="/assets/javascript/index.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <script src="/assets/javascript/translations.js"></script>
   <title>StanimirMonevWorks Homepage</title>
 </head>
 
@@ -27,8 +28,8 @@
   </div>
   <div class="main-container">
     <%- include('partials/header'); %>
+    <canvas class="matrix"></canvas>
     <main>
-      <canvas class="matrix"></canvas>
       <div id="content">
         <div id="home" class="section">
           <div class="section-container">
@@ -52,7 +53,7 @@
       </div>
     </main>
     <footer class="footer">
-      <a id="copyright" class="modal-link" href="/copyright-content"><span>Copyright © 2024</span></a>
+      <a id="copyright" class="modal-link link" href="/copyright-content"><span>Copyright © 2024</span></a>
       <span>Made with &#10084;&#65039; by Stanimir Monev</span>
       <span>
         <%- include('partials/socialMedia', {id:'contacts', css:'social-media-icons-footer', section:'footer'}); %>

@@ -21,12 +21,6 @@
     "success": "Erfolg"
   },
   "navigation": {
-    "welcome": "Willkommen",
-    "about": "Über mich",
-    "skills": "Fähigkeiten",
-    "contact": "Kontakt"
-  },
-  "navigation_menu": {
     "home": "Startseite",
     "about": "Über mich",
     "contact": "Kontakt"
@@ -142,27 +136,9 @@
       "validation_failed": "Bitte füllen Sie alle erforderlichen Felder aus"
     }
   },
-  "home": {
-    "welcome": "Willkommen",
-    "about_title": "Über mich",
-    "skills_title": "Fähigkeiten",
-    "contact_title": "Kontaktieren Sie mich",
-    "download_cv": "Lebenslauf herunterladen"
-  },
   "contact": {
-    "get_in_touch": "Kontakt aufnehmen",
-    "name": "Name",
-    "email": "E-Mail",
-    "subject": "Betreff",
-    "message": "Nachricht",
-    "send_message": "Nachricht senden",
-    "name_placeholder": "Ihr Name",
-    "email_placeholder": "Ihre E-Mail",
-    "subject_placeholder": "Betreff",
-    "message_placeholder": "Ihre Nachricht",
-    "send_email": "E-Mail senden",
     "contact_title": "Kontakt",
-    "your_full_name": "Ihr vollständiger Name",
+    "your_full_name": "Ihr Name",
     "your_email": "Ihre E-Mail",
     "subject_of_email": "Betreff der E-Mail",
     "your_message": "Ihre Nachricht",
@@ -172,42 +148,47 @@
     "privacy_policy": "Datenschutzrichtlinie"
   },
   "about": {
-    "title": "Über mich",
     "content": "Ich bin ein leidenschaftlicher Entwickler mit Erfahrung in verschiedenen Technologien.",
     "header": "Über mich",
     "name_intro": "Ich bin Stan",
     "job_title": "Software-Entwickler",
-    "description_part_1": "Ich bin jemand, der das Programmieren liebt, ganz einfach! Jeden Tag bemühe ich mich, etwas Neues zu lernen und meine Fähigkeiten in der Informatik weiterzuentwickeln.",
-    "description_part_2": "Ich bin in Varna, Bulgarien, aufgewachsen und nach dem Abitur bin ich nach Dortmund gezogen, um dort zu leben und zu studieren. Jetzt bin ich Programmierer mit Sitz in Bochum, Deutschland. 🚀",
-    "description_part_3": "Bisher hatte ich die Gelegenheit, an vielen Projekten zu arbeiten, sowohl beruflich als auch an der Universität und auch an einigen persönlichen Projekten.",
-    "description_part_4": "Zu den Bereichen der Programmierung, in die ich mich vertieft habe, gehören Web, Anwendungen, Spiele und sogar die Entwicklung künstlicher Intelligenz. 📈 Alle haben mir Freude bereitet, weil ich meinen Kopf anstrengen musste, um herauszufinden, was diesen lästigen Fehler verursacht hat oder wie ich den Code schneller laufen lassen kann.",
-    "description_part_5": "Ich liebe Programmierrätsel und hasse Fehler, die meine Zeit verschwenden, aber ich gebe nicht auf, bis ich sie gelöst habe, und wenn ich das schaffe, ist das ein großartiges Gefühl!",
-    "description_part_6": "Wenn Sie eine Herausforderung für mich haben, bringen Sie sie mit und zögern Sie nicht, mich zu kontaktieren! 📩",
+    "description_part_1": "Ich bin jemand, der das Programmieren liebt, ganz einfach! 🤓 Jeden Tag bemühe ich mich, etwas Neues zu lernen und meine Fähigkeiten in der Informatik weiterzuentwickeln. 📚",
+    "description_part_2": "Ich bin in Varna, Bulgarien 🇧🇬, aufgewachsen und nach dem Abitur bin ich nach Dortmund gezogen, um dort zu leben und zu studieren. Jetzt bin ich Programmierer mit Sitz in Bochum, Deutschland 🇩🇪.",
+    "description_part_3": "Bisher hatte ich die Gelegenheit, an vielen Projekten zu arbeiten, sowohl beruflich als auch an der Universität und auch an einigen persönlichen Projekten. 🚀",
+    "description_part_4": "Zu den Bereichen der Programmierung, in die ich mich vertieft habe, gehören Web, Anwendungen, Spiele und sogar die Entwicklung künstlicher Intelligenz. 🤖 Alle haben mir Freude bereitet, weil ich meinen Kopf anstrengen musste, um herauszufinden, was diesen lästigen Fehler verursacht hat oder wie ich den Code schneller laufen lassen kann. 📈",
+    "description_part_5": "Ich liebe Programmierrätsel 🧩 und hasse Bugs 🐛, die meine Zeit verschwenden, aber ich gebe nicht auf, bis ich sie gelöst habe, und wenn ich das schaffe, ist das ein großartiges Gefühl!😌",
+    "description_part_6": "Wenn Sie Hilfe benötigen oder Fragen haben, zögern Sie nicht, mich zu kontaktieren! 📩",
     "email_label": "E-Mail :",
     "place_label": "Ort :",
     "location": "44892 - Bochum, Deutschland",
-    "download_resume": "LEBENSLAUF HERUNTERLADEN"
-  },
-  "skills": {
-    "title": "Fähigkeiten",
-    "content": "Hier sind einige der Technologien, mit denen ich arbeite.",
-    "header": "Dinge, die ich kenne und mit denen ich gearbeitet habe:",
-    "credits_title": "Icons dank:",
-    "freepik": "Freepik",
-    "flaticon": "Flaticon",
-    "pngwing": "PNGWing",
-    "watermarkly": "Watermarkly"
+    "download_resume": "CV herunterladen",
+    "hire_me": "STELLEN SIE MICH EIN",
+    "downloading": "Wird heruntergeladen...",
+    "timeline_mobile_header": "Erfahrung",
+    "timeline_mobile_subheader": "Enthält Berufserfahrung und größere Projekte.",
+    "skills": {
+      "header": "Fähigkeiten",
+      "subheader": "Technologien und Tools, mit denen ich im Laufe der Jahre gearbeitet habe.",
+      "credits_title": "Icons dank:",
+      "freepik": "Freepik",
+      "flaticon": "Flaticon",
+      "pngwing": "PNGWing",
+      "watermarkly": "Watermarkly"
+    }
   },
   "welcome": {
-    "greeting": "Hallo, ich bin",
-    "name": "Stanimir Monev",
-    "title": "Full Stack Entwickler",
-    "description": "Willkommen auf meiner Portfolio-Website, wo Sie mehr über meine Fähigkeiten und Erfahrungen erfahren können.",
     "welcome_text": "Willkommen!",
     "my_name_is": "Mein Name ist",
-    "stanimir_monev": "Stanimir Monev",
+    "name": "Stanimir Monev",
     "and_im_into": "Und ich bin interessiert an",
-    "about_me_button": "Über mich"
+    "about_me_button": "Über mich",
+    "typewriter": {
+      "text_1": "Backend-Entwicklung.",
+      "text_2": "Frontend-Entwicklung.",
+      "text_3": "App-Entwicklung.",
+      "text_4": "Spiel-Entwicklung.",
+      "text_5": "Künstliche Intelligenz."
+    }
   },
   "download": {
     "cv_button": "Lebenslauf herunterladen",
@@ -226,15 +207,6 @@
     "error": "Fehler beim Senden der Nachricht. Bitte versuchen Sie es erneut.",
     "validation_error": "Bitte füllen Sie alle erforderlichen Felder aus."
   },
-  "js_messages": {
-    "field_required": "ist erforderlich.",
-    "all_fields_required": "Alle Felder sind erforderlich, außer dem Enddatum wenn noch tätig markiert ist.",
-    "education_fields_required": "Alle Felder sind erforderlich, außer dem Bis-Datum wenn noch studierend markiert ist.",
-    "project_fields_required": "Alle Felder sind erforderlich.",
-    "failed_load_translations": "Fehler beim Laden der Übersetzungen für die ausgewählte Sprache.",
-    "present": "Gegenwart",
-    "pdf_filename": "StanimirMonevLebenslauf.pdf"
-  },
   "email_form": {
     "title": "Neue E-Mail von SMWorks:",
     "name_label": "Name:",
@@ -251,12 +223,5 @@
     "policy_title": "Cookie-Richtlinie",
     "privacy_title": "Datenschutzrichtlinie",
     "terms_title": "Geschäftsbedingungen"
-  },
-  "typewriter": {
-    "text_1": "Backend-Entwicklung",
-    "text_2": "Frontend-Entwicklung",
-    "text_3": "App-Entwicklung",
-    "text_4": "Spiel-Entwicklung",
-    "text_5": "Künstliche Intelligenz"
   }
 }

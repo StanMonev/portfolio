@@ -21,12 +21,6 @@
     "success": "Success"
   },
   "navigation": {
-    "welcome": "Welcome",
-    "about": "About",
-    "skills": "Skills",
-    "contact": "Contact"
-  },
-  "navigation_menu": {
     "home": "Home",
     "about": "About",
     "contact": "Contact"
@@ -142,25 +136,7 @@
       "validation_failed": "Please fill in all required fields"
     }
   },
-  "home": {
-    "welcome": "Welcome",
-    "about_title": "About Me",
-    "skills_title": "Skills",
-    "contact_title": "Contact Me",
-    "download_cv": "Download CV"
-  },
   "contact": {
-    "get_in_touch": "Get in Touch",
-    "name": "Name",
-    "email": "Email",
-    "subject": "Subject",
-    "message": "Message",
-    "send_message": "Send Message",
-    "name_placeholder": "Your Name",
-    "email_placeholder": "Your Email",
-    "subject_placeholder": "Subject",
-    "message_placeholder": "Your Message",
-    "send_email": "Send Email",
     "contact_title": "Contact",
     "your_full_name": "Your Full Name",
     "your_email": "Your Email",
@@ -172,42 +148,47 @@
     "privacy_policy": "Privacy Policy"
   },
   "about": {
-    "title": "About Me",
     "content": "I am a passionate developer with experience in various technologies.",
     "header": "About Me",
     "name_intro": "I'm Stan",
     "job_title": "Software Developer",
-    "description_part_1": "I'm a person who loves programming, plain and simple! Every day, I strive to learn something new and develop my skills in computer science.",
-    "description_part_2": "I grew up in Varna, Bulgaria, and after graduating from high school, I moved to Dortmund to live and study. Now I am a programmer based in Bochum, Germany. 🚀",
-    "description_part_3": "So far, I have had the opportunity to work on many projects, professionally, at university, and also on some personal projects.",
-    "description_part_4": "The coding areas I have immersed myself in include web, applications, games, and even AI development. 📈 All of them brought me joy by making my mind work, trying to figure out what was causing that annoying bug or how I could make the code run faster.",
-    "description_part_5": "I love programming puzzles and hate bugs that waste my time, but I don't give up until I solve them, and when I do, it's the best feeling!",
-    "description_part_6": "If you have a challenge for me, bring it on and don't hesitate to contact me! 📩",
+    "description_part_1": "I'm a person who loves programming, plain and simple! 🤓 Every day, I strive to learn something new and develop my skills in computer science. 📚",
+    "description_part_2": "I grew up in Varna, Bulgaria 🇧🇬, and after graduating from high school, I moved to Dortmund to live and study. Now I am a programmer based in Bochum, Germany 🇩🇪.",
+    "description_part_3": "So far, I have had the opportunity to work on many projects, professionally, at university, and also on some personal projects. 🚀",
+    "description_part_4": "The coding areas I have immersed myself in include web, applications, games, and even AI development.🤖 All of them brought me joy by making my mind work, trying to figure out what was causing that annoying bug or how I could make the code run faster. 📈",
+    "description_part_5": "I love programming puzzles 🧩 and hate bugs 🐛 that waste my time, but I don't give up until I solve them, and when I do, it's the best feeling!😌",
+    "description_part_6": "If you need help with a project or have any questions, feel free to reach out! 📩",
     "email_label": "Email :",
     "place_label": "Place :",
     "location": "44892 - Bochum, Germany",
-    "download_resume": "DOWNLOAD RESUME"
-  },
-  "skills": {
-    "title": "Skills",
-    "content": "Here are some of the technologies I work with.",
-    "header": "Stuff that I know and I've worked with:",
-    "credits_title": "Icons thanks to:",
-    "freepik": "Freepik",
-    "flaticon": "Flaticon",
-    "pngwing": "PNGWing",
-    "watermarkly": "Watermarkly"
+    "download_resume": "Download CV",
+    "hire_me": "HIRE ME",
+    "downloading": "Downloading...",
+    "timeline_mobile_header": "Experience",
+    "timeline_mobile_subheader": "Includes work experience and larger projects.",
+    "skills": {
+      "header": "Tech Skills",
+      "subheader": "Technologies and Tools I've Worked With Over the Years.",
+      "credits_title": "Icons thanks to:",
+      "freepik": "Freepik",
+      "flaticon": "Flaticon",
+      "pngwing": "PNGWing",
+      "watermarkly": "Watermarkly"
+    }
   },
   "welcome": {
-    "greeting": "Hello, I'm",
-    "name": "Stanimir Monev",
-    "title": "Full Stack Developer",
-    "description": "Welcome to my portfolio website where you can learn more about my skills and experience.",
     "welcome_text": "Welcome!",
     "my_name_is": "My Name Is",
-    "stanimir_monev": "Stanimir Monev",
+    "name": "Stanimir Monev",
     "and_im_into": "And I'm Into",
-    "about_me_button": "About Me"
+    "about_me_button": "About Me",
+    "typewriter": {
+      "text_1": "Backend Development.",
+      "text_2": "Frontend Development.",
+      "text_3": "App Development.",
+      "text_4": "Game Development.",
+      "text_5": "Artificial Intelligence."
+    }
   },
   "download": {
     "cv_button": "Download CV",
@@ -226,15 +207,6 @@
     "error": "Failed to send message. Please try again.",
     "validation_error": "Please fill in all required fields."
   },
-  "js_messages": {
-    "field_required": "is required.",
-    "all_fields_required": "All fields are required except Job End Date if still working is checked.",
-    "education_fields_required": "All fields are required except Until Date if still studying is checked.",
-    "project_fields_required": "All fields are required.",
-    "failed_load_translations": "Failed to load translations for the selected language.",
-    "present": "Present",
-    "pdf_filename": "StanimirMonevResume.pdf"
-  },
   "email_form": {
     "title": "New E-Mail from SMWorks:",
     "name_label": "Name:",
@@ -251,12 +223,5 @@
     "policy_title": "Cookie Policy",
     "privacy_title": "Privacy Policy",
     "terms_title": "Terms and Conditions"
-  },
-  "typewriter": {
-    "text_1": "Backend Development",
-    "text_2": "Frontend Development",
-    "text_3": "App Development",
-    "text_4": "Game Development",
-    "text_5": "Artificial Intelligence"
   }
 }

@@ -1,13 +1,20 @@
 <div id="mainNavbar" class="navbar">
 	<a id="logoLink" href="/">
-		<img class="logo" src="/assets/images/smworks_logo_cropped.png" alt="logo">
+		<img class="logo" src="/assets/images/SMWLogo.png" alt="logo">
 	</a>
 	<div class="links">
-		<a id="homeButton" href="/#home" data-translate="navigation_menu.home">Home</a>
-		<a id="aboutButton" href="/#about" data-translate="navigation_menu.about">About</a>
-		<a id="contactButton" href="/#contact" data-translate="navigation_menu.contact">Contact</a>
+		<a id="homeButton" class="link" href="/#home">
+			<svg class="link-icon" viewBox="0 0 22 18" fill="currentColor"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9z"/></svg>
+			<span data-translate="navigation.home">Home</span>
+		</a>
+		<a id="aboutButton" class="link" href="/#about">
+			<svg class="link-icon" viewBox="0 0 22 18" fill="currentColor"><path d="M12 2a5 5 0 110 10 5 5 0 010-10zm-9 18a9 9 0 1118 0H3z"/></svg>
+			<span data-translate="navigation.about">About</span>
+		</a>
+		<a id="contactButton" class="link" href="/#contact" >
+			<svg class="link-icon" viewBox="0 0 22 18" fill="currentColor"><path d="M2 5a2 2 0 012-2h16a2 2 0 012 2v1l-10 6L2 6V5z"/><path d="M2 8l10 6 10-6v9a2 2 0 01-2 2H4a2 2 0 01-2-2V8z"/></svg>
+			<span data-translate="navigation.contact">Contact</span>
+		</a>
 		<%- include('languageSwitcher') %>
 	</div>
 </div>
-
-<script src="/assets/javascript/translations.js"></script>

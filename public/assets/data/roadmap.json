@@ -1,80 +1,208 @@
 [  
   {
-    "title": "First steps in programming",
-    "org": "Home",
-    "date": "2012 - 2014",
-    "description": "Created mods for a game that I played with passion - Mount and Blade: Warband.",
+    "translations": {
+      "en": {
+        "title": "First steps in programming",
+        "org": "Home",
+        "date": "2012 - 2014",
+        "description": "Created mods for a game that I was (still am) passionate about - Mount and Blade: Warband."
+      },
+      "de": {
+        "title": "Erste Schritte in der Programmierung",
+        "org": "Zuhause",
+        "date": "2012 - 2014",
+        "description": "Erstellte Mods für ein Spiel, für das ich mich begeistert habe (und immer noch begeistere) - Mount and Blade: Warband."
+      },
+      "bg": {
+        "title": "Първи стъпки в програмирането",
+        "org": "Вкъщи",
+        "date": "2012 - 2014",
+        "description": "Създадох модификации за игра, която ме вълнуваше (и все още ме вълнува) - Mount and Blade: Warband."
+      }
+    },
     "tags": ["Python", "GIMP", "Blender"],
     "x": 52,
     "y": 6,
     "popup_dir": "right"
   },
   {
-    "title": "Java Developer",
-    "org": "QTime GmbH",
-    "date": "2016 - 2020",
-    "description": "Developed various Java applications and gained experience in backend development.",
+    "translations": {
+      "en": {
+        "title": "Java Developer",
+        "org": "QTime GmbH",
+        "date": "2016 - 2020",
+        "description": "Worked on a time tracking software and gained experience in backend development with Java."
+      },
+      "de": {
+        "title": "Java-Entwickler",
+        "org": "QTime GmbH",
+        "date": "2016 - 2020",
+        "description": "Habe an einer Zeiterfassungssoftware gearbeitet und Erfahrungen in der Backend-Entwicklung mit Java gesammelt."
+      },
+      "bg": {
+        "title": "Java програмист",
+        "org": "QTime GmbH",
+        "date": "2016 - 2020",
+        "description": "Работих по софтуер за проследяване на работното време и придобих опит в разработването на бекенд с Java."
+      }
+    },
     "tags": ["Java", "Javascript", "HTML", "C++"],
     "x": 45,
     "y": 18.7,
     "popup_dir": "left"
   },
   {
-    "title": "Shopify Software Developer",
-    "org": "Eshop Guide",
-    "date": "2021 - 2023",
-    "description": "Developed various Shopify applications and gained experience in e-commerce development.",
+    "translations": {
+      "en": {
+        "title": "Shopify Software Developer",
+        "org": "Eshop Guide",
+        "date": "2021 - 2023",
+        "description": "Developed, maintained and fixed Shopify apps and themes while gaining experience in e-commerce development."
+      },
+      "de": {
+        "title": "Shopify Software-Entwickler",
+        "org": "Eshop Guide",
+        "date": "2021 - 2023",
+        "description": "Entwicklung, Wartung und Fehlerbehebung von Shopify-Apps und -Themes sowie Sammeln von Erfahrungen in der E-Commerce-Entwicklung."
+      },
+      "bg": {
+        "title": "Shopify програмист",
+        "org": "Eshop Guide",
+        "date": "2021 - 2023",
+        "description": "Разработвах, поддържах и поправях приложения и теми за Shopify, като същевременно придобивах опит в разработването на онлайн магазини."
+      }
+    },
     "tags": ["Ruby on Rails", "Shopify", "JavaScript", "Liquid", "PostgreSQL"],
     "x": 61,
     "y": 30,
     "popup_dir": "right"
   },
   {
-    "title": "Freelancing Software Developer",
-    "org": "Freelance",
-    "date": "2024 – Present",
-    "description": "Working on various freelance projects, including web development, AImodel training/evaluation and software solutions.",
+    "translations": {
+      "en": {
+        "title": "Freelancing Software Developer",
+        "org": "Freelance",
+        "date": "2024 – Present",
+        "description": "Working on various freelance projects, including web development, AI model training/evaluation and software solutions."
+      },
+      "de": {
+        "title": "Freiberuflicher Software-Entwickler",
+        "org": "Freiberuflich",
+        "date": "2024 – Heute",
+        "description": "Arbeite an verschiedenen Freelance-Projekten, einschließlich Webentwicklung, KI-Modell-Training/-Bewertung und Software-Lösungen."
+      },
+      "bg": {
+        "title": "Програмист на свободна практика",
+        "org": "Свободна практика",
+        "date": "2024 – Настояще",
+        "description": "Работя по различни freelance проекти, включително уеб разработка, обучение/оценка на AI модели и софтуерни решения."
+      }
+    },
     "tags": ["C#", "Python", "MySQL", "PostgreSQL", "JavaScript", "HTML/CSS", "Shopify"],
     "x": 55,
     "y": 42.5,
     "popup_dir": "right"
   },
   {
-    "title": "Reinforcement Learning Research",
-    "org": "University Project",
-    "date": "2024",
-    "description": "A research project focused on applying reinforcement learning techniques to a selfmade 2D game.",
-    "tags": ["Python", "TensorFlow", "Reinforcement Learning"],
+    "translations": {
+      "en": {
+        "title": "Reinforcement Learning Praxis",
+        "org": "University Project",
+        "date": "2024",
+        "description": "A project focused on applying reinforcement learning to train an AI agent to play a selfmade 2D game."
+      },
+      "de": {
+        "title": "Reinforcement Learning Forschung",
+        "org": "Universitätsprojekt",
+        "date": "2024",
+        "description": "Ein Projekt, das sich auf die Anwendung von Reinforcement Learning konzentriert, um einen KI-Agenten für das Spielen eines selbst entwickelten 2D-Spiels zu trainieren."
+      },
+      "bg": {
+        "title": "Изследване в областта на Reinforcement Learning",
+        "org": "Университетски проект",
+        "date": "2024",
+        "description": "Проект, фокусиран върху прилагането на Reinforcement Learning за обучение на агент с изкуствен интелект, който да играе 2D игра."
+      }
+    },
+    "tags": ["Python", "TensorFlow", "Reinforcement Learning", "Pygame", "OpenAI Gym"],
     "x": 40.2,
     "y": 54,
     "popup_dir": "left"
   },
   {
-    "title": "Portfolio Website",
-    "org": "Personal Project",
-    "date": "2024 - Present",
-    "description": "A personal portfolio website to showcase my projects and skills.",
+    "translations": {
+      "en": {
+        "title": "Portfolio Website",
+        "org": "Personal Project",
+        "date": "2024 - Present",
+        "description": "A personal portfolio website to showcase my projects and skills."
+      },
+      "de": {
+        "title": "Portfolio-Website",
+        "org": "Persönliches Projekt",
+        "date": "2024 - Heute",
+        "description": "Eine persönliche Portfolio-Website zur Präsentation meiner Projekte und Fähigkeiten."
+      },
+      "bg": {
+        "title": "Портфолио уебсайт",
+        "org": "Личен проект",
+        "date": "2024 - Настояще",
+        "description": "Личен портфолио уебсайт за представяне на моите проекти и умения."
+      }
+    },
     "tags": ["HTML", "CSS", "JavaScript", "EJS"],
     "x": 56,
     "y": 65.5,
     "popup_dir": "right"
   },
   {
-    "title": "Portfolio Website",
-    "org": "Personal Project",
-    "date": "2024 - Present",
-    "description": "A personal portfolio website to showcase my projects and skills.",
-    "tags": ["HTML", "CSS", "JavaScript", "EJS"],
-    "x": 56,
-    "y": 80,
+    "translations": {
+      "en": {
+        "title": "Blog building website (WIP)",
+        "org": "Personal Project",
+        "date": "2024 - Present",
+        "description": "A web application to create and manage blogs using React for the frontend and ExpressJS for the backend."
+      },
+      "de": {
+        "title": "Blog-Bau-Website (WIP)",
+        "org": "Persönliches Projekt",
+        "date": "2024 - Heute",
+        "description": "Eine Webanwendung zum Erstellen und Verwalten von Blogs mit React für das Frontend und ExpressJS für das Backend."
+      },
+      "bg": {
+        "title": "Сайт за блогове (WIP)",
+        "org": "Личен проект",
+        "date": "2024 - Настояще",
+        "description": "Уеб приложение за създаване и управление на блогове, използвайки React за фронтенд и ExpressJS за бекенд."
+      }
+    },
+    "tags": ["React", "JavaScript", "EJS"],
+    "x": 57,
+    "y": 79,
     "popup_dir": "right"
   },
   {
-    "title": "React Blog Builder (WIP)",
-    "org": "Personal Project",
-    "date": "2024 - Present",
-    "description": "A web application to create and manage blogs using React for the frontend and Express for the backend.",
-    "tags": ["React", "Express", "EJS"],
+    "translations": {
+      "en": {
+        "title": "Apple-like Shopify Website",
+        "org": "Freelance Project",
+        "date": "2025 - Present",
+        "description": "Built an apple-like Shopify website for a client using a custom theme, that I created and extended from the Impulse theme."
+      },
+      "de": {
+        "title": "Apple-ähnliche Shopify-Website",
+        "org": "Freelance-Projekt",
+        "date": "2025 - Heute",
+        "description": "Erstellte für einen Kunden eine Shopify-Website im Apple-Stil unter Verwendung eines Themes, welches ich entwickelt habe und das auf dem Impulse-Theme basiert."
+      },
+      "bg": {
+        "title": "Apple-подобен Shopify уебсайт",
+        "org": "Фрийланс проект",
+        "date": "2025 - Настояще",
+        "description": "Изградих Shopify уебсайт подобен на Apple за клиент, като създадох персонализирана тема, като разширение от темата Impulse."
+      }
+    },
+    "tags": ["JavaScript", "HTML/CSS", "Liquid", "Shopify"],
     "x": 44,
     "y": 93,
     "popup_dir": "left"
