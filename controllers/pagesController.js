@@ -139,6 +139,14 @@ const getAdminPage = (req, res) => {
   res.render('admin');
 };
 
+/**
+ * Renders the legacy resume editor page.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {void}
+ * @deprecated Legacy resume/CV implementation.
+ */
 const getResumeEditorPage = (req, res) => {
   res.render('resume_editor');
 };

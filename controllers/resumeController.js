@@ -13,6 +13,7 @@
  *
  * This controller ensures that resume data is managed effectively and that requests are handled
  * securely and efficiently.
+  * @deprecated Legacy resume/CV implementation.
  */
 
 const resumeService = require('../services/resumeService');
@@ -25,6 +26,7 @@ const ADMIN_ID = 1;
  * @param {Object} req - The request object containing resume data in the body.
  * @param {Object} res - The response object used to send back the result.
  * @returns {Promise<void>} - Sends a response with the status of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 const saveOrUpdateResume = async (req, res) => {
   const userId = req.session.userId;
@@ -66,6 +68,7 @@ const saveOrUpdateResume = async (req, res) => {
  * @param {Object} req - The request object containing work experience data in the body.
  * @param {Object} res - The response object used to send back the result.
  * @returns {Promise<void>} - Sends a response with the status of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 const addOrUpdateWorkExperience = async (req, res) => {
   const userId = req.session.userId;
@@ -98,6 +101,7 @@ const addOrUpdateWorkExperience = async (req, res) => {
  * @param {Object} req - The request object containing the work experience ID in the body.
  * @param {Object} res - The response object used to send back the result.
  * @returns {Promise<void>} - Sends a response with the status of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 const deleteWorkExperience = async (req, res) => {
   const userId = req.session.userId;
@@ -121,6 +125,7 @@ const deleteWorkExperience = async (req, res) => {
  * @param {Object} req - The request object containing education data in the body.
  * @param {Object} res - The response object used to send back the result.
  * @returns {Promise<void>} - Sends a response with the status of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 const addOrUpdateEducation = async (req, res) => {
   const userId = req.session.userId;
@@ -154,6 +159,7 @@ const addOrUpdateEducation = async (req, res) => {
  * @param {Object} req - The request object containing the education ID in the body.
  * @param {Object} res - The response object used to send back the result.
  * @returns {Promise<void>} - Sends a response with the status of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 const deleteEducation = async (req, res) => {
   const userId = req.session.userId;
@@ -177,6 +183,7 @@ const deleteEducation = async (req, res) => {
  * @param {Object} req - The request object containing project data in the body.
  * @param {Object} res - The response object used to send back the result.
  * @returns {Promise<void>} - Sends a response with the status of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 const addOrUpdateProject = async (req, res) => {
   const userId = req.session.userId;
@@ -206,6 +213,7 @@ const addOrUpdateProject = async (req, res) => {
  * @param {Object} req - The request object containing the project ID in the body.
  * @param {Object} res - The response object used to send back the result.
  * @returns {Promise<void>} - Sends a response with the status of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 const deleteProject = async (req, res) => {
   const userId = req.session.userId;
@@ -229,6 +237,7 @@ const deleteProject = async (req, res) => {
  * @param {Object} req - The request object.
  * @param {Object} res - The response object used to send back the resume information.
  * @returns {Promise<void>} - Sends a response with the resume data if found.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getResumeInfo = async (req, res) => {
   const userId = req.session.userId;
@@ -251,6 +260,7 @@ const getResumeInfo = async (req, res) => {
  * @param {Object} req - The request object containing the work experience ID in the URL parameters.
  * @param {Object} res - The response object used to send back the work experience data.
  * @returns {Promise<void>} - Sends a response with the work experience data if found.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getWorkExperience = async (req, res) => {
   const userId = req.session.userId;
@@ -276,6 +286,7 @@ const getWorkExperience = async (req, res) => {
  * @param {Object} req - The request object containing the education ID in the URL parameters.
  * @param {Object} res - The response object used to send back the education data.
  * @returns {Promise<void>} - Sends a response with the education data if found.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getEducation = async (req, res) => {
   const userId = req.session.userId;
@@ -301,6 +312,7 @@ const getEducation = async (req, res) => {
  * @param {Object} req - The request object containing the project ID in the URL parameters.
  * @param {Object} res - The response object used to send back the project data.
  * @returns {Promise<void>} - Sends a response with the project data if found.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getProject = async (req, res) => {
   const userId = req.session.userId;
@@ -326,6 +338,7 @@ const getProject = async (req, res) => {
  * @param {Object} req - The request object.
  * @param {Object} res - The response object used to send back the work experience data.
  * @returns {Promise<void>} - Sends a response with the work experiences data.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getAdminWorkExperiences = async (req, res) => {
   try {
@@ -348,6 +361,7 @@ const getAdminWorkExperiences = async (req, res) => {
  * @param {Object} req - The request object.
  * @param {Object} res - The response object used to send back the education data.
  * @returns {Promise<void>} - Sends a response with the education data.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getAdminEducations = async (req, res) => {
   try {
@@ -370,6 +384,7 @@ const getAdminEducations = async (req, res) => {
  * @param {Object} req - The request object.
  * @param {Object} res - The response object used to send back the project data.
  * @returns {Promise<void>} - Sends a response with the projects data.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getAdminProjects = async (req, res) => {
   try {
@@ -392,6 +407,7 @@ const getAdminProjects = async (req, res) => {
  * @param {Object} req - The request object.
  * @param {Object} res - The response object used to send back the resume information.
  * @returns {Promise<void>} - Sends a response with the resume data if found.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getAdminResume = async (req, res) => {
   try {
@@ -413,6 +429,7 @@ const getAdminResume = async (req, res) => {
  * @param {Object} req - The request object.
  * @param {Object} res - The response object used to send back the work experience data.
  * @returns {Promise<void>} - Sends a response with the work experiences data.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getWorkExperiences = async (req, res) => {
   const userId = req.session.userId;
@@ -434,6 +451,7 @@ const getWorkExperiences = async (req, res) => {
  * @param {Object} req - The request object.
  * @param {Object} res - The response object used to send back the education data.
  * @returns {Promise<void>} - Sends a response with the education data.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getEducations = async (req, res) => {
   const userId = req.session.userId;
@@ -455,6 +473,7 @@ const getEducations = async (req, res) => {
  * @param {Object} req - The request object.
  * @param {Object} res - The response object used to send back the project data.
  * @returns {Promise<void>} - Sends a response with the projects data.
+  * @deprecated Legacy resume/CV implementation.
  */
 const getProjects = async (req, res) => {
   const userId = req.session.userId;

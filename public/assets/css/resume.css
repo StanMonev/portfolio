@@ -1,3 +1,4 @@
+/* @deprecated Legacy resume/CV stylesheet. */
 /* Resume Editor Page Styles */
 body {
     font-family: Arial, sans-serif;
@@ -176,3 +177,4 @@ textarea {
         height: 50%;
     }
 }
+

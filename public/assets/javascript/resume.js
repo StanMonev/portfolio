@@ -11,6 +11,7 @@
  * - Manage form submissions for saving or updating resume data, work experiences, educations, and projects.
  * - Handle UI interactions like panel resizing, input validation, and updating previews.
  * - Generate PDF from the resume preview.
+  * @deprecated Legacy resume/CV implementation.
  */
 
 const divider = document.querySelector('.divider');
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * 
  * @param {string} date - The date string to convert.
  * @returns {string} - The formatted date string.
+  * @deprecated Legacy resume/CV implementation.
  */
 function getInputDate(date) {
     const now = new Date(date);
@@ -45,6 +47,7 @@ function getInputDate(date) {
  * If no saved values are found, the panels are set to equal widths.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function setInitialWidths() {
     const container = divider.parentNode;
@@ -69,6 +72,7 @@ function setInitialWidths() {
  * button clicks, and input changes.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function addEventListeners() {
     divider.addEventListener('mousedown', (e) => {
@@ -162,6 +166,7 @@ function addEventListeners() {
  * Fetches and displays the main resume data (e.g., name, contact info).
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function fetchResumeData() {
     try {
@@ -189,6 +194,7 @@ async function fetchResumeData() {
  * Updates the resume preview section with the latest input values.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function updatePreview(event=null, sectionOrder=null) {
     const firstName = document.getElementById('firstName').value;
@@ -245,6 +251,13 @@ function updatePreview(event=null, sectionOrder=null) {
     if(interests) document.getElementById('previewInterests').innerHTML = formatList(interests);
 }
 
+/**
+ * Creates a short display label from a URL.
+ *
+ * @param {string} url - The URL to transform into a display label.
+ * @returns {string} - The display label extracted from the URL.
+ * @deprecated Legacy resume/CV implementation.
+ */
 function createDisplayName(url) {
     if (!url) return '';
     const displayText = url.split('/').pop();
@@ -255,6 +268,7 @@ function createDisplayName(url) {
  * Clears all input fields related to the resume data.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function clearResumeFields() {
     document.getElementById('firstName').value = '';
@@ -275,6 +289,7 @@ function clearResumeFields() {
  * Saves or updates the main resume data on the server.
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function saveOrUpdateResume() {
     const requiredFields = ['firstName', 'lastName', 'town', 'country', 'email', 'languages', 'skills'];
@@ -312,6 +327,7 @@ async function saveOrUpdateResume() {
  * Fetches and displays the work experiences associated with the resume.
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function fetchWorkExperiences() {
     try {
@@ -352,6 +368,7 @@ async function fetchWorkExperiences() {
  * Saves or updates a work experience entry associated with the resume.
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function saveOrUpdateWorkExperience() {
     const jobTitle = document.getElementById('jobTitle').value.trim();
@@ -389,6 +406,7 @@ async function saveOrUpdateWorkExperience() {
  * Resets the work experience form buttons to their default states.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function resetWorkExperienceButtons() {
     document.getElementById('addWorkExperienceButton').style.display = 'inline-block';
@@ -402,6 +420,7 @@ function resetWorkExperienceButtons() {
  * 
  * @param {number} id - The ID of the work experience entry to edit.
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function editWorkExperience(id) {
     try {
@@ -427,6 +446,7 @@ async function editWorkExperience(id) {
  * 
  * @param {number} id - The ID of the work experience entry to delete.
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function deleteWorkExperience(id) {
     try {
@@ -442,6 +462,7 @@ async function deleteWorkExperience(id) {
  * Fetches and displays the education entries associated with the resume.
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function fetchEducations() {
     try {
@@ -482,6 +503,7 @@ async function fetchEducations() {
  * Saves or updates an education entry associated with the resume.
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function saveOrUpdateEducation() {
     const name = document.getElementById('educationName').value.trim();
@@ -519,6 +541,7 @@ async function saveOrUpdateEducation() {
  * Resets the education form buttons to their default states.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function resetEducationButtons() {
     document.getElementById('addEducationButton').style.display = 'inline-block';
@@ -532,6 +555,7 @@ function resetEducationButtons() {
  * 
  * @param {number} id - The ID of the education entry to edit.
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function editEducation(id) {
     try {
@@ -557,6 +581,7 @@ async function editEducation(id) {
  * 
  * @param {number} id - The ID of the education entry to delete.
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function deleteEducation(id) {
     try {
@@ -572,6 +597,7 @@ async function deleteEducation(id) {
  * Fetches and displays the projects associated with the resume.
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function fetchProjects() {
     try {
@@ -609,6 +635,7 @@ async function fetchProjects() {
  * Saves or updates a project entry associated with the resume.
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function saveOrUpdateProject() {
     const name = document.getElementById('projectName').value.trim();
@@ -640,6 +667,7 @@ async function saveOrUpdateProject() {
  * Resets the project form buttons to their default states.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function resetProjectButtons() {
     document.getElementById('addProjectButton').style.display = 'inline-block';
@@ -653,6 +681,7 @@ function resetProjectButtons() {
  * 
  * @param {number} id - The ID of the project entry to edit.
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function editProject(id) {
     try {
@@ -674,6 +703,7 @@ async function editProject(id) {
  * 
  * @param {number} id - The ID of the project entry to delete.
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function deleteProject(id) {
     try {
@@ -689,6 +719,7 @@ async function deleteProject(id) {
  * Toggles the enabled/disabled state of the job end date field based on the 'Still Working' checkbox.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function toggleJobEndDate() {
     const jobEndDate = document.getElementById('jobEndDate');
@@ -703,6 +734,7 @@ function toggleJobEndDate() {
  * Toggles the enabled/disabled state of the education end date field based on the 'Still Studying' checkbox.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function toggleEducationEndDate() {
     const educationUntil = document.getElementById('educationUntil');
@@ -717,6 +749,7 @@ function toggleEducationEndDate() {
  * Initializes all the date inputs to have the maximum date until today.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function setStartingDates(){
     document.getElementById('jobBeginDate').max = new Date().toISOString().split('T')[0];
@@ -729,6 +762,7 @@ function setStartingDates(){
  * Sets the minimum date of the job end date input to the selected job begin date input. 
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function validateJobDates() {
     document.getElementById('jobEndDate').min = document.getElementById('jobBeginDate').value;
@@ -738,6 +772,7 @@ function validateJobDates() {
  * Sets the minimum date of the education until date input to the selected education from date input. 
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function validateEducationDates() {    
     document.getElementById('educationUntil').min = document.getElementById('educationFrom').value;
@@ -748,6 +783,7 @@ function validateEducationDates() {
  * 
  * @param {string} section - The section to clear ('work', 'education', or 'project').
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function clearFields(section) {
     if (section === 'work') {
@@ -774,6 +810,7 @@ function clearFields(section) {
  * Updates the work experience preview section with the latest data.
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function updateWorkExperiencePreview() {
     try {
@@ -807,6 +844,7 @@ async function updateWorkExperiencePreview() {
  * Updates the education preview section with the latest data.
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function updateEducationPreview() {
     try {
@@ -842,6 +880,7 @@ async function updateEducationPreview() {
  * Updates the projects preview section with the latest data.
  * 
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function updateProjectsPreview() {
     try {
@@ -869,6 +908,7 @@ async function updateProjectsPreview() {
  * Event listener for downloading the resume as a PDF.
  * 
  * @returns {void}
+  * @deprecated Legacy resume/CV implementation.
  */
 document.getElementById('downloadPDF').addEventListener('click', function () {
     const element = document.getElementById('cvPreview');
@@ -882,6 +922,12 @@ document.getElementById('downloadPDF').addEventListener('click', function () {
     html2pdf().set(opt).from(element).save();
 });
 
+/**
+ * Initializes sortable behavior for the CV preview sections.
+ *
+ * @returns {void}
+ * @deprecated Legacy resume/CV implementation.
+ */
 function initializeSortable(){
     var cvPreview = document.getElementById('cvPreview');
     Sortable.create(cvPreview, {

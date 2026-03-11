@@ -1,6 +1,7 @@
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
+ * @deprecated Legacy resume/CV schema migration.
  */
 exports.up = function(knex) {
     return knex.schema
@@ -58,6 +59,7 @@ exports.up = function(knex) {
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
+ * @deprecated Legacy resume/CV schema migration.
  */
 exports.down = function(knex) {
     return knex.schema

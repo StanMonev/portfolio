@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', addClickToDownloadButtons);
 
 /**
  * Wire up the download button click -> update preview -> watermark -> pdf -> cleanup
+  * @deprecated Legacy resume/CV implementation.
  */
 function addClickToDownloadButtons() {
   const btns = [
@@ -75,6 +76,7 @@ function addClickToDownloadButtons() {
  * Toggle loading state for the neon button
  * @param {HTMLElement} btn
  * @param {boolean} isLoading
+  * @deprecated Legacy resume/CV implementation.
  */
 function setLoading(btn, isLoading) {
   if (!btn) return;
@@ -94,6 +96,7 @@ function setLoading(btn, isLoading) {
 /**
  * Injects a transient stylesheet that adds the watermark. Returns a cleanup fn.
  * @returns {() => void}
+  * @deprecated Legacy resume/CV implementation.
  */
 function attachWatermarkStyle() {
   const style = document.createElement('style');
@@ -131,6 +134,7 @@ function attachWatermarkStyle() {
  * Fetches the resume data and updates the preview sections.
  * Relies on fetchData, orderElements, formatList, splitTitle existing globally.
  * @returns {Promise<void>}
+  * @deprecated Legacy resume/CV implementation.
  */
 async function updatePreview() {
   try {
@@ -177,6 +181,7 @@ async function updatePreview() {
 
 /**
  * Education section
+  * @deprecated Legacy resume/CV implementation.
  */
 async function updateEducationPreview() {
   try {
@@ -217,6 +222,7 @@ async function updateEducationPreview() {
 
 /**
  * Projects section
+  * @deprecated Legacy resume/CV implementation.
  */
 async function updateProjectsPreview() {
   try {
@@ -247,6 +253,7 @@ async function updateProjectsPreview() {
 
 /**
  * Work experience section
+  * @deprecated Legacy resume/CV implementation.
  */
 async function updateWorkExperiencePreview() {
   try {
@@ -290,6 +297,7 @@ async function updateWorkExperiencePreview() {
 /**
  * Build contact HTML segments with icons. Matches your original output exactly.
  * @param {{town?:string,country?:string,email?:string,linkedin?:string,github?:string,website?:string}} info
+  * @deprecated Legacy resume/CV implementation.
  */
 function buildContactHTML(info) {
   const parts = [];
@@ -301,7 +309,10 @@ function buildContactHTML(info) {
   return parts.join(' | ');
 }
 
-/** Month name in en-GB like your original usage */
+/**
+ * Month name in en-GB like your original usage
+ * @deprecated Legacy resume/CV implementation.
+ */
 function fromDateLocale(d) {
   return d.toLocaleString('en-GB', { month: 'long' });
 }
