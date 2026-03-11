@@ -194,6 +194,12 @@ class TranslationService {
             const key = element.getAttribute('data-translate-title');
             element.title = this.t(key);
         });
+
+        // Translate ARIA labels with data-translate-aria-label
+        document.querySelectorAll('[data-translate-aria-label]').forEach(element => {
+            const key = element.getAttribute('data-translate-aria-label');
+            element.setAttribute('aria-label', this.t(key));
+        });
     }
 
     /**
