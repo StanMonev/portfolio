@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "testimonials": [
+    {
+      "id": "jonathan-t-001",
+      "text": "The whole collaboration was smooth and easy from start to finish.",
+      "author": "Jonathan T.",
+      "rating": 5,
+      "source": "Client Review"
+    },
+    {
+      "id": "mahmood-v-001",
+      "text": "Working with Stanimir was a real pleasure; professional and easy to work with.",
+      "author": "Mahmood V.",
+      "rating": 5,
+      "source": "Client Review"
+    },
+    {
+      "id": "alex-s-001",
+      "text": "Stanimir delivered our software project on time with strong quality and quickly understood the requirements. Communication was efficient and professional, and we'd gladly work with him again.",
+      "author": "Alex S.",
+      "rating": 5,
+      "source": "Client Review"
+    },
+    {
+      "id": "eshop-guide-001",
+      "text": "Stanimir consistently delivered reliable, high-quality work with a structured and efficient approach. He was dependable, team-oriented, and performed to our full satisfaction.",
+      "author": "Eshop Guide GmbH",
+      "rating": 5,
+      "source": "Eshop Guide GmbH"
+    },
+    {
+      "id": "qtime-001",
+      "text": "He showed solid technical expertise and solved issues quickly in our software systems. He worked independently, handled pressure well, and was a strong team contributor.",
+      "author": "QTime GmbH",
+      "rating": 5,
+      "source": "QTime GmbH"
+    },
+    {
+      "id": "todor-todorov-001",
+      "text": "Stanimir improved key C# processes while keeping existing functionality stable and reliable. His SQL and full-stack skills made him highly effective for both optimization and new development.",
+      "author": "Todor Todorov",
+      "role": "CTO",
+      "company": "Industrial Integrated Systems Ltd.",
+      "rating": 5,
+      "source": "Industrial Integrated Systems Ltd."
+    }
+  ]
+}

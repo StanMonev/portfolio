@@ -169,6 +169,13 @@
     "downloading": "Wird heruntergeladen...",
     "timeline_mobile_header": "Erfahrung",
     "timeline_mobile_subheader": "Enthält Berufserfahrung und größere Projekte.",
+    "reviews_title": "Bewertungen",
+    "reviews_subtitle": "Feedback von Kunden und Teams, mit denen ich gearbeitet habe.",
+    "reviews_prev_aria": "Vorherige Bewertungen",
+    "reviews_next_aria": "Naechste Bewertungen",
+    "reviews_empty": "Noch keine Bewertungen.",
+    "reviews_unavailable": "Bewertungen sind derzeit nicht verfuegbar.",
+    "reviews_anonymous": "Anonym",
     "skills": {
       "header": "Fähigkeiten",
       "subheader": "Technologien und Tools, mit denen ich im Laufe der Jahre gearbeitet habe.",

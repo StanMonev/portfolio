@@ -169,6 +169,13 @@
     "downloading": "Downloading...",
     "timeline_mobile_header": "Experience",
     "timeline_mobile_subheader": "Includes work experience and larger projects.",
+    "reviews_title": "Reviews",
+    "reviews_subtitle": "Feedback from clients and teams I have worked with.",
+    "reviews_prev_aria": "Previous reviews",
+    "reviews_next_aria": "Next reviews",
+    "reviews_empty": "No reviews yet.",
+    "reviews_unavailable": "Reviews are currently unavailable.",
+    "reviews_anonymous": "Anonymous",
     "skills": {
       "header": "Tech Skills",
       "subheader": "Technologies and Tools I've Worked With Over the Years.",

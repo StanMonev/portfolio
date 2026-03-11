@@ -169,6 +169,13 @@
     "downloading": "Изтегля се...",
     "timeline_mobile_header": "Опит",
     "timeline_mobile_subheader": "Съдържа работни места и по-големи проекти.",
+    "reviews_title": "Отзиви",
+    "reviews_subtitle": "Мнения от клиенти и екипи, с които съм работил.",
+    "reviews_prev_aria": "Предишни отзиви",
+    "reviews_next_aria": "Следващи отзиви",
+    "reviews_empty": "Все още няма отзиви.",
+    "reviews_unavailable": "Отзивите в момента не са налични.",
+    "reviews_anonymous": "Анонимен",
     "skills": {
       "header": "Умения",
       "subheader": "Технологии и инструменти, с които съм работил през годините.",
