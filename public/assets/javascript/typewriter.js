@@ -12,6 +12,14 @@
  */
 
 let typewriterInstances = [];
+let typewriterStarted = false;
+const TYPEWRITER_FALLBACK_TEXTS = [
+  "Backend Development",
+  "Frontend Development",
+  "App Development",
+  "Game Development",
+  "Artificial Intelligence"
+];
 
 /**
  * @param {HTMLElement} el - The HTML element where the typewriter effect will be applied.
@@ -91,21 +99,15 @@ TxtType.prototype.stop = function() {
 };
 
 /**
- * onload event listener
- * 
- * Starts the typewriter effect when the window finishes loading.
- */
-window.onload = function () {
-  startTypewriter();
-};
-
-/**
  * Initializes the typewriter effect on elements with the class "typewriter".
  * It reads the `data-type` attribute to get the custom text strings if provided, otherwise uses the default text array.
  * 
  * @returns {void}
  */
 function startTypewriter() {
+  if (typewriterStarted) return;
+  typewriterStarted = true;
+
   var elements = document.getElementsByClassName("typewriter");
   for (var i = 0; i < elements.length; i++) {
     let translationKeys = elements[i].getAttribute('data-type');
@@ -126,18 +128,21 @@ function startTypewriter() {
  * Gets translated texts from translation keys
  */
 function getTranslatedTexts(translationKeys) {
-  if (!translationKeys) return ["Backend Development", "Frontend Development", "App Development", "Game Development", "Artificial Intelligence"];
+  if (!translationKeys) return TYPEWRITER_FALLBACK_TEXTS;
   
   try {
     const keys = JSON.parse(translationKeys);
     if (window.translationService) {
-      return keys.map(key => window.translationService.t(key));
+      return keys.map((key, index) => {
+        const translated = window.translationService.t(key, key);
+        return translated === key ? TYPEWRITER_FALLBACK_TEXTS[index] || key : translated;
+      });
     } else {
       // Fallback texts if translation service is not available
-      return ["Backend Development", "Frontend Development", "App Development", "Game Development", "Artificial Intelligence"];
+      return TYPEWRITER_FALLBACK_TEXTS;
     }
   } catch (e) {
-    return ["Backend Development", "Frontend Development", "App Development", "Game Development", "Artificial Intelligence"];
+    return TYPEWRITER_FALLBACK_TEXTS;
   }
 }
 
@@ -156,6 +161,48 @@ function updateTypewriterLanguage() {
  */
 window.addEventListener('languageChanged', function(e) {
   updateTypewriterLanguage();
+});
+
+/**
+ * Initializes typewriter when translations are ready (or immediately as fallback).
+ */
+function initializeTypewriter() {
+  const readyPromise = window.translationServiceReadyPromise;
+
+  if (readyPromise && typeof readyPromise.then === 'function') {
+    readyPromise
+      .catch(() => null)
+      .finally(() => startTypewriter());
+    return;
+  }
+
+  if (window.translationService) {
+    const fallbackTimer = setTimeout(() => {
+      if (!typewriterStarted) startTypewriter();
+    }, 1500);
+
+    window.addEventListener('translationsInitialized', () => {
+      clearTimeout(fallbackTimer);
+      if (!typewriterStarted) startTypewriter();
+    }, { once: true });
+    return;
+  }
+
+  startTypewriter();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeTypewriter);
+} else {
+  initializeTypewriter();
+}
+
+window.addEventListener('translationsInitialized', () => {
+  if (!typewriterStarted) {
+    startTypewriter();
+  } else {
+    updateTypewriterLanguage();
+  }
 });
 
 /**

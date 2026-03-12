@@ -25,7 +25,10 @@ const PDF_OPTIONS_BASE = {
   jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
 };
 
+const HTML2PDF_CDN_URL = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js';
+
 let isDownloading = false;
+let html2PdfLoaderPromise = null;
 
 // === Boot ====================================================================
 document.addEventListener('DOMContentLoaded', initResumeDownload);
@@ -87,7 +90,8 @@ async function handleDownload(buttons) {
       filename: getResumeFilename(language)
     };
 
-    await html2pdf().set(pdfOptions).from(cvPreview).save();
+    const html2pdfLib = await ensureHtml2PdfLoaded();
+    await html2pdfLib().set(pdfOptions).from(cvPreview).save();
   } catch (error) {
     console.error('[resume] PDF generation failed:', error);
   } finally {
@@ -96,6 +100,52 @@ async function handleDownload(buttons) {
     setLoadingState(buttons, false);
     isDownloading = false;
   }
+}
+
+/**
+ * Loads html2pdf lazily when needed for downloads.
+ * @returns {Promise<Function>}
+ * @deprecated Legacy resume/CV implementation.
+ */
+function ensureHtml2PdfLoaded() {
+  if (typeof window.html2pdf === 'function') {
+    return Promise.resolve(window.html2pdf);
+  }
+
+  if (html2PdfLoaderPromise) {
+    return html2PdfLoaderPromise;
+  }
+
+  html2PdfLoaderPromise = new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-html2pdf-loader="true"]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve(window.html2pdf), { once: true });
+      existing.addEventListener('error', () => reject(new Error('Failed to load html2pdf library.')), { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = HTML2PDF_CDN_URL;
+    script.async = true;
+    script.defer = true;
+    script.setAttribute('data-html2pdf-loader', 'true');
+    script.onload = () => {
+      if (typeof window.html2pdf === 'function') {
+        resolve(window.html2pdf);
+      } else {
+        reject(new Error('html2pdf loaded, but API is unavailable.'));
+      }
+    };
+    script.onerror = () => reject(new Error('Failed to load html2pdf library.'));
+
+    document.head.appendChild(script);
+  }).finally(() => {
+    if (typeof window.html2pdf !== 'function') {
+      html2PdfLoaderPromise = null;
+    }
+  });
+
+  return html2PdfLoaderPromise;
 }
 
 /**

@@ -23,7 +23,15 @@
     margin: 0;
 }
 
-.cv-header p {
+.cv-header .preview-job-title {
+    margin: 4px 0 2px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6f8bb4;
+    letter-spacing: 0.2px;
+}
+
+.cv-header #previewContact {
     font-size: 14px;
     margin: 10px 0 0;
 }
@@ -83,7 +91,8 @@
 }
 
 #previewName {
-    color: cornflowerblue;
+    color: rgb(25, 116, 206);
+    font-weight: bolder;
 }
 
 .title-main {

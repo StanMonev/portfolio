@@ -292,13 +292,34 @@ const setupMatrixBackground = () => {
     return;
   }
 
-  window.updateMatrix = () => resetMatrix(canvas);
+  let resetRafId = null;
+  const scheduleMatrixReset = () => {
+    if (resetRafId != null) return;
+    resetRafId = requestAnimationFrame(() => {
+      resetRafId = null;
+      resetMatrix(canvas);
+    });
+  };
+
+  window.updateMatrix = () => scheduleMatrixReset();
+
+  const mainContainer = document.querySelector('.main-container');
+  if (mainContainer && typeof ResizeObserver !== 'undefined') {
+    const resizeObserver = new ResizeObserver(() => {
+      scheduleMatrixReset();
+    });
+    resizeObserver.observe(mainContainer);
+  }
 
   // one-time listeners
-  window.addEventListener('resize', () => resetMatrix(canvas), { passive: true });
-  window.addEventListener('orientationchange', () => resetMatrix(canvas), { passive: true });
+  window.addEventListener('resize', scheduleMatrixReset, { passive: true });
+  window.addEventListener('orientationchange', scheduleMatrixReset, { passive: true });
+  window.addEventListener('languageChanged', scheduleMatrixReset, { passive: true });
+  window.addEventListener('translationsInitialized', scheduleMatrixReset, { passive: true });
+
   // Start
-  window.addEventListener('load', () => resetMatrix(canvas), { passive: true });
+  window.addEventListener('load', scheduleMatrixReset, { passive: true });
+  scheduleMatrixReset();
 };
 
 /**

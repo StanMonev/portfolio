@@ -220,11 +220,39 @@ class TranslationService {
 // Create global instance
 window.translationService = new TranslationService();
 
+/**
+ * Dispatches an event when translations are initialized and ready.
+ */
+function notifyTranslationsInitialized() {
+    window.dispatchEvent(new CustomEvent('translationsInitialized', {
+        detail: {
+            language: window.translationService.getCurrentLanguage(),
+            translations: window.translationService.getTranslations()
+        }
+    }));
+}
+
+/**
+ * Initializes translation service and exposes a global ready promise.
+ */
+function initializeTranslations() {
+    const readyPromise = window.translationService.init()
+        .then(() => {
+            notifyTranslationsInitialized();
+            return window.translationService;
+        })
+        .catch((error) => {
+            console.error('[translations] initialization failed:', error);
+            throw error;
+        });
+
+    window.translationServiceReadyPromise = readyPromise;
+    return readyPromise;
+}
+
 // Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        window.translationService.init();
-    });
+    document.addEventListener('DOMContentLoaded', initializeTranslations);
 } else {
-    window.translationService.init();
+    initializeTranslations();
 }
