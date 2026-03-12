@@ -303,16 +303,20 @@ const setupMatrixBackground = () => {
 
   window.updateMatrix = () => scheduleMatrixReset();
 
-  const mainContainer = document.querySelector('.main-container');
-  if (mainContainer && typeof ResizeObserver !== 'undefined') {
-    const resizeObserver = new ResizeObserver(() => {
-      scheduleMatrixReset();
-    });
-    resizeObserver.observe(mainContainer);
-  }
+  // On mobile, scrolling can trigger resize events due browser UI (address bar) changes.
+  // Reset only when viewport width changes (real layout shift), not height-only churn.
+  let lastViewportWidth = window.innerWidth;
+  const onViewportResize = () => {
+    const currentWidth = window.innerWidth;
+    const widthChanged = Math.abs(currentWidth - lastViewportWidth) > 1;
+    if (!widthChanged) return;
+
+    lastViewportWidth = currentWidth;
+    scheduleMatrixReset();
+  };
 
   // one-time listeners
-  window.addEventListener('resize', scheduleMatrixReset, { passive: true });
+  window.addEventListener('resize', onViewportResize, { passive: true });
   window.addEventListener('orientationchange', scheduleMatrixReset, { passive: true });
   window.addEventListener('languageChanged', scheduleMatrixReset, { passive: true });
   window.addEventListener('translationsInitialized', scheduleMatrixReset, { passive: true });
