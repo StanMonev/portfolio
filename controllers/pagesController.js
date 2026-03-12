@@ -18,48 +18,48 @@ const { validationResult } = require('express-validator');
 const emailService = require('../services/emailService');
 const path = require('path');
 const skills = [
-  { name: 'JavaScript', icon: '/assets/images/icons/javascript.png' },
-  { name: 'CSS', icon: '/assets/images/icons/css3.png' },
-  { name: 'HTML5', icon: '/assets/images/icons/html5.png' },
-  { name: 'Java', icon: '/assets/images/icons/java.png' },
-  { name: 'Python', icon: '/assets/images/icons/python.png' },
-  { name: 'Ruby', icon: '/assets/images/icons/ruby.png' },
-  { name: 'PHP', icon: '/assets/images/icons/php.png' },
-  { name: 'C#', icon: '/assets/images/icons/csharp.png' },
-  { name: 'SQL', icon: '/assets/images/icons/sql.png' },
-  { name: 'R', icon: '/assets/images/icons/r.png' },
-  { name: 'TypeScript', icon: '/assets/images/icons/typescript.png' },
-  { name: 'C++', icon: '/assets/images/icons/cplusplus.png' },
-  { name: 'Haskell', icon: '/assets/images/icons/haskell.png' },
-  { name: 'Ruby on Rails', icon: '/assets/images/icons/rubyonrails.png' },
-  { name: 'ExpressJS', icon: '/assets/images/icons/expressjs.png' },
-  { name: 'Laravel', icon: '/assets/images/icons/laravel.png' },
-  { name: 'FastAPI', icon: '/assets/images/icons/fastapi.png' },
-  { name: 'Angular', icon: '/assets/images/icons/angular.png' },
-  { name: 'Django', icon: '/assets/images/icons/django.png' },
-  { name: 'NodeJS', icon: '/assets/images/icons/nodejs.png' },
-  { name: 'JSON', icon: '/assets/images/icons/json.png' },
-  { name: 'XML', icon: '/assets/images/icons/xml.png' },
-  { name: 'JQuery', icon: '/assets/images/icons/jquery.png' },
-  { name: 'jQWidgets', icon: '/assets/images/icons/jqwidgets.png' },
-  { name: 'BrainJS', icon: '/assets/images/icons/brainjs.png' },
-  { name: 'PyTorch', icon: '/assets/images/icons/pytorch.png' },
-  { name: 'TensorFlow', icon: '/assets/images/icons/tensorflow.png' },
-  { name: 'Numpy', icon: '/assets/images/icons/numpy.png' },
-  { name: 'Pandas', icon: '/assets/images/icons/pandas.png' },
-  { name: 'Matplotlib', icon: '/assets/images/icons/matplotlib.png' },
-  { name: 'RSpec', icon: '/assets/images/icons/rspec.png' },
-  { name: 'JUnit 5', icon: '/assets/images/icons/junit.png' },
-  { name: 'Postman', icon: '/assets/images/icons/postman.png' },
-  { name: 'Unity', icon: '/assets/images/icons/unity.png' },
-  { name: 'Shopify', icon: '/assets/images/icons/shopify.png' },
-  { name: 'Git', icon: '/assets/images/icons/git.png' },
-  { name: 'Github', icon: '/assets/images/icons/github.png' },
-  { name: 'Gitlab', icon: '/assets/images/icons/gitlab.png' },
-  { name: 'MySQL', icon: '/assets/images/icons/mysql.png' },
-  { name: 'PostgreSQL', icon: '/assets/images/icons/postgresql.png' },
-  { name: 'MongoDB', icon: '/assets/images/icons/mongodb.png' },
-  { name: 'MariaDB', icon: '/assets/images/icons/mariadb.png' }
+  { name: 'JavaScript', icon: '/assets/images/icons/skills/javascript.webp' },
+  { name: 'CSS', icon: '/assets/images/icons/skills/css3.webp' },
+  { name: 'HTML5', icon: '/assets/images/icons/skills/html5.webp' },
+  { name: 'Java', icon: '/assets/images/icons/skills/java.webp' },
+  { name: 'Python', icon: '/assets/images/icons/skills/python.webp' },
+  { name: 'Ruby', icon: '/assets/images/icons/skills/ruby.webp' },
+  { name: 'PHP', icon: '/assets/images/icons/skills/php.webp' },
+  { name: 'C#', icon: '/assets/images/icons/skills/csharp.webp' },
+  { name: 'R', icon: '/assets/images/icons/skills/r.webp' },
+  { name: 'TypeScript', icon: '/assets/images/icons/skills/typescript.webp' },
+  { name: 'C++', icon: '/assets/images/icons/skills/cplusplus.webp' },
+  { name: 'Haskell', icon: '/assets/images/icons/skills/haskell.webp' },
+  { name: 'Ruby on Rails', icon: '/assets/images/icons/skills/rubyonrails.webp' },
+  { name: 'ExpressJS', icon: '/assets/images/icons/skills/expressjs.webp' },
+  { name: 'Laravel', icon: '/assets/images/icons/skills/laravel.webp' },
+  { name: 'FastAPI', icon: '/assets/images/icons/skills/fastapi.webp' },
+  { name: 'Angular', icon: '/assets/images/icons/skills/angular.webp' },
+  { name: 'Django', icon: '/assets/images/icons/skills/django.webp' },
+  { name: 'NodeJS', icon: '/assets/images/icons/skills/nodejs.webp' },
+  { name: 'JSON', icon: '/assets/images/icons/skills/json.webp' },
+  { name: 'XML', icon: '/assets/images/icons/skills/xml.webp' },
+  { name: 'JQuery', icon: '/assets/images/icons/skills/jquery.webp' },
+  { name: 'jQWidgets', icon: '/assets/images/icons/skills/jqwidgets.webp' },
+  { name: 'BrainJS', icon: '/assets/images/icons/skills/brainjs.webp' },
+  { name: 'PyTorch', icon: '/assets/images/icons/skills/pytorch.webp' },
+  { name: 'TensorFlow', icon: '/assets/images/icons/skills/tensorflow.webp' },
+  { name: 'Numpy', icon: '/assets/images/icons/skills/numpy.webp' },
+  { name: 'Pandas', icon: '/assets/images/icons/skills/pandas.webp' },
+  { name: 'Matplotlib', icon: '/assets/images/icons/skills/matplotlib.webp' },
+  { name: 'RSpec', icon: '/assets/images/icons/skills/rspec.webp' },
+  { name: 'JUnit 5', icon: '/assets/images/icons/skills/junit.webp' },
+  { name: 'Postman', icon: '/assets/images/icons/skills/postman.webp' },
+  { name: 'Unity', icon: '/assets/images/icons/skills/unity.webp' },
+  { name: 'Shopify', icon: '/assets/images/icons/skills/shopify.webp' },
+  { name: 'Git', icon: '/assets/images/icons/skills/git.webp' },
+  { name: 'Github', icon: '/assets/images/icons/skills/github.webp' },
+  { name: 'Gitlab', icon: '/assets/images/icons/skills/gitlab.webp' },
+  { name: 'SQL', icon: '/assets/images/icons/skills/sql.webp' },
+  { name: 'MySQL', icon: '/assets/images/icons/skills/mysql.webp' },
+  { name: 'PostgreSQL', icon: '/assets/images/icons/skills/postgresql.webp' },
+  { name: 'MongoDB', icon: '/assets/images/icons/skills/mongodb.webp' },
+  { name: 'MariaDB', icon: '/assets/images/icons/skills/mariadb.webp' }
 ];
 
 
@@ -139,6 +139,14 @@ const getAdminPage = (req, res) => {
   res.render('admin');
 };
 
+/**
+ * Renders the legacy resume editor page.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {void}
+ * @deprecated Legacy resume/CV implementation.
+ */
 const getResumeEditorPage = (req, res) => {
   res.render('resume_editor');
 };

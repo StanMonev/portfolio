@@ -18,6 +18,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   preloadImages();
+  setNavbar();
   setupNavigationLinks();
   sendEmailHandler();
   checkInputFilled();
@@ -25,20 +26,10 @@ document.addEventListener("DOMContentLoaded", () => {
   setupModal();
   setupPolicies();
   setupCookies();
-  initializeLinks();
+  setupSkillsCarousel();
+  setupRoadmap();
+  setupLanguageSwitcher();
 });
-
-/**
- * Toggles the visibility of the download button.
- * 
- * @returns {void}
- */
-const toggleDownloadButton = () => {
-  const element = document.getElementById("downloadButton");
-  if (!element) return;
-  element.classList.toggle("hidden");
-  element.classList.toggle("visible");
-};
 
 /**
  * Sets up smooth scrolling for navigation links in the main navbar.
@@ -46,13 +37,58 @@ const toggleDownloadButton = () => {
  * @returns {void}
  */
 const setupNavigationLinks = () => {
-  document.querySelectorAll('#mainNavbar .navbar-list .nav-item a').forEach(link => {
+  const links = document.querySelectorAll('#mainNavbar .links a');
+  links.forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
-      const target = document.querySelector(e.target.getAttribute('href'));
-      scrollIntoViewWithOffset(target, 100);
+      const target = document.querySelector(link.getAttribute('href').substring(1));
+      scrollIntoViewWithOffset(target);
     });
   });
+};
+
+
+/**
+ * Scrolls the page to the target element with an offset for fixed headers.
+ * 
+ * @param {HTMLElement} targetElement - The element to scroll to.
+ * @param {number} offset - The offset to apply to the scroll position.
+ * @returns {void}
+ */
+const scrollIntoViewWithOffset = (targetElement, offset = 0) => {
+  const elementPosition = targetElement.getBoundingClientRect().top;
+  const offsetPosition = elementPosition + window.scrollY - offset;
+
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: 'smooth'
+  });
+};
+
+/**
+ * The navbar should have a transparent background at the top of the page.
+ * 
+ * @returns {void}
+ */
+const setNavbar = () => {
+  const navbar = document.getElementById('mainNavbar');
+  if (!navbar) return;
+
+  const handleScroll = () => {
+    if (window.scrollY === 0) {
+      navbar.removeAttribute('style');
+    } else {
+      navbar.style.backgroundColor = 'transparent';
+      navbar.style.boxShadow = 'rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px';
+      navbar.style.backdropFilter = 'blur(10px) saturate(0.95) contrast(0.95)';
+    }
+  };
+
+  // Initial check
+  handleScroll();
+
+  // Listen for scroll events
+  window.addEventListener('scroll', handleScroll, { passive: true });
 };
 
 /**
@@ -236,91 +272,149 @@ const checkFilled = (e, inputFields, textareaField) => {
 };
 
 /**
- * Sets up the matrix background animation and attaches resize observers to handle screen changes.
- * 
- * @returns {void}
+ * Matrix background — robust, crisp, and leak-free.
+ * Usage: call setupMatrixBackground() once after DOM is ready.
  */
-const setupMatrixBackground = async () => {
-  let initID = runMatrixBackground();
-  localStorage.setItem("matrixBackgroundID", initID);
 
-  const resizeObserver = new ResizeObserver(resetMatrix);
-  resizeObserver.observe(document.querySelector('main'));
-  screen.orientation.addEventListener("change", resetMatrix);
+const MATRIX = {
+  rafId: null,
+  fontSize: 14,                        // tweak as you like
+  letters: ('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789').repeat(6).split(''),
 };
 
 /**
- * Resets the matrix background animation by clearing and restarting the interval.
- * 
- * @returns {void}
+ * Initialize and start the matrix background.
  */
-const resetMatrix = () => {
-  let id = localStorage.getItem("matrixBackgroundID");
-  if (id !== undefined) clearInterval(id);
-  id = runMatrixBackground();
-  localStorage.setItem("matrixBackgroundID", id);
-};
-
-/**
- * Runs the matrix background animation by drawing letters on the canvas.
- * 
- * @returns {number} - The interval ID for the animation loop.
- */
-const runMatrixBackground = () => {
+const setupMatrixBackground = () => {
   const canvas = document.querySelector('.matrix');
-  const ctx = canvas.getContext('2d');
-  setCanvasHeight(canvas);
-
-  canvas.width = $('html').width();
-
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVXYZ'.repeat(6).split('');
-  const fontSize = 10;
-  const columns = canvas.width / fontSize;
-  let drops = [];
-  for (let i = 0; i < columns; i++) {
-    drops[i] = 1;
+  if (!canvas) {
+    console.warn('[matrix] No canvas with class ".matrix" found.');
+    return;
   }
 
-  return loopMatrixBackground(ctx, canvas, drops, letters, fontSize);
+  let resetRafId = null;
+  const scheduleMatrixReset = () => {
+    if (resetRafId != null) return;
+    resetRafId = requestAnimationFrame(() => {
+      resetRafId = null;
+      resetMatrix(canvas);
+    });
+  };
+
+  window.updateMatrix = () => scheduleMatrixReset();
+
+  const mainContainer = document.querySelector('.main-container');
+  if (mainContainer && typeof ResizeObserver !== 'undefined') {
+    const resizeObserver = new ResizeObserver(() => {
+      scheduleMatrixReset();
+    });
+    resizeObserver.observe(mainContainer);
+  }
+
+  // one-time listeners
+  window.addEventListener('resize', scheduleMatrixReset, { passive: true });
+  window.addEventListener('orientationchange', scheduleMatrixReset, { passive: true });
+  window.addEventListener('languageChanged', scheduleMatrixReset, { passive: true });
+  window.addEventListener('translationsInitialized', scheduleMatrixReset, { passive: true });
+
+  // Start
+  window.addEventListener('load', scheduleMatrixReset, { passive: true });
+  scheduleMatrixReset();
 };
 
 /**
- * Loops the matrix background animation, continuously drawing new letters on the canvas.
- * 
- * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
- * @param {HTMLCanvasElement} canvas - The canvas element on which to draw the animation.
- * @param {Array<number>} drops - An array representing the positions of the drops.
- * @param {Array<string>} letters - An array of letters to be drawn in the animation.
- * @param {number} fontSize - The font size for the letters in the animation.
- * @returns {number} - The interval ID for the animation loop.
+ * Stop (if running), resize, re-init state, and restart.
  */
-const loopMatrixBackground = (ctx, canvas, drops, letters, fontSize) => {
-  return setInterval(() => {
-    ctx.fillStyle = 'rgba(30, 30, 30, .1)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+const resetMatrix = (canvas) => {
+  stopMatrix();
+  const state = initMatrixCanvas(canvas, MATRIX.fontSize);
+  startMatrixLoop(state);
+};
 
-    drops.forEach((drop, i) => {
-      const text = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillStyle = '#044804';
-      ctx.fillText(text, i * fontSize, drop * fontSize);
-      drops[i]++;
+/**
+ * Cancel the RAF loop if active.
+ */
+const stopMatrix = () => {
+  if (MATRIX.rafId != null) {
+    cancelAnimationFrame(MATRIX.rafId);
+    MATRIX.rafId = null;
+  }
+};
 
-      if (drops[i] * fontSize > canvas.height && Math.random() > .99) {
+/**
+ * Prepare canvas size (with DPR), compute columns/drops, and return drawing state.
+ */
+const initMatrixCanvas = (canvas, fontSize) => {
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const main = document.querySelector('.main-container');
+
+  const widthCSS = Math.ceil(
+    (main && main.clientWidth) ||
+    document.documentElement.clientWidth ||
+    window.innerWidth || 0
+  );
+
+  const heightCSS = Math.ceil(
+    main
+      ? Math.max(main.scrollHeight, main.offsetHeight, main.getBoundingClientRect().height)
+      : (document.documentElement.clientHeight || window.innerHeight || 0)
+  );
+
+  canvas.style.width = `${widthCSS}px`;
+  canvas.style.height = `${heightCSS}px`;
+  canvas.width = Math.floor(widthCSS * dpr);
+  canvas.height = Math.floor(heightCSS * dpr);
+
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.font = `${fontSize}px monospace`;
+  ctx.textBaseline = 'top';
+
+  const columns = Math.ceil(widthCSS / fontSize);
+  const drops = new Array(columns).fill(1);
+
+  ctx.fillStyle = 'rgb(10, 10, 10)';
+  ctx.fillRect(0, 0, widthCSS, heightCSS);
+
+  return { ctx, widthCSS, heightCSS, drops, fontSize };
+};
+
+const setMatrixBackgroundSize = (canvas, width, height) => {
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  canvas.width = Math.floor(width * window.devicePixelRatio);
+  canvas.height = Math.floor(height * window.devicePixelRatio);
+};
+
+
+/**
+ * Start the animation loop (RAF).
+ */
+const startMatrixLoop = ({ ctx, widthCSS, heightCSS, drops, fontSize }) => {
+  const { letters } = MATRIX;
+
+  const tick = () => {
+    // trail fade
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
+    ctx.fillRect(0, 0, widthCSS, heightCSS);
+
+    for (let i = 0; i < drops.length; i++) {
+      const ch = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+      ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+
+      drops[i] += 1;
+
+      // Randomly reset
+      if (drops[i] * fontSize > heightCSS && Math.random() > 0.975) {
         drops[i] = 0;
       }
-    });
-  }, 25);
-};
+    }
 
-/**
- * Sets the height of the canvas element to match the maximum scroll height of the document.
- * 
- * @param {HTMLCanvasElement} canvas - The canvas element whose height is to be set.
- * @returns {void}
- */
-const setCanvasHeight = canvas => {
-  const height = Math.max(document.body.scrollHeight, document.documentElement.clientHeight);
-  canvas.height = height;
+    MATRIX.rafId = requestAnimationFrame(tick);
+  };
+
+  MATRIX.rafId = requestAnimationFrame(tick);
 };
 
 /**
@@ -330,19 +424,25 @@ const setCanvasHeight = canvas => {
  */
 const setupModal = () => {
   const modal = document.getElementById('modal');
-  const modalCloseTop = document.getElementById('modalCloseTop');
-  const modalCloseBottom = document.getElementById('modalCloseBottom');
+  const closeTop = document.getElementById('modalCloseTop');
+  const closeBottom = document.getElementById('modalCloseBottom');
 
-  [modalCloseTop, modalCloseBottom].forEach(element => {
-    element.onclick = () => modal.style.display = 'none';
-  });
-
-  window.onclick = event => {
-    if (event.target === modal) {
-      modal.style.display = 'none';
-    }
-  };
+  closeTop?.addEventListener('click', closeModal);
+  closeBottom?.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 };
+
+function openModal() {
+  modal.classList.add('open');
+  document.getElementsByTagName('html')[0].style.overflow = "hidden";
+}
+
+function closeModal() {
+  modal.classList.remove('open');
+  document.getElementsByTagName('html')[0].removeAttribute('style');
+}
+
 
 /**
  * Sets up event listeners for links that open modals, loading the corresponding content.
@@ -463,43 +563,10 @@ const showPolicy = async endpoint => {
     const modalBody = document.getElementById('modalBody');
     const data = await fetchData(endpoint, 'HTML');
     modalBody.innerHTML = data;
-    document.getElementById('modal').style.display = 'block';
+    openModal();
   } catch (error) {
     console.error('Error:', error);
   }
-};
-
-/**
- * Initializes smooth scrolling behavior for links on the page.
- * 
- * @returns {void}
- */
-const initializeLinks = () => {
-  document.querySelectorAll('.links a').forEach(anchor => {
-    anchor.addEventListener('click', e => {
-      e.preventDefault();
-      const targetId = anchor.getAttribute('href').substring(2);
-      const targetElement = document.getElementById(targetId);
-      if (targetElement) scrollIntoViewWithOffset(targetElement, -125);
-    });
-  });
-};
-
-/**
- * Scrolls the page to the target element with an offset for fixed headers.
- * 
- * @param {HTMLElement} targetElement - The element to scroll to.
- * @param {number} offset - The offset to apply to the scroll position.
- * @returns {void}
- */
-const scrollIntoViewWithOffset = (targetElement, offset) => {
-  const elementPosition = targetElement.getBoundingClientRect().top;
-  const offsetPosition = elementPosition + window.scrollY  - offset;
-
-  window.scrollTo({
-    top: offsetPosition,
-    behavior: 'smooth'
-  });
 };
 
 const preloadImages = async () => {
@@ -509,3 +576,520 @@ const preloadImages = async () => {
     img.src = path;
   });
 }
+
+/**
+ * Skills carousel: infinitely scroll skills horizontally by duplicating the content.
+ * This creates a seamless, jitter-free loop.
+ */
+const setupSkillsCarousel = () => {
+  const track = document.getElementById('skillsTrack');
+  const frame = document.querySelector('.skills-section');
+  if (!track || !frame) return;
+
+  const DEFAULT_SPEED_PX_S = 36;
+  const MIN_SPEED_PX_S = 20;
+  const MAX_SPEED_PX_S = 300;
+
+  let offset = 0;
+  let loopWidth = 0;
+  let rafId = null;
+
+  // positive = move RIGHT, negative = move LEFT
+  let baseSpeed = DEFAULT_SPEED_PX_S;
+
+  let isPointerDown = false;
+  let startX = 0;
+  let lastX = 0;
+  let lastT = 0;
+  let lastMoveT = 0;
+  let vx = 0; // px/ms
+
+  if (!track.hasAttribute('data-cloned')) {
+    const children = Array.from(track.children);
+    children.forEach(node => {
+      const clone = node.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      track.appendChild(clone);
+    });
+    track.setAttribute('data-cloned', 'true');
+  }
+
+  function measure() {
+    loopWidth = track.scrollWidth / 2;
+  }
+
+  function wrapOffset(x) {
+    if (loopWidth <= 0) return x;
+    while (x <= -loopWidth) x += loopWidth;
+    while (x > 0) x -= loopWidth;
+    return x;
+  }
+
+  function render() {
+    track.style.transform = `translate3d(${offset}px,0,0)`;
+  }
+
+  function step(t) {
+    if (!lastT) lastT = t;
+    const dt = Math.min(50, t - lastT); // ms cap
+    lastT = t;
+
+    if (!isPointerDown) {
+      // follow our “positive = right” convention
+      offset += baseSpeed * (dt / 1000);
+      offset = wrapOffset(offset);
+      render();
+    }
+    rafId = requestAnimationFrame(step);
+  }
+
+  function start() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (rafId == null) rafId = requestAnimationFrame(step);
+  }
+  function stop() {
+    if (rafId != null) cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+
+  // Keep visual continuity on resize
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const prevLoopWidth = loopWidth || 1;
+      const progress = offset / prevLoopWidth; // fraction (can be negative)
+      measure();
+      offset = progress * loopWidth;
+      offset = wrapOffset(offset);
+      render();
+    }, 100);
+  });
+
+  // Pause when tab is hidden
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop(); else start();
+  });
+
+  // Drag/Flick with Pointer Events
+  frame.style.touchAction = 'pan-x';
+  frame.style.cursor = 'grab';
+
+  function onPointerDown(e) {
+    isPointerDown = true;
+    frame.setPointerCapture?.(e.pointerId);
+    frame.style.cursor = 'grabbing';
+
+    // kill text selection while dragging
+    document.body.style.userSelect = 'none';
+
+    startX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+    lastX = startX;
+    lastMoveT = performance.now();
+  }
+
+  function onPointerMove(e) {
+    if (!isPointerDown) return;
+    const x = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+    const now = performance.now();
+    const dx = x - lastX;
+    const dt = Math.max(1, now - lastMoveT);
+
+    // direct drag: move with the pointer
+    offset += dx;              // dx>0 -> move right
+    offset = wrapOffset(offset);
+    render();
+
+    vx = dx / dt;              // px/ms
+    lastX = x;
+    lastMoveT = now;
+
+    if (e.cancelable) e.preventDefault();
+  }
+
+  function onPointerUp() {
+    if (!isPointerDown) return;
+    isPointerDown = false;
+    frame.style.cursor = 'grab';
+    document.body.style.userSelect = ''; // restore selection
+
+    const flickSpeed = vx * 1000; // px/s, sign follows drag direction
+    if (Math.abs(flickSpeed) > MIN_SPEED_PX_S) {
+      baseSpeed = Math.max(-MAX_SPEED_PX_S, Math.min(MAX_SPEED_PX_S, flickSpeed));
+    } else {
+      if (Math.abs(baseSpeed) < MIN_SPEED_PX_S) {
+        baseSpeed = (baseSpeed >= 0 ? 1 : -1) * MIN_SPEED_PX_S;
+      }
+    }
+  }
+
+  frame.addEventListener('pointerdown', onPointerDown, { passive: false });
+  frame.addEventListener('pointermove', onPointerMove, { passive: false });
+  frame.addEventListener('pointerup', onPointerUp, { passive: true });
+  frame.addEventListener('pointercancel', onPointerUp, { passive: true });
+  frame.addEventListener('pointerleave', onPointerUp, { passive: true });
+
+  // Wheel/trackpad horizontal scroll nudges the position and sets direction
+  frame.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
+    offset += e.deltaX; // natural: deltaX>0 scrolls right
+    offset = wrapOffset(offset);
+    render();
+
+    const factor = 4;
+    const targetSpeed = Math.max(-MAX_SPEED_PX_S, Math.min(MAX_SPEED_PX_S, e.deltaX * factor));
+    if (Math.abs(targetSpeed) >= MIN_SPEED_PX_S) baseSpeed = targetSpeed;
+
+    e.preventDefault();
+  }, { passive: false });
+
+  requestAnimationFrame(() => {
+    measure();
+    render();
+    start();
+  });
+};
+
+/** Roadmap: fetch data, render points, handle language switching.
+ * Usage: call setupRoadmap() once after DOM is ready.
+ */
+const setupRoadmap = () => {
+  const canvas = document.getElementById('roadmapCanvas');
+  const dataUrl = canvas?.getAttribute('data-src');
+
+  // Store the data globally for language switching
+  let roadmapData = [];
+
+  // Load data function
+  async function loadData() {
+    try {
+      const res = await fetch(dataUrl, { cache: 'no-store' });
+      if (!res.ok) throw new Error(res.statusText);
+      return await res.json();
+    } catch (e) {
+      console.error('Roadmap data error:', e);
+      return [];
+    }
+  }
+
+  // Desktop roadmap setup
+  function renderPoints(data, language = 'en') {
+    if (!canvas) return;
+
+    const pointsContainer = canvas.querySelector('.roadmap-points-container');
+    if (!pointsContainer) return;
+
+    pointsContainer.innerHTML = '';
+
+    data.forEach((item, i) => {
+      // Get translations for current language or fallback to English
+      const content = item.translations?.[language] || item.translations?.en || {
+        title: item.title || 'Untitled',
+        org: item.org || '',
+        date: item.date || '',
+        description: item.description || ''
+      };
+
+      // Create point element
+      const point = document.createElement('div');
+      point.className = 'roadmap-point';
+      point.style.left = `${item.x || 50}%`;
+      point.style.top = `${item.y || (20 + i * 30)}%`;
+      point.style.setProperty('--delay', `${0.2 + i * 0.4}s`);
+      point.style.setProperty('--duration', `${1.8 + i * 0.4}s`);
+      point.dataset.index = i;
+      point.setAttribute('data-direction', item.popup_dir);
+
+      // Create tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'roadmap-tooltip';
+      tooltip.innerHTML = `
+        <h4>${content.title}</h4>
+        <div class="meta">${[content.org, content.date].filter(Boolean).join(' · ')}</div>
+        <p>${content.description}</p>
+        ${item.tags ? `<div class="tags">${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>` : ''}
+        ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener">Open</a>` : ''}
+      `;
+
+      point.appendChild(tooltip);
+      pointsContainer.appendChild(point);
+    });
+  }
+
+  // Mobile timeline setup function that uses roadmapData
+  function setupMobileTimeline(data, language = 'en') {
+    const startYear = s => {
+      const m = String(s).match(/(\d{4})/);
+      return m ? parseInt(m[1], 10) : 0;
+    };
+
+    // Use the passed data and language instead of hardcoded 'en'
+    const items = data.map(r => {
+      const t = r.translations?.[language] || r.translations?.en || {};
+      return {
+        title: t.title || '',
+        org: t.org || '',
+        date: t.date || '',
+        description: t.description || '',
+        tags: r.tags || []
+      };
+    }).sort((a, b) => startYear(a.date) - startYear(b.date));
+
+    // ---- Render slides ----
+    const track = document.getElementById('track');
+    if (!track) return;
+
+    track.innerHTML = ''; // Clear existing content
+
+    items.forEach((e, idx) => {
+      const el = document.createElement('article');
+      el.className = 'slide';
+      el.setAttribute('data-index', idx);
+      el.innerHTML = `
+      <div class="topline">
+        <div class="title">${e.title}</div>
+        <div class="org">${e.org}</div>
+        <div class="date">${e.date}</div>
+      </div>
+      ${e.description ? `<div class="desc">${e.description}</div>` : ``}
+      ${e.tags?.length ? `<div class="tags">${e.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ``}
+    `;
+      track.appendChild(el);
+    });
+
+    // ---- Year rail ----
+    const railTicks = document.getElementById('railTicks');
+    if (!railTicks) return;
+
+    railTicks.innerHTML = ''; // Clear existing content
+
+    items.forEach((e, i) => {
+      const y = startYear(e.date) || e.date;
+      const tick = document.createElement('div');
+      tick.className = 'tick';
+      tick.textContent = y;
+      tick.dataset.index = i;
+      tick.addEventListener('click', () => snapTo(i));
+      railTicks.appendChild(tick);
+    });
+
+    // ---- Active slide tracking ----
+    let slideWidth = null;
+    function computeMetrics() {
+      const first = track.querySelector('.slide');
+      slideWidth = first ? first.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || 0) : 1;
+    }
+
+    function nearestIndex() {
+      const left = track.scrollLeft;
+      const slides = track.querySelectorAll('.slide');
+      if (!slides.length) return 0;
+      let best = 0, bestDist = Infinity;
+      slides.forEach((s, i) => {
+        const x = s.offsetLeft;
+        const d = Math.abs(x - left);
+        if (d < bestDist) { bestDist = d; best = i; }
+      });
+      return best;
+    }
+
+    function setActive(i) {
+      document.querySelectorAll('.tick').forEach((t, idx) => {
+        t.classList.toggle('active', idx === i);
+      });
+    }
+
+    function snapTo(i) {
+      const target = track.querySelector(`.slide[data-index="${i}"]`);
+      if (target) target.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    }
+
+    // initial state
+    computeMetrics();
+    setActive(0);
+
+    // update on scroll (throttled)
+    let raf = null;
+    track.addEventListener('scroll', () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        setActive(nearestIndex());
+      });
+    });
+
+    // make vertical wheels pan horizontally on desktop touchpads/mice
+    track.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        track.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // keyboard left/right support when track is focused
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); snapTo(Math.min(nearestIndex() + 1, items.length - 1)); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); snapTo(Math.max(nearestIndex() - 1, 0)); }
+    });
+
+    // nav buttons (desktop nicety)
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+
+    if (btnPrev) btnPrev.addEventListener('click', () => snapTo(Math.max(nearestIndex() - 1, 0)));
+    if (btnNext) btnNext.addEventListener('click', () => snapTo(Math.min(nearestIndex() + 1, items.length - 1)));
+
+    // recalc on resize
+    window.addEventListener('resize', computeMetrics);
+  }
+
+  // Function to update roadmap language
+  function updateRoadmapLanguage(language) {
+    if (roadmapData.length > 0) {
+      if (window.innerWidth >= 1550) {
+        renderPoints(roadmapData, language);
+      } else {
+        setupMobileTimeline(roadmapData, language); // Pass language parameter
+      }
+    }
+  }
+
+  // Store the update function globally
+  window.updateRoadmapLanguage = updateRoadmapLanguage;
+
+  // Initialize based on screen size
+  async function init() {
+    roadmapData = await loadData();
+
+    // Get current language from localStorage or default to 'en'
+    const currentLanguage = localStorage.getItem('language') || 'en';
+
+    if (window.innerWidth < 1550) {
+      const roadmap = document.getElementById('roadmap');
+      if (roadmap) roadmap.style.display = 'none';
+      setupMobileTimeline(roadmapData, currentLanguage); // Pass current language
+    } else {
+      if (canvas && canvas.dataset.initialized !== 'true') {
+        canvas.dataset.initialized = 'true';
+        renderPoints(roadmapData, currentLanguage); // Pass current language
+      }
+    }
+  }
+
+  // Start initialization
+  init();
+};
+
+/** Language switcher: accessible dropdown with flags and labels.
+ * Usage: call setupLanguageSwitcher() once after DOM is ready.
+ */
+const setupLanguageSwitcher = () => {
+  function initFlagDropdown(root) {
+    const trigger = root.querySelector('.fd-trigger');
+    const list = root.querySelector('.fd-list');
+    const iconEl = root.querySelector('.fd-trigger-icon');
+    const labelEl = root.querySelector('.fd-trigger-label');
+    const options = Array.from(root.querySelectorAll('.fd-option'));
+
+    // Internal state
+    let activeIndex = -1;
+
+    // Helper: apply selection to trigger
+    function applySelection(opt) {
+      const iconUrl = opt.getAttribute('data-icon-url') || '';
+      const label = opt.getAttribute('data-label') || opt.textContent.trim();
+      iconEl.src = iconUrl;
+      iconEl.alt = '';
+      labelEl.textContent = label;
+      options.forEach(o => o.setAttribute('aria-selected', String(o === opt)));
+      root.dataset.value = opt.getAttribute('data-value') || '';
+      localStorage.setItem('language', root.dataset.value);
+      root.dispatchEvent(new CustomEvent('change', { detail: { value: root.dataset.value, label, iconUrl } }));
+      window.updateRoadmapLanguage ? window.updateRoadmapLanguage(root.dataset.value) : null;
+    }
+
+    // Helper: open/close
+    function setOpen(open) {
+      root.setAttribute('aria-expanded', String(open));
+      if (open) {
+        // focus active or selected
+        const selectedIndex = options.findIndex(o => o.getAttribute('aria-selected') === 'true');
+        activeIndex = selectedIndex >= 0 ? selectedIndex : 0;
+        setActive(activeIndex);
+        list.focus({ preventScroll: true });
+      } else {
+        activeIndex = -1;
+      }
+    }
+
+    // Active highlight
+    function setActive(index) {
+      options.forEach(o => o.removeAttribute('data-active'));
+      if (index >= 0 && index < options.length) {
+        options[index].setAttribute('data-active', 'true');
+        options[index].scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    // Click handling
+    trigger.addEventListener('click', () => {
+      setOpen(root.getAttribute('aria-expanded') !== 'true');
+      trigger.style.visibility = 'hidden';
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!root.contains(e.target)) {
+        trigger.removeAttribute('style');
+        setOpen(false);
+      }
+    });
+
+    options.forEach((opt, i) => {
+      // Render icon thumbnails inside options
+      const existingImg = opt.querySelector('img');
+      if (!existingImg) {
+        const img = document.createElement('img');
+        img.src = opt.getAttribute('data-icon-url') || '';
+        img.alt = '';
+        opt.prepend(img);
+      }
+      opt.addEventListener('click', () => {
+        trigger.removeAttribute('style');
+        applySelection(opt);
+        setOpen(false);
+        trigger.focus();
+      });
+      opt.addEventListener('mousemove', () => { activeIndex = i; setActive(activeIndex); });
+    });
+
+    // Keyboard on trigger
+    trigger.addEventListener('keydown', (e) => {
+      const open = root.getAttribute('aria-expanded') === 'true';
+      if ((e.key === 'Enter' || e.key === ' ') && !open) { e.preventDefault(); setOpen(true); return; }
+      if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !open) { e.preventDefault(); setOpen(true); }
+    });
+
+    // Keyboard on list
+    list.addEventListener('keydown', (e) => {
+      const open = root.getAttribute('aria-expanded') === 'true';
+      if (!open) return;
+      if (e.key === 'Escape') { e.preventDefault(); setOpen(false); trigger.focus(); return; }
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (activeIndex >= 0) options[activeIndex].click();
+        return;
+      }
+      if (e.key === 'ArrowDown') { e.preventDefault(); activeIndex = Math.min(options.length - 1, (activeIndex + 1)); setActive(activeIndex); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); activeIndex = Math.max(0, (activeIndex - 1)); setActive(activeIndex); }
+      if (e.key === 'Home') { e.preventDefault(); activeIndex = 0; setActive(activeIndex); }
+      if (e.key === 'End') { e.preventDefault(); activeIndex = options.length - 1; setActive(activeIndex); }
+    });
+
+    // Initialize default (data-selected) or first
+    const preset = options.find(o => o.hasAttribute('data-selected')) || options[0];
+    if (preset) applySelection(preset);
+  }
+
+  // Init all instances on the page
+  document.querySelectorAll('.flag-dropdown').forEach(initFlagDropdown);
+};

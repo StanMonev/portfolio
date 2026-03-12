@@ -8,10 +8,18 @@
  * Key functionalities:
  * - Typewriter effect with typing and deleting animation.
  * - Ability to handle custom text provided via the `data-type` attribute or fallback to default text.
- * - Automatic detection and parsing of JSON strings for custom text input.
+ * - Translation support that updates when language changes.
  */
 
-const text = ["Backend Development", "Frontend Development", "App Development", "Game Development", "Computational Intelligence", "Reinforcement Learning"];
+let typewriterInstances = [];
+let typewriterStarted = false;
+const TYPEWRITER_FALLBACK_TEXTS = [
+  "Backend Development",
+  "Frontend Development",
+  "App Development",
+  "Game Development",
+  "Artificial Intelligence"
+];
 
 /**
  * @param {HTMLElement} el - The HTML element where the typewriter effect will be applied.
@@ -24,8 +32,9 @@ var TxtType = function (el, toRotate, period) {
   this.loopNum = 0;
   this.period = parseInt(period, 10) || 2000;
   this.txt = "";
-  this.tick();
   this.isDeleting = false;
+  this.timeoutId = null;
+  this.tick();
 };
 
 /**
@@ -60,18 +69,33 @@ TxtType.prototype.tick = function () {
     delta = 500;  // Small pause before starting the next word
   }
 
-  setTimeout(function () {
+  this.timeoutId = setTimeout(function () {
     that.tick();
   }, delta);
 };
 
 /**
- * onload event listener
- * 
- * Starts the typewriter effect when the window finishes loading.
+ * Updates the typewriter with new text array
  */
-window.onload = function () {
-  startTypewriter();
+TxtType.prototype.updateText = function(newTextArray) {
+  this.toRotate = newTextArray;
+  // Reset to start fresh with new text
+  this.loopNum = 0;
+  this.txt = "";
+  this.isDeleting = false;
+  if (this.timeoutId) {
+    clearTimeout(this.timeoutId);
+  }
+  this.tick();
+};
+
+/**
+ * Stops the typewriter animation
+ */
+TxtType.prototype.stop = function() {
+  if (this.timeoutId) {
+    clearTimeout(this.timeoutId);
+  }
 };
 
 /**
@@ -81,16 +105,105 @@ window.onload = function () {
  * @returns {void}
  */
 function startTypewriter() {
+  if (typewriterStarted) return;
+  typewriterStarted = true;
+
   var elements = document.getElementsByClassName("typewriter");
   for (var i = 0; i < elements.length; i++) {
-    let toRotate = elements[i].getAttribute('data-type') || text;
-    toRotate = isJsonString(toRotate) ? JSON.parse(toRotate) : toRotate;
+    let translationKeys = elements[i].getAttribute('data-type');
+    let toRotate = getTranslatedTexts(translationKeys);
     var period = 2000;
-    if (toRotate) {
-      new TxtType(elements[i], toRotate, period);
+    if (toRotate && toRotate.length > 0) {
+      const instance = new TxtType(elements[i], toRotate, period);
+      typewriterInstances.push({
+        element: elements[i],
+        instance: instance,
+        translationKeys: translationKeys
+      });
     }
   }
 }
+
+/**
+ * Gets translated texts from translation keys
+ */
+function getTranslatedTexts(translationKeys) {
+  if (!translationKeys) return TYPEWRITER_FALLBACK_TEXTS;
+  
+  try {
+    const keys = JSON.parse(translationKeys);
+    if (window.translationService) {
+      return keys.map((key, index) => {
+        const translated = window.translationService.t(key, key);
+        return translated === key ? TYPEWRITER_FALLBACK_TEXTS[index] || key : translated;
+      });
+    } else {
+      // Fallback texts if translation service is not available
+      return TYPEWRITER_FALLBACK_TEXTS;
+    }
+  } catch (e) {
+    return TYPEWRITER_FALLBACK_TEXTS;
+  }
+}
+
+/**
+ * Updates all typewriter instances when language changes
+ */
+function updateTypewriterLanguage() {
+  typewriterInstances.forEach(item => {
+    const newTexts = getTranslatedTexts(item.translationKeys);
+    item.instance.updateText(newTexts);
+  });
+}
+
+/**
+ * Listen for language change events
+ */
+window.addEventListener('languageChanged', function(e) {
+  updateTypewriterLanguage();
+});
+
+/**
+ * Initializes typewriter when translations are ready (or immediately as fallback).
+ */
+function initializeTypewriter() {
+  const readyPromise = window.translationServiceReadyPromise;
+
+  if (readyPromise && typeof readyPromise.then === 'function') {
+    readyPromise
+      .catch(() => null)
+      .finally(() => startTypewriter());
+    return;
+  }
+
+  if (window.translationService) {
+    const fallbackTimer = setTimeout(() => {
+      if (!typewriterStarted) startTypewriter();
+    }, 1500);
+
+    window.addEventListener('translationsInitialized', () => {
+      clearTimeout(fallbackTimer);
+      if (!typewriterStarted) startTypewriter();
+    }, { once: true });
+    return;
+  }
+
+  startTypewriter();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeTypewriter);
+} else {
+  initializeTypewriter();
+}
+
+window.addEventListener('translationsInitialized', () => {
+  if (!typewriterStarted) {
+    startTypewriter();
+  } else {
+    updateTypewriterLanguage();
+  }
+});
 
 /**
  * Checks if a given string is a valid JSON string.

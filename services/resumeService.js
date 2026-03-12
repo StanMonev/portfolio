@@ -15,6 +15,7 @@
  *
  * This service acts as an intermediary between the controllers and the models,
  * ensuring that all operations related to resumes are handled efficiently and consistently.
+  * @deprecated Legacy resume/CV implementation.
  */
 
 const Resume = require('../models/Resume');
@@ -29,6 +30,7 @@ const Project = require('../models/Project');
  * @param {string} userId - The ID of the user whose resume is being saved or updated.
  * @param {Object} fields - An object containing the fields to be saved or updated.
  * @returns {Promise<Object>} - Returns the saved or updated resume object.
+  * @deprecated Legacy resume/CV implementation.
  */
 
 const saveOrUpdateResume = async (userId, fields) => {
@@ -47,6 +49,7 @@ const saveOrUpdateResume = async (userId, fields) => {
  * @param {string|null} id - The ID of the work experience entry to update, or null to add a new entry.
  * @param {Object} fields - An object containing the fields to be saved or updated.
  * @returns {Promise<Object>} - Returns a message indicating the result of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 
 const addOrUpdateWorkExperience = async (id, fields) => {
@@ -64,6 +67,7 @@ const addOrUpdateWorkExperience = async (id, fields) => {
  * 
  * @param {string} id - The ID of the work experience entry to delete.
  * @returns {Promise<Object>} - Returns a message indicating the result of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 
 const deleteWorkExperience = async (id) => {
@@ -77,6 +81,7 @@ const deleteWorkExperience = async (id) => {
  * @param {string|null} id - The ID of the education entry to update, or null to add a new entry.
  * @param {Object} fields - An object containing the fields to be saved or updated.
  * @returns {Promise<Object>} - Returns a message indicating the result of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 
 const addOrUpdateEducation = async (id, fields) => {
@@ -94,6 +99,7 @@ const addOrUpdateEducation = async (id, fields) => {
  * 
  * @param {string} id - The ID of the education entry to delete.
  * @returns {Promise<Object>} - Returns a message indicating the result of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 
 const deleteEducation = async (id) => {
@@ -107,6 +113,7 @@ const deleteEducation = async (id) => {
  * @param {string|null} id - The ID of the project entry to update, or null to add a new entry.
  * @param {Object} fields - An object containing the fields to be saved or updated.
  * @returns {Promise<Object>} - Returns a message indicating the result of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 
 const addOrUpdateProject = async (id, fields) => {
@@ -124,6 +131,7 @@ const addOrUpdateProject = async (id, fields) => {
  * 
  * @param {string} id - The ID of the project entry to delete.
  * @returns {Promise<Object>} - Returns a message indicating the result of the operation.
+  * @deprecated Legacy resume/CV implementation.
  */
 
 const deleteProject = async (id) => {
@@ -135,30 +143,79 @@ const deleteProject = async (id) => {
 // GET Logic
 // //////////
 
+/**
+ * Retrieves resume information for a specific user.
+ *
+ * @param {string} userId - The ID of the user.
+ * @returns {Promise<Object|undefined>} - Returns the resume if it exists.
+ * @deprecated Legacy resume/CV implementation.
+ */
 const getResumeInfo = async (userId) => {
   return await Resume.findByUserId(userId);
 };
 
+/**
+ * Retrieves a work experience by ID.
+ *
+ * @param {string} id - The work experience ID.
+ * @returns {Promise<Object|undefined>} - Returns the work experience if it exists.
+ * @deprecated Legacy resume/CV implementation.
+ */
 const getWorkExperience = async (id) => {
   return await WorkExperience.findById(id);
 };
 
+/**
+ * Retrieves an education entry by ID.
+ *
+ * @param {string} id - The education ID.
+ * @returns {Promise<Object|undefined>} - Returns the education entry if it exists.
+ * @deprecated Legacy resume/CV implementation.
+ */
 const getEducation = async (id) => {
   return await Education.findById(id);
 };
 
+/**
+ * Retrieves a project by ID.
+ *
+ * @param {string} id - The project ID.
+ * @returns {Promise<Object|undefined>} - Returns the project if it exists.
+ * @deprecated Legacy resume/CV implementation.
+ */
 const getProject = async (id) => {
   return await Project.findById(id);
 };
 
+/**
+ * Retrieves all work experiences for a resume.
+ *
+ * @param {string} resumeId - The resume ID.
+ * @returns {Promise<Array<Object>>} - Returns the list of work experiences.
+ * @deprecated Legacy resume/CV implementation.
+ */
 const getWorkExperiences = async (resumeId) => {
   return await WorkExperience.findByResumeId(resumeId);
 };
 
+/**
+ * Retrieves all education entries for a resume.
+ *
+ * @param {string} resumeId - The resume ID.
+ * @returns {Promise<Array<Object>>} - Returns the list of education entries.
+ * @deprecated Legacy resume/CV implementation.
+ */
 const getEducations = async (resumeId) => {
   return await Education.findByResumeId(resumeId);
 };
 
+/**
+ * Retrieves all projects for a resume.
+ *
+ * @param {string} resumeId - The resume ID.
+ * @returns {Promise<Array<Object>>} - Returns the list of projects.
+ * @deprecated Legacy resume/CV implementation.
+ */
 const getProjects = async (resumeId) => {
   return await Project.findByResumeId(resumeId);
 };

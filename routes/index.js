@@ -63,6 +63,7 @@ router.get('/api/download-button', pagesController.getDownloadButton);
 
 /**
  * API routes for managing resumes, work experiences, education, and projects.
+ * @deprecated Legacy resume/CV API endpoints.
  */
 router.post('/api/resume/save', resumeController.saveOrUpdateResume);
 router.get('/api/resume', resumeController.getResumeInfo);

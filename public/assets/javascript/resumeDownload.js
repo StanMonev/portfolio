@@ -1,214 +1,354 @@
-// Call the function as soon as the file is loaded.
-addClickToDownloadButton();
+﻿(() => {
+// === Config / Selectors ======================================================
+const IDS = {
+  downloadBtnDesktop: 'downloadButtonDesktop',
+  downloadBtnMobile: 'downloadButtonMobile',
+  resumeContainer: 'resumeContainer'
+};
+
+const RESUME_TEMPLATE_PATHS = {
+  en: '/assets/resume/resume-en.html',
+  de: '/assets/resume/resume-de.html',
+  bg: '/assets/resume/resume-bg.html'
+};
+
+const RESUME_FILENAMES = {
+  en: 'StanimirMonev-CV-en.pdf',
+  de: 'StanimirMonev-CV-de.pdf',
+  bg: 'StanimirMonev-CV-bg.pdf'
+};
+
+const PDF_OPTIONS_BASE = {
+  margin: 5,
+  image: { type: 'jpeg', quality: 1 },
+  html2canvas: { scale: 2 },
+  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+};
+
+const HTML2PDF_CDN_URL = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js';
+
+let isDownloading = false;
+let html2PdfLoaderPromise = null;
+
+// === Boot ====================================================================
+document.addEventListener('DOMContentLoaded', initResumeDownload);
 
 /**
- * Add event listener for the download button. When clicked, it generates a PDF of the resume with a watermark.
- * 
- * @returns {void}
+ * Initializes click handling for desktop/mobile download buttons.
+ * @deprecated Legacy resume/CV implementation.
  */
+function initResumeDownload() {
+  const buttons = getDownloadButtons();
 
-function addClickToDownloadButton(){
-    document.getElementById('downloadButton').addEventListener('click', async function () {
-    
-        // Add Loader
-        const downloadButtonContainer = document.getElementById('downloadButtonContainer');
-        downloadButtonContainer.innerHTML = '<div class="loader"></div>'
-        downloadButtonContainer.classList.remove("download-button-container");
-        downloadButtonContainer.classList.add("loader-container");
-        
-        await updatePreview();
-    
-        //Remove Loader
-        const data = await fetchData('/api/download-button', 'HTML')
-        downloadButtonContainer.innerHTML = data
-        downloadButtonContainer.classList.remove("loader-container");
-        downloadButtonContainer.classList.add("download-button-container");
-        addClickToDownloadButton();
-    
-        const element = document.getElementById('cvPreview');
-        const style = document.createElement('style');
-    
-        style.textContent = `
-            #about #resumeContainer {
-                display: block !important;
-            }
-    
-            .watermark {
-                position: relative;
-            }
-    
-            .watermark::before {
-                content: 'Copyright of Stanimir Monev';
-                font-size: 50px;
-                color: rgba(0, 0, 0, 0.1);
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                transform: rotate(-45deg);
-                display: grid;
-                place-items: center;
-                pointer-events: none;
-            }
-        `;
-    
-        document.head.appendChild(style); // Add watermark style to the document
-    
-        const opt = {
-            margin: 5,
-            filename: 'StanimirMonevResume.pdf',
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-    
-        // Generate the PDF and then remove the watermark style after the download
-        html2pdf().set(opt).from(element).save().then(() => {
-            document.head.removeChild(style);
-        });
+  if (!buttons.length) {
+    console.warn(`[resume] Missing #${IDS.downloadBtnDesktop} and #${IDS.downloadBtnMobile}`);
+    return;
+  }
+
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      handleDownload(buttons);
     });
+  });
+
+  // Warm the template for initial language to make first click faster.
+  prepareResumeTemplate(getActiveLanguage())
+    .then(() => hideResumeExportContainer())
+    .catch(error => {
+      console.error('[resume] template preload failed:', error);
+    });
+
+  window.addEventListener('languageChanged', event => {
+    const language = normalizeLanguage(event?.detail?.language || getActiveLanguage());
+    prepareResumeTemplate(language)
+      .then(() => hideResumeExportContainer())
+      .catch(error => {
+        console.error('[resume] template switch failed:', error);
+      });
+  });
 }
 
 /**
- * Fetches the resume data from the server and updates the preview section with the latest information.
- * 
- * @returns {Promise<void>}
+ * Handles the export flow and generates a language-specific PDF.
+ * @param {HTMLElement[]} buttons
+ * @deprecated Legacy resume/CV implementation.
  */
-async function updatePreview() {
-    try {
-        const data = await fetchData('/api/resume/admin');
-        const firstName = data.first_name;
-        const lastName = data.last_name;
-        const town = data.town;
-        const country = data.country;
-        const email = data.email;
-        const linkedin = data.linkedin;
-        const github = data.github;
-        const website = data.website;
-        const skills = data.skills;
-        const languages = data.languages;
-        const interests = data.interests;
+async function handleDownload(buttons) {
+  if (isDownloading) return;
 
-        if(data.settings && data.settings["sectionOrder"]){
-            const sectionOrder = data.settings["sectionOrder"].split(',');
-            orderElements('cvPreview', sectionOrder);
-        }
+  isDownloading = true;
+  setLoadingState(buttons, true);
 
-        document.getElementById('previewName').textContent = `${firstName} ${lastName}`;    
+  const cleanupWatermark = attachWatermarkStyle();
+  try {
+    const language = getActiveLanguage();
+    const cvPreview = await prepareResumeTemplate(language);
+    await waitForImages(cvPreview);
 
-        const contactInfo = [];
-        if (town && country) contactInfo.push(`${town}, ${country}`);
-        if (email) contactInfo.push(`<a href="mailto:${email}"><img src="/assets/images/gmail.png" class="icon" alt="Email Icon" /> E-Mail</a>`);
-        if (linkedin) contactInfo.push(`<a href="${linkedin}" target="_blank"> <img src="/assets/images/linkedin.png" class="icon" alt="LinkedIn Icon" /> LinkedIn</a>`);
-        if (github) contactInfo.push(`<a href="${github}" target="_blank"><img src="/assets/images/github.png" class="icon" alt="GitHub Icon" /> GitHub</a>`);
-        if (website) contactInfo.push(`<a href="${website}" target="_blank"><img src="/assets/images/smworks_logo_cropped.png" class="icon" alt="Website Icon" /> www.stanimirmonevworks.com</a>`);
+    const pdfOptions = {
+      ...PDF_OPTIONS_BASE,
+      filename: getResumeFilename(language)
+    };
 
-        document.getElementById('previewContact').innerHTML = contactInfo.join(' | ');
-        document.getElementById('previewSkills').innerHTML = formatList(skills);
-        document.getElementById('previewLanguages').innerHTML = formatList(languages);
-        document.getElementById('previewInterests').innerHTML = formatList(interests);
-    } catch (error) {
-        console.error('Error:', error);
-    }
-
-    // Update other sections of the resume
-    await updateEducationPreview();
-    await updateProjectsPreview();
-    await updateWorkExperiencePreview();
+    const html2pdfLib = await ensureHtml2PdfLoaded();
+    await html2pdfLib().set(pdfOptions).from(cvPreview).save();
+  } catch (error) {
+    console.error('[resume] PDF generation failed:', error);
+  } finally {
+    cleanupWatermark();
+    hideResumeExportContainer();
+    setLoadingState(buttons, false);
+    isDownloading = false;
+  }
 }
 
 /**
- * Fetches and displays the education entries associated with the resume in the preview section.
- * 
- * @returns {Promise<void>}
+ * Loads html2pdf lazily when needed for downloads.
+ * @returns {Promise<Function>}
+ * @deprecated Legacy resume/CV implementation.
  */
-async function updateEducationPreview() {
-    try {
-        const data = await fetchData('/api/resume/educations-admin');
-        data.sort((a, b) => new Date(a.from_date) - new Date(b.from_date));
+function ensureHtml2PdfLoaded() {
+  if (typeof window.html2pdf === 'function') {
+    return Promise.resolve(window.html2pdf);
+  }
 
-        const previewEducation = document.getElementById('previewEducation');
-        previewEducation.innerHTML = '';
-        data.forEach(edu => {
-            const item = document.createElement('div');
-            item.classList.add('education-item');
+  if (html2PdfLoaderPromise) {
+    return html2PdfLoaderPromise;
+  }
 
-            const [mainTitle, subTitle] = splitTitle(edu.name);
-            const fromDate = new Date(edu.from_date);
-            const endDate = new Date(edu.until_date);
-            const untilDate = edu.still_studying ? 'Present' : `${endDate.toLocaleString('en-GB', { month: 'long' })}, ${endDate.getFullYear()}`;
-
-            item.innerHTML = `
-                <div>
-                    <strong class="title-main">${mainTitle}</strong><span class="title-sub">${subTitle}</span>
-                    <span class="dates">${fromDate.toLocaleString('en-GB', { month: 'long' })}, ${fromDate.getFullYear()} - ${untilDate}</span>
-                </div>
-                <ul>${formatList(edu.description)}</ul>
-            `;
-            previewEducation.appendChild(item);
-        });
-    } catch (error) {
-        console.error('Error:', error);
+  html2PdfLoaderPromise = new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-html2pdf-loader="true"]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve(window.html2pdf), { once: true });
+      existing.addEventListener('error', () => reject(new Error('Failed to load html2pdf library.')), { once: true });
+      return;
     }
+
+    const script = document.createElement('script');
+    script.src = HTML2PDF_CDN_URL;
+    script.async = true;
+    script.defer = true;
+    script.setAttribute('data-html2pdf-loader', 'true');
+    script.onload = () => {
+      if (typeof window.html2pdf === 'function') {
+        resolve(window.html2pdf);
+      } else {
+        reject(new Error('html2pdf loaded, but API is unavailable.'));
+      }
+    };
+    script.onerror = () => reject(new Error('Failed to load html2pdf library.'));
+
+    document.head.appendChild(script);
+  }).finally(() => {
+    if (typeof window.html2pdf !== 'function') {
+      html2PdfLoaderPromise = null;
+    }
+  });
+
+  return html2PdfLoaderPromise;
 }
 
 /**
- * Fetches and displays the project entries associated with the resume in the preview section.
- * 
- * @returns {Promise<void>}
+ * Loads the selected language template into #resumeContainer.
+ * @param {string} language
+ * @returns {Promise<HTMLElement>}
+ * @deprecated Legacy resume/CV implementation.
  */
-async function updateProjectsPreview() {
-    try {
-        const data = await fetchData('/api/resume/projects-admin');
-        const previewProjects = document.getElementById('previewProjects');
-        previewProjects.innerHTML = '';
-        data.forEach(proj => {
-            const item = document.createElement('div');
-            item.classList.add('project-item');
-            const [mainTitle, subTitle] = splitTitle(proj.name);
-            item.innerHTML = `
-                <div>
-                    <strong class="title-main">${mainTitle}</strong><span class="title-sub">${subTitle}</span>
-                </div>
-                <ul class="bullet-points">${formatList(proj.description)}</ul>
-            `;
-            previewProjects.appendChild(item);
-        });
-    } catch (error) {
-        console.error('Error:', error);
+async function prepareResumeTemplate(language) {
+  const normalizedLanguage = normalizeLanguage(language);
+  const container = document.getElementById(IDS.resumeContainer);
+
+  if (!container) {
+    throw new Error(`[resume] Missing #${IDS.resumeContainer}`);
+  }
+
+  const hasCurrentTemplate =
+    container.dataset.resumeLanguage === normalizedLanguage &&
+    !!container.querySelector('#cvPreview');
+
+  if (!hasCurrentTemplate) {
+    const templatePath = RESUME_TEMPLATE_PATHS[normalizedLanguage] || RESUME_TEMPLATE_PATHS.en;
+    const response = await fetch(templatePath, { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`Failed to load resume template: ${templatePath} (${response.status})`);
     }
+
+    container.innerHTML = await response.text();
+    container.dataset.resumeLanguage = normalizedLanguage;
+  }
+
+  container.classList.add('resume-export-ready');
+
+  const cvPreview = container.querySelector('#cvPreview');
+  if (!cvPreview) {
+    throw new Error('[resume] Template is missing #cvPreview');
+  }
+
+  return cvPreview;
 }
 
 /**
- * Fetches and displays the work experience entries associated with the resume in the preview section.
- * 
- * @returns {Promise<void>}
+ * Hides the export container after PDF generation.
+ * @deprecated Legacy resume/CV implementation.
  */
-async function updateWorkExperiencePreview() {
-    try {
-        const data = await fetchData('/api/resume/work-experiences-admin');
-        data.sort((a, b) => new Date(a.job_begin_date) - new Date(b.job_begin_date));
-
-        const previewExperience = document.getElementById('previewExperience');
-        previewExperience.innerHTML = '';
-        data.forEach(exp => {
-            const item = document.createElement('div');
-            item.classList.add('experience-item');
-            const beginDate = new Date(exp.job_begin_date);
-            const endDate = new Date(exp.job_end_date);
-            const endDateString = exp.still_working ? 'Present' : `${endDate.toLocaleString('en-GB', { month: 'long' })}, ${endDate.getFullYear()}`;
-            const [mainTitle, subTitle] = splitTitle(exp.job_title);
-            item.innerHTML = `
-                <div>
-                    <strong class="title-main">${mainTitle}</strong><span class="title-sub">${subTitle}</span>
-                    <span class="dates">${beginDate.toLocaleString('en-GB', { month: 'long' })}, ${beginDate.getFullYear()} - ${endDateString}</span>
-                </div>
-                <ul>${formatList(exp.job_description)}</ul>
-            `;
-            previewExperience.appendChild(item);
-        });
-    } catch (error) {
-        console.error('Error:', error);
-    }
+function hideResumeExportContainer() {
+  const container = document.getElementById(IDS.resumeContainer);
+  if (!container) return;
+  container.classList.remove('resume-export-ready');
 }
+
+/**
+ * Gets both desktop and mobile resume download buttons.
+ * @returns {HTMLElement[]}
+ * @deprecated Legacy resume/CV implementation.
+ */
+function getDownloadButtons() {
+  return [
+    document.getElementById(IDS.downloadBtnDesktop),
+    document.getElementById(IDS.downloadBtnMobile)
+  ].filter(Boolean);
+}
+
+/**
+ * Toggles loading state on all download buttons.
+ * @param {HTMLElement[]} buttons
+ * @param {boolean} isLoading
+ * @deprecated Legacy resume/CV implementation.
+ */
+function setLoadingState(buttons, isLoading) {
+  const downloadingText = getDownloadingText();
+
+  buttons.forEach(button => {
+    button.disabled = isLoading;
+    button.setAttribute('aria-busy', String(isLoading));
+    button.setAttribute('aria-disabled', String(isLoading));
+    button.classList.toggle('is-loading', isLoading);
+
+    const label = button.querySelector('.grow') || button.querySelector('span[data-translate]') || button.querySelector('span');
+    if (!label) return;
+
+    if (!button.dataset.originalLabel) {
+      button.dataset.originalLabel = label.textContent.trim();
+    }
+
+    label.textContent = isLoading ? downloadingText : button.dataset.originalLabel;
+  });
+
+  if (!isLoading) {
+    window.translationService?.translatePage?.();
+  }
+}
+
+/**
+ * Returns translated loading text.
+ * @returns {string}
+ * @deprecated Legacy resume/CV implementation.
+ */
+function getDownloadingText() {
+  return window.translationService?.t?.('about.downloading', 'Downloading...') || 'Downloading...';
+}
+
+/**
+ * Resolves the active UI language.
+ * @returns {string}
+ * @deprecated Legacy resume/CV implementation.
+ */
+function getActiveLanguage() {
+  const lang = window.translationService?.getCurrentLanguage?.()
+    || localStorage.getItem('selectedLanguage')
+    || localStorage.getItem('language')
+    || document.documentElement.lang
+    || 'en';
+
+  return normalizeLanguage(lang);
+}
+
+/**
+ * Normalizes language values like de-DE/bg-BG to en/de/bg.
+ * @param {string} language
+ * @returns {string}
+ * @deprecated Legacy resume/CV implementation.
+ */
+function normalizeLanguage(language) {
+  const code = String(language || 'en').toLowerCase();
+
+  if (code.startsWith('de')) return 'de';
+  if (code.startsWith('bg')) return 'bg';
+  if (code.startsWith('en')) return 'en';
+
+  return RESUME_TEMPLATE_PATHS[code] ? code : 'en';
+}
+
+/**
+ * Returns language-specific PDF filename.
+ * @param {string} language
+ * @returns {string}
+ * @deprecated Legacy resume/CV implementation.
+ */
+function getResumeFilename(language) {
+  const normalizedLanguage = normalizeLanguage(language);
+  return RESUME_FILENAMES[normalizedLanguage] || RESUME_FILENAMES.en;
+}
+
+/**
+ * Waits for image assets in the resume preview to finish loading.
+ * @param {HTMLElement} root
+ * @returns {Promise<void>}
+ * @deprecated Legacy resume/CV implementation.
+ */
+async function waitForImages(root) {
+  if (!root) return;
+
+  const images = Array.from(root.querySelectorAll('img'));
+  if (!images.length) return;
+
+  await Promise.all(images.map(image => {
+    if (image.complete) return Promise.resolve();
+
+    return new Promise(resolve => {
+      const done = () => resolve();
+      image.addEventListener('load', done, { once: true });
+      image.addEventListener('error', done, { once: true });
+    });
+  }));
+}
+
+/**
+ * Injects a transient stylesheet that adds watermark only during export.
+ * @returns {() => void}
+ * @deprecated Legacy resume/CV implementation.
+ */
+function attachWatermarkStyle() {
+  const style = document.createElement('style');
+  style.setAttribute('data-watermark-style', 'true');
+  style.textContent = `
+    #resumeContainer.resume-export-ready .watermark {
+      position: relative;
+    }
+
+    #resumeContainer.resume-export-ready .watermark::before {
+      content: 'Copyright of Stanimir Monev';
+      font-size: 50px;
+      color: rgba(0, 0, 0, 0.1);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-45deg);
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+  `;
+
+  document.head.appendChild(style);
+
+  return () => {
+    if (style.parentNode) {
+      style.parentNode.removeChild(style);
+    }
+  };
+}
+})();
+

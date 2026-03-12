@@ -1,15 +1,30 @@
-<div class="skills-section">
-  <h2>Stuff that I know and I've worked with:</h2>
-  <div class="skills-grid">
-    <% skills.forEach(skill => { %>
-      <div class="skill-item">
-        <img loading="lazy" src="<%= skill.icon %>" alt="<%= skill.name %> icon" class="skill-icon">
-        <span class="skill-name"><%= skill.name %></span>
-      </div>
-    <% }) %>
-  </div>
-</div>
+<!-- skills.ejs (single file: HTML + CSS + JS) -->
+<section class="skills-wrap" id="skills">
+  <header>
+    <h1 data-translate="about.skills.header"></h1>
+    <h3 data-translate="about.skills.subheader"></h3>
+    <div class="icon-credits">
+      <h5 data-translate="about.skills.credits_title">Icons thanks to:</h5>
+      <a href="https://www.freepik.com/" class="link" target="_blank" rel="noopener noreferrer" data-translate="about.skills.freepik">Freepik</a>,
+      <a href="https://www.flaticon.com/" class="link" target="_blank" rel="noopener noreferrer" data-translate="about.skills.flaticon">Flaticon</a>,
+      <a href="https://www.pngwing.com/" class="link" target="_blank" rel="noopener noreferrer" data-translate="about.skills.pngwing">PNGWing</a>
+      <span data-translate="contact.and">and</span>
+      <a href="https://watermarkly.com/" class="link" target="_blank" rel="noopener noreferrer" data-translate="about.skills.watermarkly">Watermarkly</a>
+    </div>
+  </header>
 
-<div class="icon-credits">
-  <h5>Icons thanks to:</h5> <a href="https://www.freepik.com/" target="_blank" rel="noopener noreferrer">Freepik</a>, <a href="https://www.flaticon.com/" target="_blank" rel="noopener noreferrer">Flaticon</a>, <a href="https://www.pngwing.com/" target="_blank" rel="noopener noreferrer">PNGWing</a> and <a href="https://watermarkly.com/"  target="_blank" rel="noopener noreferrer">Watermarkly</a>
-</div>
+  <div class="skills-section">
+    <!-- Track -->
+    <div class="skills-grid" id="skillsTrack">
+      <% skills.forEach(skill => { %>
+        <div class="skill-item">
+          <img loading="lazy" src="<%= skill.icon %>" alt="<%= skill.name %> icon" class="skill-icon">
+          <span class="skill-name"><%= skill.name %></span>
+        </div>
+      <% }) %>
+    </div>
+    <!-- Optional gradient masks -->
+    <div class="skills-fade skills-fade-left" aria-hidden="true"></div>
+    <div class="skills-fade skills-fade-right" aria-hidden="true"></div>
+  </div>
+</section>

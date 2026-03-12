@@ -1,24 +1,158 @@
-<div class="header">About Me</div>
-<div class="image-container">
-  <img class="about-me-photo" src="/assets/images/CV_Pic_To_Use.jpeg" alt="about_me_photo">
-</div>
+<div class="header" data-translate="about.header">About Me</div>
+<section id="roadmap" class="roadmap-section">
+  <div class="timeline-text a">2016</div>
+  <div class="timeline-text b">2020</div>
+  <div class="timeline-text c">2024</div>
+  <div id="roadmapCanvas" class="roadmap-canvas" data-src="/assets/data/roadmap.json">
+    <img src="/assets/images/roadmap.webp" class="roadmap-background" alt="roadmap">
+    <div class="roadmap-points-container">
+      <!-- Points and tooltips will be generated here -->
+    </div>
+  </div>
+</section>
 <div class="content">
-  <h1>I'm Stan</h1>
-  <h4>Software Developer</h4>
+  <h1 data-translate="about.name_intro">I'm Stan</h1>
+  <h4 data-translate="about.job_title">Software Developer</h4>
 
   <p>
-     I'm a versatile Software Developer currently based in Bochum, Germany.
-     I love learning, experiencing and discovering new things. And I also have a passion for coding! &#128640;
-     I have had a lot of experience from small to big projects in the university, different companies or just doing them for fun from the comfort of my home.
-     Projects that span from web, app, game to even AI development. &#128200; All of them brought me joy by letting my mind work, trying to figure out what was causing that pesky error or how I can make the code run faster and look prettier.
-     I really enjoy coding riddles that get me thinking &#129504;, and when I solve them, it's the best feeling ever!
-     If you have a challenge for me, bring it on and don't hesitate to contact me! &#128233;
+    <span data-translate="about.description_part_1">I'm a versatile Software Developer currently based in Bochum,
+      Germany.</span>
+    <span data-translate="about.description_part_2">I love learning, experiencing and discovering new things. And I also
+      have a passion for coding! 🚀</span>
+    <span data-translate="about.description_part_3">I have had a lot of experience from small to big projects in the
+      university, different companies or just doing them for fun from the comfort of my home.</span>
+    <span data-translate="about.description_part_4">Projects that span from web, app, game to even AI development. 📈
+      All of them brought me joy by letting my mind work, trying to figure out what was causing that pesky error or how
+      I can make the code run faster and look prettier.</span>
+    <span data-translate="about.description_part_5">I really enjoy coding riddles that get me thinking 🤔, and when I
+      solve them, it's the best feeling ever!</span>
+    <span data-translate="about.description_part_6">If you have a challenge for me, bring it on and don't hesitate to
+      contact me! 📩</span>
   </p>
 
-  <div><span>Email :</span> <a href="mailto:contact@stanimirmonevworks.com">contact@stanimirmonevworks.com</a></div>
-  <div><span>Place :</span> 44892 - Bochum, Germany</div>
+  <div class="contact-container-desktop">
+    <div class="contact-email-container">
+      <span class="bold" data-translate="about.email_label">Email :</span>
+      <a href="mailto:contact@stanimirmonevworks.com" class="link">
+        <svg viewBox="0 0 24 24" class="info-icon" aria-hidden="true">
+          <path fill="url(#g)" d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" />
+          <path d="M22 6l-10 7L2 6" />
+        </svg>
+        <span>contact@stanimirmonevworks.com</span>
+      </a>
+    </div>
+    <div class="download-container">
+      <span class="bold" data-translate="about.compact_resume">Compact Resume:</span>
+      <button id="downloadButtonDesktop" class="link" aria-label="Download" data-translate-aria-label="common.download">
+        <svg class="info-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="url(#g)"
+            d="M12 3a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4.007 4.007a1.25 1.25 0 0 1-1.768 0L6.925 11.707a1 1 0 1 1 1.414-1.414L10.5 12.454V4a1 1 0 0 1 1-1Zm-7 14a1 1 0 1 0 0 2h14a1 1 0 1 0 0-2H5Z" />
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#10d960" />
+              <stop offset="1" stop-color="#06b24d" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span data-translate="common.download">Download</span>
+      </button>
+    </div>
 
-  <div id="downloadButtonContainer" class="download-button-container">
-    <%- include('downloadButton', {id:'downloadButton', css:'download-button', text:'DOWNLOAD RESUME'}); %>
+    <div class="hire-me-container">
+      <span class="bold" data-translate="about.hire_me_on">Hire me on:</span>
+      <a href="https://www.upwork.com/freelancers/~01d7eb6126c7efd1ee?mp_source=share" class="link" target="_blank"
+        rel="noopener noreferrer">
+        <svg class="info-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="url(#g2)"
+            d="M9 4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1h2.5A2.5 2.5 0 0 1 20 7.5V10H4V7.5A2.5 2.5 0 0 1 6.5 5H9V4Zm2 1h2V4h-2v1ZM4 12h16v6.5A2.5 2.5 0 0 1 17.5 21h-11A2.5 2.5 0 0 1 4 18.5V12Zm5 2.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5H9Z" />
+          <defs>
+            <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#10d960" />
+              <stop offset="1" stop-color="#06b24d" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span>Upwork</span>
+      </a>
+      <a href="https://www.freelancer.com/u/SMonev" class="link" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" class="info-icon" aria-hidden="true">
+          <path fill="url(#g2)" d="M4 4l8 16 2-7 7-2z" />
+        </svg>
+        <span>Freelancer</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="contact-container-mobile">
+    <section class="card">
+      <!-- Email -->
+      <a class="cta email" href="mailto:contact@stanimirmonevworks.com" aria-label="Email me" data-translate-aria-label="about.email_me">
+        <svg viewBox="0 0 24 24" class="icon fill" aria-hidden="true">
+          <path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" />
+          <path d="M22 6l-10 7L2 6" />
+        </svg>
+        <span class="grow" data-translate="about.email_me">Email me</span>
+      </a>
+
+      <!-- Compact CV download -->
+      <button id="downloadButtonMobile" class="cta outline" aria-label="Download CV" data-translate-aria-label="about.download_resume">
+        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+          <path d="M12 3v10" />
+          <path d="M7 9l5 5 5-5" />
+          <path d="M5 21h14" />
+        </svg>
+        <span class="grow" data-translate="about.download_resume">Download CV</span>
+        <span class="meta">PDF • ~1–2 MB</span>
+      </button>
+
+      <!-- Freelancer -->
+      <a class="cta pill" href="https://www.freelancer.com/u/YOUR_FREELANCER_HANDLE" target="_blank"
+        rel="noopener noreferrer" aria-label="View my Freelancer profile (opens in a new tab)">
+        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+          <path d="M4 4l8 16 2-7 7-2z" />
+        </svg>
+        <span class="grow">Freelancer</span>
+      </a>
+
+      <!-- Upwork -->
+      <a class="cta pill" href="https://www.upwork.com/freelancers/~YOUR_UPWORK_PROFILE_ID" target="_blank"
+        rel="noopener noreferrer" aria-label="View my Upwork profile (opens in a new tab)">
+        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+          <path d="M3 7h18v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+        </svg>
+        <span class="grow">Upwork</span>
+      </a>
+    </section>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <h1 data-translate="about.timeline_mobile_header"></h1>
+    <p data-translate="about.timeline_mobile_subheader"></p>
+  </header>
+  <div class="timeline-mobile">
+    <div id="track" class="track" aria-label="Horizontal timeline" tabindex="0"></div>
+
+    <div class="rail" aria-hidden="true">
+      <div class="rail-line"></div>
+      <div id="railTicks" class="rail-ticks"></div>
+    </div>
+
+    <div class="nav" aria-hidden="true">
+      <button class="prev" id="btnPrev" aria-label="Previous">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M14 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </button>
+      <button class="next" id="btnNext" aria-label="Next">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
   </div>
 </div>

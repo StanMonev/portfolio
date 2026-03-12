@@ -1,33 +1,33 @@
 <div class="contact-container">
   <div class="response-container">
-    <span class="response">Contact</span>
+    <span class="response" data-translate="contact.contact_title">Contact</span>
   </div>
   <form id="sendEmailForm" action="/contact" method="post">
     <div id="nameContainer" class="form-container">
       <input type="text" class="form-control" id="name" name="name">
-      <label for="name">Your Full Name</label>
+      <label for="name" data-translate="contact.your_full_name">Your Full Name</label>
       <div class="error-message hidden"></div>
     </div>
     <div id="emailContainer" class="form-container">
       <input type="email" class="form-control" id="email" name="email">
-      <label for="email">Your Email</label>
+      <label for="email" data-translate="contact.your_email">Your Email</label>
       <div class="error-message hidden"></div>
     </div>
     <div id="subjectContainer" class="form-container">
       <input type="text" class="form-control" id="subject" name="subject">
-      <label for="subject">Subject of the email</label>
+      <label for="subject" data-translate="contact.subject_of_email">Subject of the email</label>
       <div class="error-message hidden"></div>
     </div>
     <div id="messageContainer" class="form-container">
       <textarea id="message" class="form-control" name="message"></textarea>
-      <label for="message">Your Message</label>
+      <label for="message" data-translate="contact.your_message">Your Message</label>
       <div class="error-message hidden"></div>
       
       <div id="termsContainer">
-        <label for="terms"><input type="checkbox" id="terms" name="terms"> I accept the <a id="acceptTermsAndConditions" class="modal-link" href="/tac-policy-content">Terms and Conditions</a> and <a id="acceptPrivacyPolicy" class="modal-link" href="/privacy-policy-content">Privacy Policy</a>.</label>
+        <label for="terms"><input type="checkbox" id="terms" name="terms"> <span data-translate="contact.terms_acceptance">I accept the</span> <a id="acceptTermsAndConditions" class="modal-link link" href="/tac-policy-content" data-translate="contact.terms_and_conditions">Terms and Conditions</a> <span data-translate="contact.and">and</span> <a id="acceptPrivacyPolicy" class="modal-link link" href="/privacy-policy-content" data-translate="contact.privacy_policy">Privacy Policy</a>.</label>
         <div class="error-message hidden"></div>
       </div>
-      <input id="sendEmailBtn" class="form-control" type="submit" value="Submit">
+      <input id="sendEmailBtn" class="form-control" type="submit" value="Submit" data-translate="common.submit">
     </div>
   </form> 
 </div>

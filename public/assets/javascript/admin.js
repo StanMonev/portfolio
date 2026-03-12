@@ -182,6 +182,7 @@ async function renderCharts(filterIPs='') {
  * Redirects the user to the resume editor page.
  * 
  * @returns {void}
+ * @deprecated Legacy resume/CV implementation.
  */
 function redirectToResumeEditor() {
     window.location.href = "/admin/resume_editor";
