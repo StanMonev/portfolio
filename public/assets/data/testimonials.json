@@ -4,6 +4,11 @@
     {
       "id": "jonathan-t-001",
       "text": "The whole collaboration was smooth and easy from start to finish.",
+      "translations": {
+        "en": "The whole collaboration was smooth and easy from start to finish.",
+        "de": "Die Zusammenarbeit war von Anfang bis Ende reibungslos und unkompliziert.",
+        "bg": "Сътрудничеството беше гладко и лесно от началото до края."
+      },
       "author": "Jonathan T.",
       "rating": 5,
       "source": "Client Review"
@@ -11,6 +16,11 @@
     {
       "id": "mahmood-v-001",
       "text": "Working with Stanimir was a real pleasure; professional and easy to work with.",
+      "translations": {
+        "en": "Working with Stanimir was a real pleasure; professional and easy to work with.",
+        "de": "Die Zusammenarbeit mit Stanimir war eine echte Freude - professionell und angenehm.",
+        "bg": "Работата със Станимир беше истинско удоволствие - професионална и лесна."
+      },
       "author": "Mahmood V.",
       "rating": 5,
       "source": "Client Review"
@@ -18,6 +28,11 @@
     {
       "id": "alex-s-001",
       "text": "Stanimir delivered our software project on time with strong quality and quickly understood the requirements. Communication was efficient and professional, and we'd gladly work with him again.",
+      "translations": {
+        "en": "Stanimir delivered our software project on time with strong quality and quickly understood the requirements. Communication was efficient and professional, and we'd gladly work with him again.",
+        "de": "Stanimir hat unser Softwareprojekt pünktlich und in hoher Qualität geliefert und die Anforderungen schnell verstanden. Die Kommunikation war effizient und professionell, und wir würden jederzeit wieder mit ihm zusammenarbeiten.",
+        "bg": "Станимир достави софтуерния ни проект навреме и с високо качество, като бързо разбра изискванията. Комуникацията беше ефективна и професионална и с удоволствие бихме работили отново с него."
+      },
       "author": "Alex S.",
       "rating": 5,
       "source": "Client Review"
@@ -25,20 +40,39 @@
     {
       "id": "eshop-guide-001",
       "text": "Stanimir consistently delivered reliable, high-quality work with a structured and efficient approach. He was dependable, team-oriented, and performed to our full satisfaction.",
-      "author": "Eshop Guide GmbH",
+      "translations": {
+        "en": "Stanimir consistently delivered reliable, high-quality work with a structured and efficient approach. He was dependable, team-oriented, and performed to our full satisfaction.",
+        "de": "Stanimir lieferte konstant zuverlässige, hochwertige Ergebnisse mit strukturierter und effizienter Arbeitsweise. Er war verlässlich, teamorientiert und erfüllte unsere Erwartungen voll.",
+        "bg": "Станимир постоянно предоставяше надеждни и качествени резултати със структуриран и ефективен подход. Той беше надежден, екипен и напълно оправда очакванията ни."
+      },
+      "author": "D. Crowder",
+      "role": "Technical Director",
+      "company": "Eshop Guide GmbH",
       "rating": 5,
       "source": "Eshop Guide GmbH"
     },
     {
       "id": "qtime-001",
       "text": "He showed solid technical expertise and solved issues quickly in our software systems. He worked independently, handled pressure well, and was a strong team contributor.",
-      "author": "QTime GmbH",
+      "translations": {
+        "en": "He showed solid technical expertise and solved issues quickly in our software systems. He worked independently, handled pressure well, and was a strong team contributor.",
+        "de": "Er zeigte starke technische Kompetenz und löste Probleme in unseren Softwaresystemen schnell. Er arbeitete selbstständig, blieb auch unter Druck souverän und war ein wertvoller Teamplayer.",
+        "bg": "Той показа силна техническа експертиза и решаваше бързо проблеми в нашите софтуерни системи. Работеше самостоятелно, справяше се добре под напрежение и беше ценен екипен играч."
+      },
+      "author": "J. Wronna",
+      "role": "CEO",
+      "company": "QTime GmbH",
       "rating": 5,
       "source": "QTime GmbH"
     },
     {
       "id": "todor-todorov-001",
       "text": "Stanimir improved key C# processes while keeping existing functionality stable and reliable. His SQL and full-stack skills made him highly effective for both optimization and new development.",
+      "translations": {
+        "en": "Stanimir improved key C# processes while keeping existing functionality stable and reliable. His SQL and full-stack skills made him highly effective for both optimization and new development.",
+        "de": "Stanimir verbesserte zentrale C#-Prozesse und hielt die bestehende Funktionalität stabil und zuverlässig. Seine SQL- und Full-Stack-Kenntnisse machten ihn sowohl bei Optimierungen als auch bei neuen Entwicklungen äußerst effektiv.",
+        "bg": "Станимир подобри ключови C# процеси, като запази съществуващата функционалност стабилна и надеждна. Неговите SQL и full-stack умения го направиха изключително ефективен както при оптимизации, така и при нова разработка."
+      },
       "author": "Todor Todorov",
       "role": "CTO",
       "company": "Industrial Integrated Systems Ltd.",

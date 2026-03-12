@@ -34,9 +34,9 @@ function addFlagIconsToOptions(selectElement) {
         // Ensure options only show flags (they already do in the HTML)
         const langCode = option.value;
         const flagOnly = {
-            'en': '🇪🇳 <img src="/assets/images/icons/en.png" alt="english flag icon">',
-            'de': '🇩🇪 <img src="/assets/images/icons/de.png" alt="german flag icon">',
-            'bg': '🇧🇬 <img src="/assets/images/icons/bg.png" alt="bulgarian flag icon">'
+            'en': '🇪🇳 <img src="/assets/images/icons/languages/en.webp" alt="english flag icon">',
+            'de': '🇩🇪 <img src="/assets/images/icons/languages/de.webp" alt="german flag icon">',
+            'bg': '🇧🇬 <img src="/assets/images/icons/languages/bg.webp" alt="bulgarian flag icon">'
         };
         
         if (flagOnly[langCode]) {

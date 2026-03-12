@@ -17,6 +17,35 @@ const t = (key, fallback) => {
   return fallback || key;
 };
 
+const getActiveLanguage = () => {
+  const translationService = window.translationService;
+  if (translationService && typeof translationService.getCurrentLanguage === 'function') {
+    return translationService.getCurrentLanguage();
+  }
+
+  return localStorage.getItem('selectedLanguage') || localStorage.getItem('language') || 'en';
+};
+
+const getLocalizedReviewText = (item, language = 'en') => {
+  if (item && item.translations && typeof item.translations === 'object') {
+    const normalizedLanguage = String(language).toLowerCase();
+    const shortLanguage = normalizedLanguage.split('-')[0];
+    const localized =
+      item.translations[normalizedLanguage] ||
+      item.translations[shortLanguage] ||
+      item.translations.en;
+
+    if (typeof localized === 'string') {
+      return localized;
+    }
+    if (localized && typeof localized.text === 'string') {
+      return localized.text;
+    }
+  }
+
+  return item?.text || '';
+};
+
 const setupTestimonials = async () => {
   const section = document.getElementById('testimonials');
   const viewport = section?.querySelector('.testimonials-viewport');
@@ -37,7 +66,7 @@ const setupTestimonials = async () => {
       ? payload
       : (Array.isArray(payload.testimonials) ? payload.testimonials : []);
 
-    renderTestimonials(track, testimonials);
+    renderTestimonials(track, testimonials, getActiveLanguage());
 
     if (!testimonials.length) {
       hideCarouselControls(prevBtn, nextBtn);
@@ -45,6 +74,14 @@ const setupTestimonials = async () => {
     }
 
     setupTestimonialsCarousel(section, viewport, track, prevBtn, nextBtn);
+
+    if (!section.dataset.reviewsLanguageListener) {
+      window.addEventListener('languageChanged', event => {
+        const language = event?.detail?.language || getActiveLanguage();
+        applyLanguageToRenderedTestimonials(track, testimonials, language);
+      });
+      section.dataset.reviewsLanguageListener = 'true';
+    }
   } catch (error) {
     console.error('[testimonials] load failed:', error);
     track.innerHTML = `<p class="testimonials-empty">${t('about.reviews_unavailable', 'Reviews are currently unavailable.')}</p>`;
@@ -52,7 +89,7 @@ const setupTestimonials = async () => {
   }
 };
 
-const renderTestimonials = (root, testimonials) => {
+const renderTestimonials = (root, testimonials, language = 'en') => {
   root.innerHTML = '';
 
   if (!Array.isArray(testimonials) || testimonials.length === 0) {
@@ -62,9 +99,10 @@ const renderTestimonials = (root, testimonials) => {
 
   const fragment = document.createDocumentFragment();
 
-  testimonials.forEach(item => {
+  testimonials.forEach((item, idx) => {
     const card = document.createElement('article');
     card.className = 'testimonial-card';
+    card.dataset.testimonialId = item.id || `review-${idx}`;
 
     const rating = clampRating(item.rating);
     const stars = document.createElement('div');
@@ -74,7 +112,7 @@ const renderTestimonials = (root, testimonials) => {
 
     const quote = document.createElement('p');
     quote.className = 'testimonial-text';
-    quote.textContent = item.text || '';
+    quote.textContent = getLocalizedReviewText(item, language);
 
     const author = document.createElement('h4');
     author.className = 'testimonial-author';
@@ -97,6 +135,33 @@ const renderTestimonials = (root, testimonials) => {
   });
 
   root.appendChild(fragment);
+};
+
+const applyLanguageToRenderedTestimonials = (root, testimonials, language = 'en') => {
+  if (!Array.isArray(testimonials) || testimonials.length === 0) {
+    root.innerHTML = `<p class="testimonials-empty">${t('about.reviews_empty', 'No reviews yet.')}</p>`;
+    return;
+  }
+
+  const byId = new Map(
+    testimonials.map((item, idx) => [item.id || `review-${idx}`, item])
+  );
+
+  root.querySelectorAll('.testimonial-card').forEach(card => {
+    const id = card.dataset.testimonialId;
+    const item = byId.get(id);
+    if (!item) return;
+
+    const quote = card.querySelector('.testimonial-text');
+    if (quote) {
+      quote.textContent = getLocalizedReviewText(item, language);
+    }
+
+    const author = card.querySelector('.testimonial-author');
+    if (author && !item.author) {
+      author.textContent = t('about.reviews_anonymous', 'Anonymous');
+    }
+  });
 };
 
 const setupTestimonialsCarousel = (section, viewport, track, prevBtn, nextBtn) => {

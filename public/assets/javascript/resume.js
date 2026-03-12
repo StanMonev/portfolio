@@ -240,10 +240,10 @@ function updatePreview(event=null, sectionOrder=null) {
 
     const contactInfo = [];
     if (town && country) contactInfo.push(`${town}, ${country}`);
-    if (email) contactInfo.push(`<a href="mailto:${email}"><div><img src="/assets/images/gmail.png" class="icon" alt="Email Icon" />${email} </div></a>`);
-    if (linkedin) contactInfo.push(`<a href="${linkedin}" target="_blank"><div><img src="/assets/images/linkedin.png" class="icon" alt="LinkedIn Icon" />${createDisplayName(linkedin)} </div></a>`);
-    if (github) contactInfo.push(`<a href="${github}" target="_blank"><div><img src="/assets/images/github.png" class="icon" alt="GitHub Icon" />${createDisplayName(github)} </div></a>`);
-    if (website) contactInfo.push(`<a href="${website}" target="_blank"><div><img src="/assets/images/smworks_logo_cropped.png" class="icon" alt="Website Icon" />${createDisplayName(website)} </div></a>`);
+    if (email) contactInfo.push(`<a href="mailto:${email}"><div><img src="/assets/images/icons/cv/gmail.webp" class="icon" alt="Email Icon" />${email} </div></a>`);
+    if (linkedin) contactInfo.push(`<a href="${linkedin}" target="_blank"><div><img src="/assets/images/icons/cv/linkedin.webp" class="icon" alt="LinkedIn Icon" />${createDisplayName(linkedin)} </div></a>`);
+    if (github) contactInfo.push(`<a href="${github}" target="_blank"><div><img src="/assets/images/icons/cv/github.webp" class="icon" alt="GitHub Icon" />${createDisplayName(github)} </div></a>`);
+    if (website) contactInfo.push(`<a href="${website}" target="_blank"><div><img src="/assets/images/logo.webp" class="icon" alt="Website Icon" />${createDisplayName(website)} </div></a>`);
 
     document.getElementById('previewContact').innerHTML = contactInfo.join(' | ');
     document.getElementById('previewSkills').innerHTML = formatList(skills);
