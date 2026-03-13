@@ -278,6 +278,7 @@ const checkFilled = (e, inputFields, textareaField) => {
 
 const MATRIX = {
   rafId: null,
+  state: null,
   fontSize: 14,                        // tweak as you like
   letters: ('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789').repeat(6).split(''),
 };
@@ -292,16 +293,16 @@ const setupMatrixBackground = () => {
     return;
   }
 
-  let resetRafId = null;
-  const scheduleMatrixReset = () => {
-    if (resetRafId != null) return;
-    resetRafId = requestAnimationFrame(() => {
-      resetRafId = null;
-      resetMatrix(canvas);
+  let syncRafId = null;
+  const scheduleMatrixSync = () => {
+    if (syncRafId != null) return;
+    syncRafId = requestAnimationFrame(() => {
+      syncRafId = null;
+      syncMatrix(canvas);
     });
   };
 
-  window.updateMatrix = () => scheduleMatrixReset();
+  window.updateMatrix = () => scheduleMatrixSync();
 
   // On mobile, scrolling can trigger resize events due browser UI (address bar) changes.
   // Reset only when viewport width changes (real layout shift), not height-only churn.
@@ -312,45 +313,109 @@ const setupMatrixBackground = () => {
     if (!widthChanged) return;
 
     lastViewportWidth = currentWidth;
-    scheduleMatrixReset();
+    scheduleMatrixSync();
   };
 
   // one-time listeners
   window.addEventListener('resize', onViewportResize, { passive: true });
-  window.addEventListener('orientationchange', scheduleMatrixReset, { passive: true });
-  window.addEventListener('languageChanged', scheduleMatrixReset, { passive: true });
-  window.addEventListener('translationsInitialized', scheduleMatrixReset, { passive: true });
+  window.addEventListener('orientationchange', scheduleMatrixSync, { passive: true });
+  window.addEventListener('languageChanged', scheduleMatrixSync, { passive: true });
+  window.addEventListener('translationsInitialized', scheduleMatrixSync, { passive: true });
 
   // Start
-  window.addEventListener('load', scheduleMatrixReset, { passive: true });
-  scheduleMatrixReset();
+  window.addEventListener('load', scheduleMatrixSync, { passive: true });
+  scheduleMatrixSync();
 };
 
 /**
- * Stop (if running), resize, re-init state, and restart.
+ * Initialize the loop once, then keep the current animation state across resizes.
  */
-const resetMatrix = (canvas) => {
-  stopMatrix();
-  const state = initMatrixCanvas(canvas, MATRIX.fontSize);
-  startMatrixLoop(state);
-};
-
-/**
- * Cancel the RAF loop if active.
- */
-const stopMatrix = () => {
-  if (MATRIX.rafId != null) {
-    cancelAnimationFrame(MATRIX.rafId);
-    MATRIX.rafId = null;
+const syncMatrix = (canvas) => {
+  if (!MATRIX.state) {
+    MATRIX.state = initMatrixCanvas(canvas, MATRIX.fontSize);
+    startMatrixLoop(MATRIX.state);
+    return;
   }
+
+  resizeMatrixState(canvas, MATRIX.state);
+};
+
+/**
+ * Resize the backing canvas without restarting the animation from scratch.
+ */
+const resizeMatrixState = (canvas, state) => {
+  const { dpr, widthCSS, heightCSS } = getMatrixCanvasMetrics();
+  const previousWidthCSS = state.widthCSS;
+  const previousHeightCSS = state.heightCSS;
+
+  if (
+    previousWidthCSS === widthCSS &&
+    previousHeightCSS === heightCSS &&
+    state.dpr === dpr
+  ) {
+    return;
+  }
+
+  let snapshot = null;
+  if (canvas.width > 0 && canvas.height > 0) {
+    snapshot = document.createElement('canvas');
+    snapshot.width = canvas.width;
+    snapshot.height = canvas.height;
+    snapshot.getContext('2d').drawImage(canvas, 0, 0);
+  }
+
+  configureMatrixCanvas(canvas, widthCSS, heightCSS, dpr);
+
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.font = `${state.fontSize}px monospace`;
+  ctx.textBaseline = 'top';
+  ctx.fillStyle = 'rgb(10, 10, 10)';
+  ctx.fillRect(0, 0, widthCSS, heightCSS);
+
+  if (snapshot) {
+    ctx.drawImage(snapshot, 0, 0, previousWidthCSS, previousHeightCSS);
+  }
+
+  const nextColumnCount = Math.ceil(widthCSS / state.fontSize);
+  const maxDropOffset = Math.max(1, Math.ceil(heightCSS / state.fontSize));
+  const nextDrops = Array.from({ length: nextColumnCount }, (_, index) => (
+    index < state.drops.length
+      ? state.drops[index]
+      : Math.floor(Math.random() * maxDropOffset)
+  ));
+
+  state.ctx = ctx;
+  state.widthCSS = widthCSS;
+  state.heightCSS = heightCSS;
+  state.dpr = dpr;
+  state.drops = nextDrops;
 };
 
 /**
  * Prepare canvas size (with DPR), compute columns/drops, and return drawing state.
  */
 const initMatrixCanvas = (canvas, fontSize) => {
-  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const { dpr, widthCSS, heightCSS } = getMatrixCanvasMetrics();
+  configureMatrixCanvas(canvas, widthCSS, heightCSS, dpr);
+
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.font = `${fontSize}px monospace`;
+  ctx.textBaseline = 'top';
+
+  const columns = Math.ceil(widthCSS / fontSize);
+  const drops = new Array(columns).fill(1);
+
+  ctx.fillStyle = 'rgb(10, 10, 10)';
+  ctx.fillRect(0, 0, widthCSS, heightCSS);
+
+  return { ctx, widthCSS, heightCSS, drops, fontSize, dpr };
+};
+
+const getMatrixCanvasMetrics = () => {
   const main = document.querySelector('.main-container');
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
 
   const widthCSS = Math.ceil(
     (main && main.clientWidth) ||
@@ -364,40 +429,26 @@ const initMatrixCanvas = (canvas, fontSize) => {
       : (document.documentElement.clientHeight || window.innerHeight || 0)
   );
 
-  canvas.style.width = `${widthCSS}px`;
-  canvas.style.height = `${heightCSS}px`;
-  canvas.width = Math.floor(widthCSS * dpr);
-  canvas.height = Math.floor(heightCSS * dpr);
-
-  const ctx = canvas.getContext('2d');
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.font = `${fontSize}px monospace`;
-  ctx.textBaseline = 'top';
-
-  const columns = Math.ceil(widthCSS / fontSize);
-  const drops = new Array(columns).fill(1);
-
-  ctx.fillStyle = 'rgb(10, 10, 10)';
-  ctx.fillRect(0, 0, widthCSS, heightCSS);
-
-  return { ctx, widthCSS, heightCSS, drops, fontSize };
+  return { dpr, widthCSS, heightCSS };
 };
 
-const setMatrixBackgroundSize = (canvas, width, height) => {
+const configureMatrixCanvas = (canvas, width, height, dpr) => {
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
-  canvas.width = Math.floor(width * window.devicePixelRatio);
-  canvas.height = Math.floor(height * window.devicePixelRatio);
+  canvas.width = Math.floor(width * dpr);
+  canvas.height = Math.floor(height * dpr);
 };
 
 
 /**
  * Start the animation loop (RAF).
  */
-const startMatrixLoop = ({ ctx, widthCSS, heightCSS, drops, fontSize }) => {
+const startMatrixLoop = (state) => {
   const { letters } = MATRIX;
 
   const tick = () => {
+    const { ctx, widthCSS, heightCSS, drops, fontSize } = state;
+
     // trail fade
     ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
     ctx.fillRect(0, 0, widthCSS, heightCSS);
