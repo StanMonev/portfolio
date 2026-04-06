@@ -50,17 +50,21 @@ npm run migrate
 
 5. Start the app:
 ```bash
-npm run devStart
+npm run start:dev
 ```
 
 For production:
 ```bash
-npm run productionStart
+npm run start:prod
 ```
 
+The production build minifies the browser JavaScript files from `public/assets/javascript` into `public/assets/javascript/dist`. When `NODE_ENV=production`, the app will serve the minified files if they exist and fall back to the original files otherwise.
+
 ## Scripts
-- `npm run devStart` - Run with nodemon
-- `npm run productionStart` - Run with node
+- `npm run build` - Run the frontend JavaScript production build
+- `npm run build:js` - Minify browser JavaScript into `public/assets/javascript/dist`
+- `npm run start:dev` - Run with nodemon
+- `npm run start:prod` - Build the frontend JavaScript, then start the app with node
 - `npm run migrate` - Run latest migrations
 
 ## Database Commands

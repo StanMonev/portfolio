@@ -8,9 +8,9 @@
     <title data-translate="resume.editor_title">Resume Editor</title>
     <link rel="stylesheet" href="/assets/css/resume.css">
     <link rel="stylesheet" href="/assets/css/resume-preview.css">
-    <script src="/assets/javascript/translations.js"></script>
-    <script src="/assets/javascript/api.js"></script>
-    <script src="/assets/javascript/utils.js"></script>
+    <script src="<%= jsAsset('translations.js') %>"></script>
+    <script src="<%= jsAsset('api.js') %>"></script>
+    <script src="<%= jsAsset('utils.js') %>"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
 </head>
@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    <script src="/assets/javascript/resume.js"></script>
+    <script src="<%= jsAsset('resume.js') %>"></script>
 </body>
 </html>
 

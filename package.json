@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "This project will run the following tools:",
   "scripts": {
-    "devStart": "nodemon server.js",
-    "productionStart": "node ./server.js",
+    "build": "npm run build:js",
+    "build:js": "node ./scripts/build-js.js",
+    "start:dev": "nodemon server.js",
+    "start:prod": "npm run build && node ./server.js",
     "migrate": "knex migrate:latest"
   },
   "repository": {
@@ -34,6 +36,7 @@
     "pg": "^8.12.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "terser": "^5.46.1"
   }
 }

@@ -33,17 +33,35 @@ if (process.env.NODE_ENV !== 'production') {
 
 const bodyParser = require('body-parser');
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const session = require('express-session');
 const passport = require('passport');
 const flash = require('connect-flash');
 const pagesRouter = require("./routes/index");
 const app = express();
+const minifiedJavaScriptDir = path.join(__dirname, 'public', 'assets', 'javascript', 'dist');
 
 // /////////////////////////////
 // General server logic
 // /////////////////////////////
 
 app.set('view engine', 'ejs');
+
+app.locals.jsAsset = filename => {
+  if (process.env.NODE_ENV !== 'production') {
+    return `/assets/javascript/${filename}`;
+  }
+
+  const minifiedFilename = filename.replace(/\.js$/, '.min.js');
+  const minifiedFilePath = path.join(minifiedJavaScriptDir, minifiedFilename);
+
+  if (fs.existsSync(minifiedFilePath)) {
+    return `/assets/javascript/dist/${minifiedFilename}`;
+  }
+
+  return `/assets/javascript/${filename}`;
+};
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
