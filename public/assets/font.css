@@ -8,6 +8,7 @@
        url('fonts/robotomono-italic-variablefont_wght-webfont.svg#roboto_monoitalic') format('svg');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -20,4 +21,5 @@
        url('fonts/robotomono-variablefont_wght-webfont.svg#roboto_monoregular') format('svg');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }

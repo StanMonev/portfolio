@@ -32,6 +32,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const bodyParser = require('body-parser');
+const compression = require('compression');
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -46,6 +47,7 @@ const minifiedJavaScriptDir = path.join(__dirname, 'public', 'assets', 'javascri
 // General server logic
 // /////////////////////////////
 
+app.disable('x-powered-by');
 app.set('view engine', 'ejs');
 
 app.locals.jsAsset = filename => {
@@ -64,6 +66,19 @@ app.locals.jsAsset = filename => {
 };
 
 app.use(express.urlencoded({ extended: true }));
+app.use(compression({ threshold: 0 }));
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+
+  if (process.env.NODE_ENV === 'production' && req.secure) {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
+
+  next();
+});
 app.use(express.static('public'));
 app.use(bodyParser.json());
 

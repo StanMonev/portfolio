@@ -256,11 +256,13 @@ div.section {
 /* ============================== */
 
 .matrix {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: auto;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
   display: block;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ============================== */
@@ -315,6 +317,11 @@ div.section {
   display: flex;
   font-size: 25px;
   gap: 5px;
+}
+
+.typewriter {
+  display: inline-block;
+  min-width: var(--typewriter-width, 0);
 }
 
 #home.section .section-container div.text-container {
@@ -460,6 +467,15 @@ div.section {
 #about.section .content p {
   width: 555px;
   margin: 50px 0;
+}
+
+#about.section .content h2 {
+  margin: 0;
+}
+
+#about.section .content h3 {
+  margin: 0.5rem 0 0;
+  color: var(--site-green);
 }
 
 #about.section .content div {
@@ -750,7 +766,7 @@ div.section {
   }
 }
 
-#skills header h1 {
+#skills header h2 {
   margin: 0 0 10px;
   font-size: clamp(1.15rem, 4.5vw, 1.5rem);
   color: var(--site-green);
@@ -768,14 +784,14 @@ div.section {
   text-wrap: wrap;
 }
 
-#skills header h3 {
+.skills-subheader {
   margin: 0;
   font-size: 1.25rem;
   color: var(--site-green);
   text-align: center;
 }
 
-.section .section-container .icon-credits h5 {
+.section .section-container .icon-credits-title {
   margin: 0;
   align-self: center;
   font-size: 0.95rem;
@@ -790,18 +806,18 @@ div.section {
     display: none;
   }
 
-  #skills header h1 {
+  #skills header h2 {
     font-size: 1.25rem;
   }
 
-  #skills header h3 {
+  .skills-subheader {
     font-size: .85rem;
   }
 
   .section .section-container .icon-credits,
-  .section .section-container .icon-credits h5 {
+  .section .section-container .icon-credits-title {
     font-size: 0.75rem;
-    color: var(--muted);
+    color: var(--text-color);
   }
 }
 
@@ -819,14 +835,14 @@ div.section {
   z-index: 1;
 }
 
-#testimonials header h1 {
+#testimonials header h2 {
   margin: 0 0 10px;
   text-align: center;
   color: var(--site-green);
   font-size: clamp(1.15rem, 4.5vw, 2.4rem);
 }
 
-#testimonials header h3 {
+.testimonials-subtitle {
   margin: 0;
   text-align: center;
   color: var(--muted);
@@ -936,7 +952,7 @@ div.section {
     margin-top: 36px;
   }
 
-  #testimonials header h3 {
+  .testimonials-subtitle {
     font-size: 0.85rem;
   }
 
@@ -1238,7 +1254,7 @@ div.section {
     padding: 6px 2px 8px
   }
 
-  #about .wrap header h1 {
+  #about .wrap header h2 {
     margin: 0 0 4px;
     font-size: clamp(1.15rem, 4.5vw, 1.5rem);
     color: var(--site-green);

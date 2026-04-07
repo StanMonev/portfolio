@@ -29,12 +29,23 @@ const TYPEWRITER_FALLBACK_TEXTS = [
 var TxtType = function (el, toRotate, period) {
   this.toRotate = toRotate;
   this.el = el;
+  this.wrapEl = el.querySelector('.wrap') || document.createElement('span');
+  if (!this.wrapEl.parentNode) {
+    this.wrapEl.className = 'wrap';
+    this.el.appendChild(this.wrapEl);
+  }
   this.loopNum = 0;
   this.period = parseInt(period, 10) || 2000;
   this.txt = "";
   this.isDeleting = false;
   this.timeoutId = null;
+  this.syncWidth();
   this.tick();
+};
+
+TxtType.prototype.syncWidth = function () {
+  const longest = this.toRotate.reduce((max, item) => Math.max(max, String(item).length), 0);
+  this.el.style.setProperty('--typewriter-width', `${Math.max(longest + 1, 1)}ch`);
 };
 
 /**
@@ -51,7 +62,9 @@ TxtType.prototype.tick = function () {
     this.txt = fullTxt.substring(0, this.txt.length + 1);
   }
 
-  this.el.innerHTML = '<span class="wrap">' + this.txt + "</span>";
+  if (this.wrapEl) {
+    this.wrapEl.textContent = this.txt;
+  }
 
   var that = this;
   var delta = 200 - Math.random() * 100;  // Random typing speed to simulate human typing
@@ -79,6 +92,7 @@ TxtType.prototype.tick = function () {
  */
 TxtType.prototype.updateText = function(newTextArray) {
   this.toRotate = newTextArray;
+  this.syncWidth();
   // Reset to start fresh with new text
   this.loopNum = 0;
   this.txt = "";

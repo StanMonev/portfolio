@@ -5,8 +5,33 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  setupTestimonials();
+  setupTestimonialsWhenVisible();
 });
+
+const setupTestimonialsWhenVisible = () => {
+  const section = document.getElementById('testimonials');
+  if (!section || section.dataset.testimonialsReady === 'true') return;
+
+  const initialize = () => {
+    if (section.dataset.testimonialsReady === 'true') return;
+    section.dataset.testimonialsReady = 'true';
+    setupTestimonials();
+  };
+
+  if (!('IntersectionObserver' in window)) {
+    initialize();
+    return;
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    if (entries.some(entry => entry.isIntersecting)) {
+      observer.disconnect();
+      initialize();
+    }
+  }, { rootMargin: '320px 0px' });
+
+  observer.observe(section);
+};
 
 const t = (key, fallback) => {
   const translationService = window.translationService;

@@ -26,9 +26,11 @@ const PDF_OPTIONS_BASE = {
 };
 
 const HTML2PDF_CDN_URL = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js';
+const RESUME_PREVIEW_CSS_URL = '/assets/css/resume-preview.css';
 
 let isDownloading = false;
 let html2PdfLoaderPromise = null;
+let resumePreviewStylesPromise = null;
 
 // === Boot ====================================================================
 document.addEventListener('DOMContentLoaded', initResumeDownload);
@@ -162,6 +164,8 @@ async function prepareResumeTemplate(language) {
     throw new Error(`[resume] Missing #${IDS.resumeContainer}`);
   }
 
+  await ensureResumePreviewStylesLoaded();
+
   const hasCurrentTemplate =
     container.dataset.resumeLanguage === normalizedLanguage &&
     !!container.querySelector('#cvPreview');
@@ -185,6 +189,31 @@ async function prepareResumeTemplate(language) {
   }
 
   return cvPreview;
+}
+
+function ensureResumePreviewStylesLoaded() {
+  if (document.querySelector(`link[href="${RESUME_PREVIEW_CSS_URL}"]`)) {
+    return Promise.resolve();
+  }
+
+  if (resumePreviewStylesPromise) {
+    return resumePreviewStylesPromise;
+  }
+
+  resumePreviewStylesPromise = new Promise((resolve, reject) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = RESUME_PREVIEW_CSS_URL;
+    link.setAttribute('data-resume-preview-style', 'true');
+    link.onload = () => resolve();
+    link.onerror = () => reject(new Error('Failed to load resume preview stylesheet.'));
+    document.head.appendChild(link);
+  }).catch(error => {
+    resumePreviewStylesPromise = null;
+    throw error;
+  });
+
+  return resumePreviewStylesPromise;
 }
 
 /**

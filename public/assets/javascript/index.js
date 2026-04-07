@@ -17,7 +17,6 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  preloadImages();
   setNavbar();
   setupNavigationLinks();
   sendEmailHandler();
@@ -26,10 +25,37 @@ document.addEventListener("DOMContentLoaded", () => {
   setupModal();
   setupPolicies();
   setupCookies();
-  setupSkillsCarousel();
-  setupRoadmap();
   setupLanguageSwitcher();
+  document.querySelector('#downloadButtonMobile .meta')?.setAttribute('aria-hidden', 'true');
+  runWhenVisible('#skills', () => setupSkillsCarousel());
+  runWhenVisible('#roadmap', () => setupRoadmap());
 });
+
+const runWhenVisible = (selector, callback, options = { rootMargin: '240px 0px' }) => {
+  const target = document.querySelector(selector);
+  if (!target) return;
+
+  let hasRun = false;
+  const run = () => {
+    if (hasRun) return;
+    hasRun = true;
+    callback(target);
+  };
+
+  if (!('IntersectionObserver' in window)) {
+    run();
+    return;
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    if (entries.some(entry => entry.isIntersecting)) {
+      observer.disconnect();
+      run();
+    }
+  }, options);
+
+  observer.observe(target);
+};
 
 /**
  * Sets up smooth scrolling for navigation links in the main navbar.
@@ -182,19 +208,29 @@ const handleXhrResponse = (xhr, form) => {
  * @returns {void}
  */
 const showMessage = (alert, message) => {
-  const messageEl = $(`.alert-box.${alert}`);
-  const container = messageEl.parent();
+  const messageEl = document.querySelector(`.alert-box.${alert}`);
+  if (!messageEl) return;
+
+  const container = messageEl.parentElement;
+  if (!container) return;
+
   const ratio = 4.7575;
-  const width = $(window).width() / ratio;
+  const width = window.innerWidth / ratio;
   const marginToSet = width / 2;
 
-  container.css({
-    width: `${width}px`,
-    marginLeft: `-${marginToSet}px`
-  });
+  container.style.width = `${width}px`;
+  container.style.marginLeft = `-${marginToSet}px`;
 
-  messageEl.find('span').html(message);
-  container.fadeIn(300).delay(1500).fadeOut(400);
+  const textContainer = messageEl.querySelector('span');
+  if (textContainer) {
+    textContainer.textContent = message;
+  }
+
+  container.style.display = 'block';
+  window.clearTimeout(container._hideTimeoutId);
+  container._hideTimeoutId = window.setTimeout(() => {
+    container.style.display = 'none';
+  }, 1900);
 };
 
 /**
@@ -280,6 +316,7 @@ const MATRIX = {
   rafId: null,
   state: null,
   fontSize: 14,                        // tweak as you like
+  targetFps: 30,
   letters: ('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789').repeat(6).split(''),
 };
 
@@ -414,20 +451,11 @@ const initMatrixCanvas = (canvas, fontSize) => {
 };
 
 const getMatrixCanvasMetrics = () => {
-  const main = document.querySelector('.main-container');
-  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const isCompactViewport = window.innerWidth < 1024;
+  const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, isCompactViewport ? 1.5 : 2));
 
-  const widthCSS = Math.ceil(
-    (main && main.clientWidth) ||
-    document.documentElement.clientWidth ||
-    window.innerWidth || 0
-  );
-
-  const heightCSS = Math.ceil(
-    main
-      ? Math.max(main.scrollHeight, main.offsetHeight, main.getBoundingClientRect().height)
-      : (document.documentElement.clientHeight || window.innerHeight || 0)
-  );
+  const widthCSS = Math.ceil(document.documentElement.clientWidth || window.innerWidth || 0);
+  const heightCSS = Math.ceil(window.innerHeight || document.documentElement.clientHeight || 0);
 
   return { dpr, widthCSS, heightCSS };
 };
@@ -445,9 +473,23 @@ const configureMatrixCanvas = (canvas, width, height, dpr) => {
  */
 const startMatrixLoop = (state) => {
   const { letters } = MATRIX;
+  const frameInterval = 1000 / MATRIX.targetFps;
+  let previousFrameTime = 0;
 
-  const tick = () => {
+  const tick = now => {
     const { ctx, widthCSS, heightCSS, drops, fontSize } = state;
+
+    if (document.hidden) {
+      MATRIX.rafId = requestAnimationFrame(tick);
+      return;
+    }
+
+    if (previousFrameTime && now - previousFrameTime < frameInterval) {
+      MATRIX.rafId = requestAnimationFrame(tick);
+      return;
+    }
+
+    previousFrameTime = now;
 
     // trail fade
     ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
@@ -624,14 +666,6 @@ const showPolicy = async endpoint => {
   }
 };
 
-const preloadImages = async () => {
-  const paths = await fetchData('/api/images');
-  paths.forEach(path => {
-    const img = new Image();
-    img.src = path;
-  });
-}
-
 /**
  * Skills carousel: infinitely scroll skills horizontally by duplicating the content.
  * This creates a seamless, jitter-free loop.
@@ -648,6 +682,7 @@ const setupSkillsCarousel = () => {
   let offset = 0;
   let loopWidth = 0;
   let rafId = null;
+  let isVisible = false;
 
   // positive = move RIGHT, negative = move LEFT
   let baseSpeed = DEFAULT_SPEED_PX_S;
@@ -685,6 +720,11 @@ const setupSkillsCarousel = () => {
   }
 
   function step(t) {
+    if (!isVisible) {
+      rafId = null;
+      return;
+    }
+
     if (!lastT) lastT = t;
     const dt = Math.min(50, t - lastT); // ms cap
     lastT = t;
@@ -700,6 +740,7 @@ const setupSkillsCarousel = () => {
 
   function start() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!isVisible) return;
     if (rafId == null) rafId = requestAnimationFrame(step);
   }
   function stop() {
@@ -725,6 +766,26 @@ const setupSkillsCarousel = () => {
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stop(); else start();
   });
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      const nextVisibleState = entries.some(entry => entry.isIntersecting);
+      if (nextVisibleState === isVisible) return;
+
+      isVisible = nextVisibleState;
+      lastT = 0;
+
+      if (isVisible) {
+        start();
+      } else {
+        stop();
+      }
+    }, { rootMargin: '160px 0px' });
+
+    observer.observe(frame);
+  } else {
+    isVisible = true;
+  }
 
   // Drag/Flick with Pointer Events
   frame.style.touchAction = 'pan-x';
@@ -801,6 +862,9 @@ const setupSkillsCarousel = () => {
   requestAnimationFrame(() => {
     measure();
     render();
+    if (!('IntersectionObserver' in window)) {
+      isVisible = true;
+    }
     start();
   });
 };
