@@ -309,12 +309,14 @@ div.section {
 
 #home.section .section-container div.typewriter {
   margin: 0;
-  margin-left: 10px;
 }
 
 #home.section .section-container div.typewriter-container {
-  width: 1000px;
+  width: min(1000px, 100%);
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   font-size: 25px;
   gap: 5px;
 }
@@ -387,6 +389,7 @@ div.section {
 
   main #home.section .section-container div.typewriter-container {
     text-align: center;
+    justify-content: center;
   }
 }
 
@@ -405,6 +408,13 @@ div.section {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.35rem;
+  }
+
+  main #home.section .section-container div.typewriter {
+    margin-left: 0;
   }
 
   .welcome-about-button-container .welcome-about-button {
@@ -1737,8 +1747,6 @@ input:-webkit-autofill:active {
   height: auto;
   border-radius: 50%;
   cursor: pointer;
-  -webkit-mask: linear-gradient(135deg, #000c 40%, #000, #000c 60%) 100% 100%/250% 250%;
-  mask: linear-gradient(135deg, #000c 40%, #000, #000c 60%) 100% 100%/250% 250%;
   transition: .5s;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
@@ -2083,6 +2091,8 @@ input:-webkit-autofill:active {
 }
 
 .fd-trigger {
+  display: flex;
+  align-items: center;
   width: 100%;
   gap: .6rem;
   padding: 0 .7rem;
@@ -2120,7 +2130,7 @@ input:-webkit-autofill:active {
 .fd-list {
   position: absolute;
   z-index: 50;
-  top: calc(100% + -28px);
+  top: calc(100% - 28px);
   left: 0;
   right: 0;
   border-radius: 10px;
@@ -2149,6 +2159,10 @@ input:-webkit-autofill:active {
   content: "✓";
   margin-left: auto;
   opacity: .7;
+}
+
+.fd-option[aria-selected="true"]::after {
+  content: none;
 }
 
 .fd-option:hover,

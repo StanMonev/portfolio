@@ -359,6 +359,10 @@ const setupMatrixBackground = () => {
   window.addEventListener('languageChanged', scheduleMatrixSync, { passive: true });
   window.addEventListener('translationsInitialized', scheduleMatrixSync, { passive: true });
 
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', scheduleMatrixSync, { passive: true });
+  }
+
   // Start
   window.addEventListener('load', scheduleMatrixSync, { passive: true });
   scheduleMatrixSync();
@@ -453,9 +457,10 @@ const initMatrixCanvas = (canvas, fontSize) => {
 const getMatrixCanvasMetrics = () => {
   const isCompactViewport = window.innerWidth < 1024;
   const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, isCompactViewport ? 1.5 : 2));
+  const viewport = window.visualViewport;
 
-  const widthCSS = Math.ceil(document.documentElement.clientWidth || window.innerWidth || 0);
-  const heightCSS = Math.ceil(window.innerHeight || document.documentElement.clientHeight || 0);
+  const widthCSS = Math.ceil(viewport?.width || document.documentElement.clientWidth || window.innerWidth || 0);
+  const heightCSS = Math.ceil(viewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
 
   return { dpr, widthCSS, heightCSS };
 };
@@ -1153,12 +1158,10 @@ const setupLanguageSwitcher = () => {
     // Click handling
     trigger.addEventListener('click', () => {
       setOpen(root.getAttribute('aria-expanded') !== 'true');
-      trigger.style.visibility = 'hidden';
     });
 
     document.addEventListener('click', (e) => {
       if (!root.contains(e.target)) {
-        trigger.removeAttribute('style');
         setOpen(false);
       }
     });
@@ -1173,7 +1176,6 @@ const setupLanguageSwitcher = () => {
         opt.prepend(img);
       }
       opt.addEventListener('click', () => {
-        trigger.removeAttribute('style');
         applySelection(opt);
         setOpen(false);
         trigger.focus();
