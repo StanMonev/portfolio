@@ -101,13 +101,7 @@ const setNavbar = () => {
   if (!navbar) return;
 
   const handleScroll = () => {
-    if (window.scrollY === 0) {
-      navbar.removeAttribute('style');
-    } else {
-      navbar.style.backgroundColor = 'transparent';
-      navbar.style.boxShadow = 'rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px';
-      navbar.style.backdropFilter = 'blur(10px) saturate(0.95) contrast(0.95)';
-    }
+    navbar.classList.toggle('is-scrolled', window.scrollY > 0);
   };
 
   // Initial check
@@ -1114,9 +1108,9 @@ const setupLanguageSwitcher = () => {
     const iconEl = root.querySelector('.fd-trigger-icon');
     const labelEl = root.querySelector('.fd-trigger-label');
     const options = Array.from(root.querySelectorAll('.fd-option'));
-
     // Internal state
     let activeIndex = -1;
+    list.tabIndex = -1;
 
     // Helper: apply selection to trigger
     function applySelection(opt) {
@@ -1134,16 +1128,17 @@ const setupLanguageSwitcher = () => {
 
     // Helper: open/close
     function setOpen(open) {
-      root.setAttribute('aria-expanded', String(open));
       if (open) {
-        // focus active or selected
+        root.setAttribute('aria-expanded', 'true');
         const selectedIndex = options.findIndex(o => o.getAttribute('aria-selected') === 'true');
         activeIndex = selectedIndex >= 0 ? selectedIndex : 0;
         setActive(activeIndex);
-        list.focus({ preventScroll: true });
-      } else {
-        activeIndex = -1;
+        window.requestAnimationFrame(() => list.focus({ preventScroll: true }));
+        return;
       }
+
+      root.setAttribute('aria-expanded', 'false');
+      activeIndex = -1;
     }
 
     // Active highlight
@@ -1157,7 +1152,8 @@ const setupLanguageSwitcher = () => {
 
     // Click handling
     trigger.addEventListener('click', () => {
-      setOpen(root.getAttribute('aria-expanded') !== 'true');
+      const open = root.getAttribute('aria-expanded') === 'true';
+      setOpen(!open);
     });
 
     document.addEventListener('click', (e) => {
@@ -1194,7 +1190,12 @@ const setupLanguageSwitcher = () => {
     list.addEventListener('keydown', (e) => {
       const open = root.getAttribute('aria-expanded') === 'true';
       if (!open) return;
-      if (e.key === 'Escape') { e.preventDefault(); setOpen(false); trigger.focus(); return; }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setOpen(false);
+        trigger.focus();
+        return;
+      }
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         if (activeIndex >= 0) options[activeIndex].click();
@@ -1209,6 +1210,7 @@ const setupLanguageSwitcher = () => {
     // Initialize default (data-selected) or first
     const preset = options.find(o => o.hasAttribute('data-selected')) || options[0];
     if (preset) applySelection(preset);
+    root.setAttribute('aria-expanded', 'false');
   }
 
   // Init all instances on the page

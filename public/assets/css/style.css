@@ -1632,6 +1632,17 @@ input:-webkit-autofill:active {
   top: 0;
   padding: 10px 2em;
   transition: all .7s ease-in-out;
+  background-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.main-container .navbar.is-scrolled {
+  background-color: transparent;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+  backdrop-filter: blur(10px) saturate(0.95) contrast(0.95);
+  -webkit-backdrop-filter: blur(10px) saturate(0.95) contrast(0.95);
 }
 
 .main-container .navbar::after {
@@ -2086,29 +2097,70 @@ input:-webkit-autofill:active {
   position: relative;
   font: 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   color: #00dd00;
-  margin: 12px 0;
-  transition: all 1s ease;
+  margin: 0 0 0 4px;
+  flex: 0 0 auto;
+  --fd-origin-right: 17px;
+  --fd-panel-offset: 0px;
+  --fd-line-duration: .4s;
+  --fd-panel-duration: .4s;
+  --fd-option-count: 3;
+  --fd-option-row-height: 40px;
+  --fd-panel-padding-y: 0.15rem;
+  --fd-line-height: calc(var(--fd-panel-offset) + (var(--fd-option-count) * var(--fd-option-row-height)) + (var(--fd-panel-padding-y) * 2));
 }
 
 .fd-trigger {
+  position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
+  justify-content: center;
+  width: auto;
+  min-width: 64px;
+  height: 38px;
   gap: .6rem;
-  padding: 0 .7rem;
+  padding: 0 .65rem;
   background: transparent;
   cursor: pointer;
   color: #00dd00;
-  transform: scale(0.95);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: all .2s ease;
 }
 
-.fd-trigger:hover {
-  transform: scale(1);
+.fd-trigger::after {
+  content: "";
+  position: absolute;
+  right: calc(var(--fd-origin-right) - 2px);
+  bottom: 16px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--site-green) 42%, transparent);
+  opacity: 0;
+  transform: scale(.3);
+  pointer-events: none;
+  transition:
+    transform .18s ease calc(var(--fd-line-duration) + var(--fd-panel-duration)),
+    opacity .18s ease calc(var(--fd-line-duration) + var(--fd-panel-duration));
 }
 
-.fd-trigger:focus {
-  outline-offset: 2px;
-  transform: scale(1);
+.flag-dropdown::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 16px);
+  right: var(--fd-origin-right);
+  width: 2px;
+  height: 0;
+  background: color-mix(in oklab, var(--site-green) 40%, transparent);
+  opacity: 1;
+  transform-origin: top center;
+  pointer-events: none;
+  transition:
+    height var(--fd-line-duration) ease var(--fd-panel-duration),
+    opacity 0s linear var(--fd-panel-duration);
 }
 
 .fd-trigger img {
@@ -2120,39 +2172,81 @@ input:-webkit-autofill:active {
 
 .fd-caret {
   margin-left: auto;
-  transition: transform .15s ease;
-}
-
-.flag-dropdown[aria-expanded="true"] .fd-caret {
-  transform: rotate(180deg);
+  transform-origin: center 58%;
+  transition:
+    transform .18s ease calc(var(--fd-line-duration) + var(--fd-panel-duration)),
+    opacity .18s ease calc(var(--fd-line-duration) + var(--fd-panel-duration));
 }
 
 .fd-list {
   position: absolute;
   z-index: 50;
-  top: calc(100% - 28px);
-  left: 0;
+  top: calc(100% + var(--fd-panel-offset));
   right: 0;
+  left: auto;
+  min-width: 100%;
+  width: max-content;
+  background: color-mix(in oklab, var(--nav-background) 100%, transparent);
+  border: 2px solid color-mix(in oklab, var(--site-green) 16%, transparent);
   border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px) saturate(0.95) contrast(0.95);
+  -webkit-backdrop-filter: blur(10px) saturate(0.95) contrast(0.95);
   max-height: 280px;
-  overflow: auto;
-  padding: .15rem;
+  overflow: hidden auto;
+  padding: var(--fd-panel-padding-y) .15rem;
   margin: 0;
   list-style: none;
-  display: none;
-  transition: all .7s ease-in-out;
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  clip-path: inset(0 calc(var(--fd-origin-right) - 1px) 0 calc(100% - var(--fd-origin-right) - 1px) round 10px);
+  transform-origin: top right;
+  transition:
+    clip-path var(--fd-panel-duration) ease 0s,
+    opacity 0s linear var(--fd-panel-duration),
+    visibility 0s linear var(--fd-panel-duration);
+}
+
+.flag-dropdown[aria-expanded="true"] .fd-caret {
+  opacity: 0;
+  transform: scale(.35);
+  transition-delay: 0s;
+}
+
+.flag-dropdown[aria-expanded="true"] .fd-trigger::after {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0s;
+}
+
+.flag-dropdown[aria-expanded="true"]::after {
+  height: var(--fd-line-height);
+  opacity: 1;
+  transition: height var(--fd-line-duration) ease 0s;
 }
 
 .flag-dropdown[aria-expanded="true"] .fd-list {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  clip-path: inset(0 0 0 0 round 10px);
+  transition:
+    clip-path var(--fd-panel-duration) ease var(--fd-line-duration),
+    opacity 0s linear var(--fd-line-duration),
+    visibility 0s linear 0s;
 }
 
 .fd-option {
   display: flex;
+  align-items: center;
   gap: .35rem;
   padding: .5rem .55rem;
   border-radius: 8px;
   cursor: pointer;
+  background: transparent;
+  white-space: nowrap;
 }
 
 .fd-option[aria-selected="true"]::after {
