@@ -354,6 +354,11 @@ div.section {
   margin-right: 0;
 }
 
+.typewriter-container > span[data-translate="welcome.and_im_into"] {
+  margin-right: 0.5rem;
+}
+
+
 @keyframes blink {
   50% {
     border-color: var(--font_family);
