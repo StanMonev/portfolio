@@ -41,7 +41,7 @@ Copy-Item .env.example .env
 - `RESEND_API_KEY`
 - `TO_EMAIL`
 
-`FROM_EMAIL` must use an address on a domain verified in Resend.
+Email delivery uses Resend. `FROM_EMAIL` is expected to be an address on a domain verified in Resend, while `TO_EMAIL` can be any inbox that should receive contact form messages.
 
 4. Run database migrations:
 ```bash
@@ -58,14 +58,16 @@ For production:
 npm run start:prod
 ```
 
-The production build minifies the browser JavaScript files from `public/assets/javascript` into `public/assets/javascript/dist`. When `NODE_ENV=production`, the app will serve the minified files if they exist and fall back to the original files otherwise.
+The production build step minifies browser JavaScript from `public/assets/javascript` into `public/assets/javascript/dist`. At runtime, `NODE_ENV=production` makes the app serve those minified files when they are present, with an automatic fallback to the original files.
+
+Railway deployment settings are captured in `railway.json`: Railpack runs the build script, Knex migrations run in the pre-deploy phase, and the app starts with `npm start`.
 
 ## Scripts
-- `npm run build` - Run the frontend JavaScript production build
+- `npm run build` - Frontend JavaScript production build
 - `npm run build:js` - Minify browser JavaScript into `public/assets/javascript/dist`
-- `npm run start:dev` - Run with nodemon
-- `npm run start:prod` - Build the frontend JavaScript, then start the app with node
-- `npm run migrate` - Run latest migrations
+- `npm run start:dev` - Development server with nodemon
+- `npm run start:prod` - Production server with node
+- `npm run migrate` - Latest Knex migrations
 
 ## Database Commands
 Run all migrations:

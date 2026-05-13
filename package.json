@@ -5,8 +5,9 @@
   "scripts": {
     "build": "npm run build:js",
     "build:js": "node ./scripts/build-js.js",
+    "start": "node ./server.js",
     "start:dev": "nodemon server.js",
-    "start:prod": "npm run build && node ./server.js",
+    "start:prod": "node ./server.js",
     "migrate": "knex migrate:latest"
   },
   "repository": {
