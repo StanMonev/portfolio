@@ -37,11 +37,11 @@ Copy-Item .env.example .env
 - `ADMIN_USERNAME`
 - `ADMIN_PASSWORD`
 - `ADMIN_EMAIL`
-- `EMAIL_HOST`
-- `EMAIL_HOST_PORT`
-- `EMAIL_PASSWORD`
 - `FROM_EMAIL`
+- `RESEND_API_KEY`
 - `TO_EMAIL`
+
+`FROM_EMAIL` must use an address on a domain verified in Resend.
 
 4. Run database migrations:
 ```bash

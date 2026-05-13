@@ -1,11 +1,11 @@
 /**
  * emailService.js
  *
- * This service file contains the setup for sending emails using Node.js with the nodemailer package.
+ * This service file contains the setup for sending emails using the Resend Email API.
  * It provides functionality to send emails with dynamic content rendered using EJS templates.
  *
  * Key functionalities:
- * - Configure the email transport service using environment variables for secure email delivery.
+ * - Configure the email API request using environment variables for secure email delivery.
  * - Render dynamic email content using EJS templates.
  * - Send emails with both plain text and HTML content.
  *
@@ -13,12 +13,10 @@
  * email-based functionalities within the application.
  */
 
-const nodemailer = require('nodemailer');
 const ejs = require('ejs');
-const path = require('path');
 
 /**
- * Configures and sends an email using nodemailer and EJS for templating.
+ * Configures and sends an email using Resend and EJS for templating.
  * 
  * @param {Object} mailOptions - An object containing email sending options:
  *    @param {string} mailOptions.fromEmail - The sender's email address.
@@ -32,33 +30,34 @@ const path = require('path');
  */
 
 const setupMailer = async (mailOptions) => {
-
-  //Using nodmailer.createTransport to setup the connection to the email receiver
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_HOST_PORT,
-    auth: {
-      user: process.env.FROM_EMAIL,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY is not configured.');
+  }
 
   const data = await ejs.renderFile(mailOptions.templatePath, mailOptions.templateData);
 
-  const mail_option = {
-    from: mailOptions.fromEmail,
-    to: mailOptions.toEmail,
-    subject: mailOptions.subject,
-    text: mailOptions.text,
-    html: data
-  };
-
-  transporter.sendMail(mail_option, (error, info) => {
-    if (error) {
-      throw new Error(error.message);
-    }
-    return info;
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: mailOptions.fromEmail,
+      to: [mailOptions.toEmail],
+      subject: mailOptions.subject,
+      text: mailOptions.text,
+      html: data
+    })
   });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || 'Failed to send email.');
+  }
+
+  return result;
 };
 
 // ///////
