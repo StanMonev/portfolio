@@ -43,7 +43,7 @@
     </div>
     <div class="download-container">
       <span class="bold" data-translate="about.compact_resume">Compact Resume:</span>
-      <button id="downloadButtonDesktop" class="link" aria-label="Download" data-translate-aria-label="common.download">
+      <button id="downloadButtonDesktop" class="link" aria-label="Download" data-translate-aria-label="common.download" data-recaptcha-site-key="<%= typeof recaptchaSiteKey !== 'undefined' ? recaptchaSiteKey : '' %>" data-recaptcha-action="<%= typeof recaptchaDownloadAction !== 'undefined' ? recaptchaDownloadAction : 'resume_download' %>">
         <svg class="info-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path fill="url(#g)"
             d="M12 3a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4.007 4.007a1.25 1.25 0 0 1-1.768 0L6.925 11.707a1 1 0 1 1 1.414-1.414L10.5 12.454V4a1 1 0 0 1 1-1Zm-7 14a1 1 0 1 0 0 2h14a1 1 0 1 0 0-2H5Z" />
@@ -95,7 +95,7 @@
       </a>
 
       <!-- Compact CV download -->
-      <button id="downloadButtonMobile" class="cta outline">
+      <button id="downloadButtonMobile" class="cta outline" data-recaptcha-site-key="<%= typeof recaptchaSiteKey !== 'undefined' ? recaptchaSiteKey : '' %>" data-recaptcha-action="<%= typeof recaptchaDownloadAction !== 'undefined' ? recaptchaDownloadAction : 'resume_download' %>">
         <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
           <path d="M12 3v10" />
           <path d="M7 9l5 5 5-5" />

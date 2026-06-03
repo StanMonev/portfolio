@@ -18,6 +18,9 @@
   <script defer src="<%= jsAsset('cookies.js') %>"></script>
   <script defer src="<%= jsAsset('index.js') %>"></script>
   <script defer src="<%= jsAsset('translations.js') %>"></script>
+  <% if (typeof recaptchaSiteKey !== 'undefined' && recaptchaSiteKey) { %>
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=<%= recaptchaSiteKey %>"></script>
+  <% } %>
   <title>StanimirMonevWorks</title>
 </head>
 

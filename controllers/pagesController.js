@@ -16,7 +16,9 @@
 
 const { validationResult } = require('express-validator');
 const emailService = require('../services/emailService');
+const recaptchaService = require('../services/recaptchaService');
 const path = require('path');
+
 const skills = [
   { name: 'JavaScript', icon: '/assets/images/icons/skills/javascript.webp' },
   { name: 'CSS', icon: '/assets/images/icons/skills/css3.webp' },
@@ -73,32 +75,92 @@ const skills = [
  */
 
 const sendEmailFunction = async (req, res) => {
-  const errors = validationResult(req);
+  const errors = validationResult(req).mapped();
 
-  if (!errors.isEmpty()) {
-    res.status(400).send(_getJSON('Some form elements are not full.', errors.mapped()));
-  } else {
-    const mailOptions = {
-      templatePath: path.join(__dirname, '..', 'views', 'partials', 'emailForm.ejs'),
-      templateData: {
-        name: req.body.name,
-        email: req.body.email,
-        subject: req.body.subject,
-        text: req.body.message
-      },
-      fromEmail: process.env.FROM_EMAIL,
-      toEmail: process.env.TO_EMAIL,
-      subject: req.body.subject,
-      text: req.body.message
-    };
+  if (_hasHoneypotValue(req.body.website)) {
+    res.status(400).send(_getJSON('Invalid contact form submission.', _getValidationResponse({
+      recaptchaToken: { msg: 'Security check failed. Please try again.' }
+    })));
+    return;
+  }
 
+  if (!errors.recaptchaToken) {
     try {
-      await emailService.setupMailer(mailOptions);
-      res.status(200).send(_getJSON("E-Mail sent successfully!"));
+      const recaptchaResult = await recaptchaService.verifyContactToken({
+        token: req.body.recaptchaToken,
+        remoteIp: req.ip,
+        userAgent: req.get('user-agent')
+      });
+
+      if (!recaptchaResult.success) {
+        errors.recaptchaToken = { msg: 'Security check failed. Please try again.' };
+      }
     } catch (error) {
       res.status(500).send(_getJSON(error.message));
+      return;
     }
   }
+
+  if (Object.keys(errors).length > 0) {
+    res.status(400).send(_getJSON('Some form elements are not full.', _getValidationResponse(errors)));
+    return;
+  }
+
+  const mailOptions = {
+    templatePath: path.join(__dirname, '..', 'views', 'partials', 'emailForm.ejs'),
+    templateData: {
+      name: req.body.name,
+      email: req.body.email,
+      subject: req.body.subject,
+      text: req.body.message
+    },
+    fromEmail: process.env.FROM_EMAIL,
+    toEmail: process.env.TO_EMAIL,
+    subject: req.body.subject,
+    text: req.body.message
+  };
+
+  try {
+    await emailService.setupMailer(mailOptions);
+    res.status(200).send(_getJSON("E-Mail sent successfully!"));
+  } catch (error) {
+    res.status(500).send(_getJSON(error.message));
+  }
+};
+
+/**
+ * Verifies the reCAPTCHA token required before generating a resume download.
+ *
+ * @param {Object} req - The request object containing a reCAPTCHA token.
+ * @param {Object} res - The response object used to send the verification result.
+ * @returns {Promise<void>} - Sends a JSON response indicating whether the download may continue.
+ */
+const verifyResumeDownloadFunction = async (req, res) => {
+  const errors = validationResult(req).mapped();
+
+  if (!errors.recaptchaToken) {
+    try {
+      const recaptchaResult = await recaptchaService.verifyResumeDownloadToken({
+        token: req.body.recaptchaToken,
+        remoteIp: req.ip,
+        userAgent: req.get('user-agent')
+      });
+
+      if (!recaptchaResult.success) {
+        errors.recaptchaToken = { msg: 'Security check failed. Please try again.' };
+      }
+    } catch (error) {
+      res.status(500).send(_getJSON(error.message));
+      return;
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    res.status(400).send(_getJSON('Security check failed. Please try again.', _getValidationResponse(errors)));
+    return;
+  }
+
+  res.status(200).send(_getJSON('Security check passed.'));
 };
 
 /**
@@ -132,7 +194,12 @@ const getDownloadButton = async (req, res) => {
 // //////////////////////
 
 const getHomePage = (req, res) => {
-  res.render('index', {skills});
+  res.render('index', {
+    skills,
+    recaptchaSiteKey: recaptchaService.getSiteKey(),
+    recaptchaAction: recaptchaService.getContactAction(),
+    recaptchaDownloadAction: recaptchaService.getResumeDownloadAction()
+  });
 };
 
 const getAdminPage = (req, res) => {
@@ -187,6 +254,16 @@ function _getJSON(message = '', data = null) {
   });
 }
 
+function _getValidationResponse(errors) {
+  return {
+    errors
+  };
+}
+
+function _hasHoneypotValue(value) {
+  return typeof value === 'string' && value.trim() !== '';
+}
+
 function _getImagePaths(dir) {
   const fs = require('fs');
   const path = require('path');
@@ -206,6 +283,7 @@ module.exports = {
   getDebugMode,
   getEmailForm,
   sendEmailFunction,
+  verifyResumeDownloadFunction,
   getTACPolicyContent,
   getPrivacyPolicyContent,
   getCookiePolicyContent,

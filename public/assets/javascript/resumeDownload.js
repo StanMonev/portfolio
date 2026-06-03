@@ -27,6 +27,8 @@ const PDF_OPTIONS_BASE = {
 
 const HTML2PDF_CDN_URL = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js';
 const RESUME_PREVIEW_CSS_URL = '/assets/css/resume-preview.css';
+const RESUME_DOWNLOAD_RECAPTCHA_VERIFY_URL = '/api/resume-download/verify';
+const RESUME_DOWNLOAD_RECAPTCHA_FALLBACK_ACTION = 'resume_download';
 
 let isDownloading = false;
 let html2PdfLoaderPromise = null;
@@ -49,7 +51,7 @@ function initResumeDownload() {
 
   buttons.forEach(button => {
     button.addEventListener('click', () => {
-      handleDownload(buttons);
+      handleDownload(button, buttons);
     });
   });
 
@@ -72,10 +74,11 @@ function initResumeDownload() {
 
 /**
  * Handles the export flow and generates a language-specific PDF.
+ * @param {HTMLElement} sourceButton
  * @param {HTMLElement[]} buttons
  * @deprecated Legacy resume/CV implementation.
  */
-async function handleDownload(buttons) {
+async function handleDownload(sourceButton, buttons) {
   if (isDownloading) return;
 
   isDownloading = true;
@@ -83,6 +86,8 @@ async function handleDownload(buttons) {
 
   const cleanupWatermark = attachWatermarkStyle();
   try {
+    await verifyResumeDownloadRecaptcha(sourceButton);
+
     const language = getActiveLanguage();
     const cvPreview = await prepareResumeTemplate(language);
     await waitForImages(cvPreview);
@@ -96,11 +101,67 @@ async function handleDownload(buttons) {
     await html2pdfLib().set(pdfOptions).from(cvPreview).save();
   } catch (error) {
     console.error('[resume] PDF generation failed:', error);
+    showDownloadError(error);
   } finally {
     cleanupWatermark();
     hideResumeExportContainer();
     setLoadingState(buttons, false);
     isDownloading = false;
+  }
+}
+
+async function verifyResumeDownloadRecaptcha(button) {
+  const token = await getResumeDownloadRecaptchaToken(button);
+  const response = await fetch(RESUME_DOWNLOAD_RECAPTCHA_VERIFY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recaptchaToken: token })
+  });
+
+  if (!response.ok) {
+    const responseData = await parseJsonResponse(response);
+    throw new Error(responseData?.msg || 'Resume download security check failed.');
+  }
+
+  return await response.json();
+}
+
+async function parseJsonResponse(response) {
+  try {
+    return await response.json();
+  } catch (_) {
+    return null;
+  }
+}
+
+function getResumeDownloadRecaptchaToken(button) {
+  const siteKey = button?.dataset?.recaptchaSiteKey;
+  const action = button?.dataset?.recaptchaAction || RESUME_DOWNLOAD_RECAPTCHA_FALLBACK_ACTION;
+
+  if (!siteKey) return Promise.resolve('');
+
+  if (!window.grecaptcha?.enterprise) {
+    return Promise.reject(new Error('reCAPTCHA script is not loaded.'));
+  }
+
+  return new Promise((resolve, reject) => {
+    window.grecaptcha.enterprise.ready(() => {
+      window.grecaptcha.enterprise.execute(siteKey, { action })
+        .then(resolve)
+        .catch(reject);
+    });
+  });
+}
+
+function showDownloadError(error) {
+  if (typeof showMessage === 'function') {
+    const isSecurityError = error?.message === 'Resume download security check failed.'
+      || error?.message === 'reCAPTCHA script is not loaded.'
+      || error?.message?.includes('reCAPTCHA')
+      || error?.message?.includes('API key');
+    const message = isSecurityError ? 'Security check failed. Please try again.' : 'Download failed. Please try again.';
+
+    showMessage('error', message);
   }
 }
 

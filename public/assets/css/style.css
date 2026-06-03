@@ -1555,6 +1555,23 @@ input:-webkit-autofill:active {
   flex: 100%
 }
 
+.contact-container .recaptcha-status {
+  width: 100%;
+}
+
+.contact-container .contact-honeypot {
+  height: 0;
+  left: -10000px;
+  overflow: hidden;
+  position: absolute;
+  top: auto;
+  width: 1px;
+}
+
+.grecaptcha-badge {
+  z-index: 2;
+}
+
 #sendEmailBtn {
   width: 200px;
   margin-top: 15px;

@@ -28,7 +28,12 @@ const sendEmailErrors = [
   check('name').notEmpty().withMessage('Name is required'),
   check('email').isEmail().withMessage('Invalid Email Address'),
   check('subject').notEmpty().withMessage('Subject is required'),
-  check('message').notEmpty().withMessage('Message is required')
+  check('message').notEmpty().withMessage('Message is required'),
+  check('recaptchaToken').notEmpty().withMessage('Security check is required')
+];
+
+const recaptchaTokenErrors = [
+  check('recaptchaToken').notEmpty().withMessage('Security check is required')
 ];
 
 ///////////////////// MAIN ROUTES //////////////////////////
@@ -52,6 +57,7 @@ router.get('/admin/resume_editor', authController.ensureAuthenticated, pagesCont
  * Route for handling contact form submissions with validation.
  */
 router.post('/contact', sendEmailErrors, pagesController.sendEmailFunction);
+router.post('/api/resume-download/verify', recaptchaTokenErrors, pagesController.verifyResumeDownloadFunction);
 
 /**
  * Route for handling the image loading.

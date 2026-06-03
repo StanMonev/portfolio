@@ -39,9 +39,14 @@ Copy-Item .env.example .env
 - `ADMIN_EMAIL`
 - `FROM_EMAIL`
 - `RESEND_API_KEY`
+- `RECAPTCHA_API_KEY`
+- `RECAPTCHA_PROJECT_ID`
+- `RECAPTCHA_SITE_KEY`
 - `TO_EMAIL`
 
 Email delivery uses Resend. `FROM_EMAIL` is expected to be an address on a domain verified in Resend, while `TO_EMAIL` can be any inbox that should receive contact form messages.
+
+The contact form and resume download use Google Cloud reCAPTCHA score-based verification. Create a reCAPTCHA website key, add the site key to `RECAPTCHA_SITE_KEY`, the Google Cloud project ID to `RECAPTCHA_PROJECT_ID`, and an API key with access to create reCAPTCHA assessments to `RECAPTCHA_API_KEY`. `RECAPTCHA_MIN_SCORE` is optional and defaults to `0.5`.
 
 4. Run database migrations:
 ```bash

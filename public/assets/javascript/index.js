@@ -31,6 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
   runWhenVisible('#roadmap', () => setupRoadmap());
 });
 
+const CONTACT_RECAPTCHA_FALLBACK_ACTION = 'contact_submit';
+
 const runWhenVisible = (selector, callback, options = { rootMargin: '240px 0px' }) => {
   const target = document.querySelector(selector);
   if (!target) return;
@@ -123,7 +125,7 @@ const sendEmailHandler = () => {
 
   if (!form) return;
 
-  form.addEventListener("submit", event => {
+  form.addEventListener("submit", async event => {
     event.preventDefault();
 
     if (!termsCheckbox.checked) {
@@ -134,7 +136,7 @@ const sendEmailHandler = () => {
       errorMessage.classList.add('hidden');
     }
 
-    sendEmail(form);
+    await sendEmail(form);
   });
 
   form.querySelectorAll('.form-control').forEach(input => {
@@ -148,14 +150,32 @@ const sendEmailHandler = () => {
  * @param {HTMLFormElement} form - The form element containing the email data.
  * @returns {void}
  */
-const sendEmail = form => {
+const sendEmail = async form => {
+  setContactSubmitState(form, true);
+
+  try {
+    const tokenInput = document.getElementById('recaptchaToken');
+
+    if (tokenInput) {
+      tokenInput.value = await getContactRecaptchaToken(form);
+    }
+  } catch (error) {
+    setContactSubmitState(form, false);
+    showMessage('error', 'Security check failed. Please try again.');
+    console.error(error);
+    return;
+  }
+
   const xhr = new XMLHttpRequest();
   xhr.open("POST", "/contact");
   xhr.setRequestHeader("Accept", "application/json");
   xhr.setRequestHeader("Content-Type", "application/json");
 
   xhr.onreadystatechange = () => {
-    if (xhr.readyState === 4) handleXhrResponse(xhr, form);
+    if (xhr.readyState === 4) {
+      setContactSubmitState(form, false);
+      handleXhrResponse(xhr, form);
+    }
   };
 
   const formData = new FormData(form);
@@ -165,6 +185,45 @@ const sendEmail = form => {
   });
 
   xhr.send(JSON.stringify(jsonData));
+};
+
+/**
+ * Gets a fresh Google Cloud reCAPTCHA token for the contact form action.
+ *
+ * @param {HTMLFormElement} form - The form being submitted.
+ * @returns {Promise<string>} - A reCAPTCHA token, or an empty string when no site key is configured.
+ */
+const getContactRecaptchaToken = form => {
+  const siteKey = form.dataset.recaptchaSiteKey;
+  const action = form.dataset.recaptchaAction || CONTACT_RECAPTCHA_FALLBACK_ACTION;
+
+  if (!siteKey) return Promise.resolve('');
+
+  if (!window.grecaptcha?.enterprise) {
+    return Promise.reject(new Error('reCAPTCHA script is not loaded.'));
+  }
+
+  return new Promise((resolve, reject) => {
+    window.grecaptcha.enterprise.ready(() => {
+      window.grecaptcha.enterprise.execute(siteKey, { action })
+        .then(resolve)
+        .catch(reject);
+    });
+  });
+};
+
+/**
+ * Toggles the contact submit button while reCAPTCHA and the request are in flight.
+ *
+ * @param {HTMLFormElement} form - The contact form.
+ * @param {boolean} isSubmitting - Whether the form is currently submitting.
+ * @returns {void}
+ */
+const setContactSubmitState = (form, isSubmitting) => {
+  const submitButton = form.querySelector('#sendEmailBtn');
+  if (!submitButton) return;
+
+  submitButton.disabled = isSubmitting;
 };
 
 /**
@@ -181,9 +240,10 @@ const handleXhrResponse = (xhr, form) => {
     case 200:
       showMessage('success', response.msg);
       form.reset();
+      clearContactFormState(form);
       break;
     case 400:
-      handleValidationErrors(response.data);
+      handleValidationErrors(response.data?.errors || response.data);
       break;
     case 500:
       showMessage('error', 'An error has occurred!');
@@ -244,11 +304,31 @@ const handleValidationErrors = errors => {
     const input = document.getElementById(field);
     if (input) {
       input.classList.add("is-invalid");
-      const errorContainer = input.nextElementSibling.nextElementSibling;
-      errorContainer.textContent = errors[field].msg;
-      errorContainer.classList.remove("hidden");
+
+      const errorContainer = getInputErrorContainer(input);
+
+      if (errorContainer) {
+        errorContainer.textContent = errors[field].msg;
+        errorContainer.classList.remove("hidden");
+      }
     }
   });
+};
+
+/**
+ * Clears transient UI state after a successful contact form submission.
+ *
+ * @param {HTMLFormElement} form - The form element that was submitted.
+ * @returns {void}
+ */
+const clearContactFormState = form => {
+  clearErrors();
+  form.querySelectorAll('.filled').forEach(input => input.classList.remove('filled'));
+
+  const termsError = form.querySelector('#termsContainer .error-message');
+  if (termsError) {
+    termsError.classList.add('hidden');
+  }
 };
 
 /**
@@ -259,8 +339,15 @@ const handleValidationErrors = errors => {
  */
 const clearError = input => {
   input.classList.remove("is-invalid");
-  input.nextElementSibling.nextElementSibling.classList.add("hidden");
+
+  const errorContainer = getInputErrorContainer(input);
+
+  if (errorContainer) {
+    errorContainer.classList.add("hidden");
+  }
 };
+
+const getInputErrorContainer = input => input.closest('.form-container, .recaptcha-status')?.querySelector('.error-message');
 
 /**
  * Clears all validation errors from the form.
@@ -278,27 +365,18 @@ const clearErrors = () => {
  */
 const checkInputFilled = () => {
   const formContainer = document.querySelector('.contact-container');
-  const inputFields = formContainer.querySelectorAll('input:not(#sendEmailBtn)');
-  const textareaField = formContainer.querySelector('textarea');
+  if (!formContainer) return;
 
-  inputFields.forEach(input => {
-    input.addEventListener('input', e => checkFilled(e, inputFields, textareaField));
+  const fields = formContainer.querySelectorAll('input:not(#sendEmailBtn):not([type="checkbox"]):not([type="hidden"]):not([name="website"]), textarea');
+
+  fields.forEach(field => {
+    const syncFilledState = () => {
+      field.classList.toggle('filled', field.value.trim() !== '');
+    };
+
+    field.addEventListener('input', syncFilledState);
+    syncFilledState();
   });
-
-  textareaField.addEventListener('input', e => checkFilled(e, inputFields, textareaField));
-};
-
-/**
- * Checks if any fields in the form are filled and toggles a class accordingly.
- * 
- * @param {Event} e - The event object from the input event.
- * @param {NodeList} inputFields - A list of input elements in the form.
- * @param {HTMLElement} textareaField - The textarea element in the form.
- * @returns {void}
- */
-const checkFilled = (e, inputFields, textareaField) => {
-  const anyFieldFilled = [...inputFields].some(input => input.value.trim() !== '') || textareaField.value.trim() !== '';
-  e.target.classList.toggle('filled', anyFieldFilled);
 };
 
 /**
