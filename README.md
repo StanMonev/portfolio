@@ -87,9 +87,13 @@ npx knex migrate:rollback --all
 
 ## Project Structure
 - `server.js` - App entry point
-- `routes/` - Route definitions
-- `controllers/` - Controller logic
+- `routes/` - Feature route modules composed by `routes/index.js`
+- `controllers/` - Feature controller logic
+- `middleware/` - Request middleware such as auth, validation, honeypot, and reCAPTCHA checks
+- `validators/` - Request validation chains
 - `services/` - Service layer utilities
+- `utils/` - Shared response/util helpers
+- `data/` - Static application data used by rendered pages
 - `models/` - Data models
 - `views/` - EJS templates and partials
 - `public/` - Static assets (CSS, JS, images, resume files)

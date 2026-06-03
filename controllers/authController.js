@@ -2,10 +2,9 @@
  * authController.js
  *
  * This file contains controller functions for managing user authentication,
- * including ensuring that routes are protected, handling user login, and managing logout.
+ * including handling user login and managing logout.
  *
  * Key functionalities:
- * - Ensure that only authenticated users can access certain routes.
  * - Handle user login, including session management and "remember me" functionality.
  * - Manage user logout by destroying the session and redirecting to the login page.
  *
@@ -14,23 +13,6 @@
  */
 
 const authService = require('../services/authService');
-
-
-/**
- * Middleware to ensure that a user is authenticated before accessing a route.
- * 
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @param {Function} next - The next middleware function.
- * @returns {void} - Calls the next middleware function if authenticated, otherwise redirects to the login page.
- */
-
-const ensureAuthenticated = (req, res, next) => {
-  if (req.session.userId) {
-    return next();
-  }
-  res.redirect('/login');
-};
 
 /**
  * Handles user login by authenticating the user and setting up the session.
@@ -80,7 +62,6 @@ const logoutUser = (req, res) => {
 // ///////
 
 module.exports = {
-  ensureAuthenticated,
   loginUser,
   logoutUser
 };
