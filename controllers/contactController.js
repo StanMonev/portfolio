@@ -17,12 +17,8 @@ async function sendEmail(req, res) {
     text: req.body.message
   };
 
-  try {
-    await emailService.setupMailer(mailOptions);
-    res.status(200).send(jsonResponse('E-Mail sent successfully!'));
-  } catch (error) {
-    res.status(500).send(jsonResponse(error.message));
-  }
+  await emailService.setupMailer(mailOptions);
+  res.status(200).send(jsonResponse('E-Mail sent successfully!'));
 }
 
 module.exports = {

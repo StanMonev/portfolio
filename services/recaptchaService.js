@@ -3,6 +3,7 @@ const https = require('https');
 const CONTACT_ACTION = 'contact_submit';
 const RESUME_DOWNLOAD_ACTION = 'resume_download';
 const DEFAULT_MIN_SCORE = 0.5;
+const DEFAULT_REQUEST_TIMEOUT_MS = 8000;
 const RECAPTCHA_HOST = 'recaptchaenterprise.googleapis.com';
 
 async function verifyContactToken({ token, remoteIp, userAgent }) {
@@ -87,6 +88,7 @@ function _getConfig() {
   const projectId = process.env.RECAPTCHA_PROJECT_ID || '';
   const apiKey = process.env.RECAPTCHA_API_KEY || '';
   const minScore = Number.parseFloat(process.env.RECAPTCHA_MIN_SCORE || String(DEFAULT_MIN_SCORE));
+  const requestTimeoutMs = Number.parseInt(process.env.RECAPTCHA_REQUEST_TIMEOUT_MS || String(DEFAULT_REQUEST_TIMEOUT_MS), 10);
 
   if (!siteKey || !projectId || !apiKey) {
     throw new Error('reCAPTCHA is not configured.');
@@ -96,11 +98,12 @@ function _getConfig() {
     siteKey,
     projectId,
     apiKey,
-    minScore: Number.isFinite(minScore) ? minScore : DEFAULT_MIN_SCORE
+    minScore: Number.isFinite(minScore) ? minScore : DEFAULT_MIN_SCORE,
+    requestTimeoutMs: Number.isFinite(requestTimeoutMs) ? requestTimeoutMs : DEFAULT_REQUEST_TIMEOUT_MS
   };
 }
 
-function _createAssessment({ projectId, apiKey, siteKey, token, expectedAction, remoteIp, userAgent }) {
+function _createAssessment({ projectId, apiKey, siteKey, token, expectedAction, remoteIp, userAgent, requestTimeoutMs }) {
   const requestBody = JSON.stringify({
     event: {
       token,
@@ -149,8 +152,12 @@ function _createAssessment({ projectId, apiKey, siteKey, token, expectedAction, 
       });
     });
 
-    req.on('error', () => {
-      reject(new Error('reCAPTCHA assessment request failed.'));
+    req.setTimeout(requestTimeoutMs, () => {
+      req.destroy(new Error('reCAPTCHA assessment request timed out.'));
+    });
+
+    req.on('error', error => {
+      reject(error);
     });
 
     req.write(requestBody);

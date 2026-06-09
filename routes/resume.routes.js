@@ -1,7 +1,10 @@
 const express = require('express');
 const resumeController = require('../controllers/resumeController');
+const { requireResumeApiAccess } = require('../middleware/resumeApiAuthMiddleware');
 
 const router = express.Router();
+
+router.use('/api/resume', requireResumeApiAccess);
 
 router.post('/api/resume/save', resumeController.saveOrUpdateResume);
 router.get('/api/resume', resumeController.getResumeInfo);

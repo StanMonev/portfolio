@@ -42,11 +42,18 @@ Copy-Item .env.example .env
 - `RECAPTCHA_API_KEY`
 - `RECAPTCHA_PROJECT_ID`
 - `RECAPTCHA_SITE_KEY`
+- `RESUME_API_KEY`
 - `TO_EMAIL`
 
 Email delivery uses Resend. `FROM_EMAIL` is expected to be an address on a domain verified in Resend, while `TO_EMAIL` can be any inbox that should receive contact form messages.
 
+Use `DEV_DATABASE_URL` locally. In production, use `DATABASE_URL`; the production session store also uses that database connection.
+
 The contact form and resume download use Google Cloud reCAPTCHA score-based verification. Create a reCAPTCHA website key, add the site key to `RECAPTCHA_SITE_KEY`, the Google Cloud project ID to `RECAPTCHA_PROJECT_ID`, and an API key with access to create reCAPTCHA assessments to `RECAPTCHA_API_KEY`. `RECAPTCHA_MIN_SCORE` is optional and defaults to `0.5`.
+
+Legacy resume API routes under `/api/resume` are protected by either a logged-in admin session or an API key. Send the key as `X-Resume-Api-Key: <RESUME_API_KEY>` from the resume builder project.
+
+`/healthz` and `/health` return a lightweight JSON liveness check for hosting platforms and uptime monitors.
 
 4. Run database migrations:
 ```bash
@@ -86,7 +93,8 @@ npx knex migrate:rollback --all
 ```
 
 ## Project Structure
-- `server.js` - App entry point
+- `server.js` - HTTP entry point
+- `app.js` - Express application setup, middleware, session, routes, and error handling
 - `routes/` - Feature route modules composed by `routes/index.js`
 - `controllers/` - Feature controller logic
 - `middleware/` - Request middleware such as auth, validation, honeypot, and reCAPTCHA checks

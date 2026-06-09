@@ -1,4 +1,5 @@
-const { jsonResponse, validationResponse } = require('../utils/jsonResponse');
+const AppError = require('../errors/AppError');
+const { validationResponse } = require('../utils/jsonResponse');
 
 function verifyRecaptchaToken(verifyToken) {
   return async (req, res, next) => {
@@ -10,15 +11,23 @@ function verifyRecaptchaToken(verifyToken) {
       });
 
       if (!recaptchaResult.success) {
-        res.status(400).send(jsonResponse('Security check failed. Please try again.', validationResponse({
-          recaptchaToken: { msg: 'Security check failed. Please try again.' }
-        })));
+        next(new AppError('Security check failed. Please try again.', {
+          statusCode: 400,
+          code: 'RECAPTCHA_FAILED',
+          details: validationResponse({
+            recaptchaToken: { msg: 'Security check failed. Please try again.' }
+          })
+        }));
         return;
       }
 
       next();
     } catch (error) {
-      res.status(500).send(jsonResponse(error.message));
+      next(new AppError(error.message, {
+        statusCode: 500,
+        code: 'RECAPTCHA_UNAVAILABLE',
+        expose: process.env.NODE_ENV !== 'production'
+      }));
     }
   };
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/assets/font.css">
+  <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+  <title><%= statusCode %> - StanimirMonevWorks</title>
+</head>
+<body>
+  <main class="error-page">
+    <section class="error-page__content">
+      <p class="error-page__code"><%= statusCode %></p>
+      <h1><%= message %></h1>
+      <a class="link" href="/">Return home</a>
+
+      <% if (showDetails && details) { %>
+        <pre><%= JSON.stringify(details, null, 2) %></pre>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>

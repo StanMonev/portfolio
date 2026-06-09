@@ -1,12 +1,17 @@
 const { validationResult } = require('express-validator');
-const { jsonResponse, validationResponse } = require('../utils/jsonResponse');
+const AppError = require('../errors/AppError');
+const { validationResponse } = require('../utils/jsonResponse');
 
 function handleValidationErrors(message = 'Validation failed.') {
   return (req, res, next) => {
     const errors = validationResult(req).mapped();
 
     if (Object.keys(errors).length > 0) {
-      res.status(400).send(jsonResponse(message, validationResponse(errors)));
+      next(new AppError(message, {
+        statusCode: 400,
+        code: 'VALIDATION_ERROR',
+        details: validationResponse(errors)
+      }));
       return;
     }
 

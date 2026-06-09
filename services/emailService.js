@@ -15,6 +15,8 @@
 
 const ejs = require('ejs');
 
+const DEFAULT_REQUEST_TIMEOUT_MS = 10000;
+
 /**
  * Configures and sends an email using Resend and EJS for templating.
  * 
@@ -35,29 +37,43 @@ const setupMailer = async (mailOptions) => {
   }
 
   const data = await ejs.renderFile(mailOptions.templatePath, mailOptions.templateData);
+  const requestTimeoutMs = Number.parseInt(process.env.EMAIL_REQUEST_TIMEOUT_MS || String(DEFAULT_REQUEST_TIMEOUT_MS), 10);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), Number.isFinite(requestTimeoutMs) ? requestTimeoutMs : DEFAULT_REQUEST_TIMEOUT_MS);
 
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: mailOptions.fromEmail,
-      to: [mailOptions.toEmail],
-      subject: mailOptions.subject,
-      text: mailOptions.text,
-      html: data
-    })
-  });
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        from: mailOptions.fromEmail,
+        to: [mailOptions.toEmail],
+        subject: mailOptions.subject,
+        text: mailOptions.text,
+        html: data
+      })
+    });
 
-  const result = await response.json();
+    const result = await response.json();
 
-  if (!response.ok) {
-    throw new Error(result.message || 'Failed to send email.');
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to send email.');
+    }
+
+    return result;
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('Email service request timed out.');
+    }
+
+    throw error;
+  } finally {
+    clearTimeout(timeout);
   }
-
-  return result;
 };
 
 // ///////

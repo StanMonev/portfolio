@@ -1,10 +1,15 @@
-const { jsonResponse, validationResponse } = require('../utils/jsonResponse');
+const AppError = require('../errors/AppError');
+const { validationResponse } = require('../utils/jsonResponse');
 
 function rejectHoneypotSubmissions(req, res, next) {
   if (typeof req.body.website === 'string' && req.body.website.trim() !== '') {
-    res.status(400).send(jsonResponse('Invalid contact form submission.', validationResponse({
-      recaptchaToken: { msg: 'Security check failed. Please try again.' }
-    })));
+    next(new AppError('Invalid contact form submission.', {
+      statusCode: 400,
+      code: 'HONEYPOT_REJECTED',
+      details: validationResponse({
+        recaptchaToken: { msg: 'Security check failed. Please try again.' }
+      })
+    }));
     return;
   }
 
