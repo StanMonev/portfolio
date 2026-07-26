@@ -1018,7 +1018,6 @@ div.section {
 
 .roadmap-canvas {
   position: relative;
-  width: 62%;
   height: clamp(700px, 85vh, 1000px);
   border-radius: 12px;
   overflow: visible;
